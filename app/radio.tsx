@@ -6,10 +6,11 @@ import SearchBar from "@/components/SearchBar";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useTheme } from "@/theme/ThemeContext";
-import { safeAPICall } from "@/utils/api";
+import { get, safeAPICall } from "@/utils/api";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { AudioPlayer, createAudioPlayer } from "expo-audio";
+import { useKeepAwake } from "expo-keep-awake";
 import { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
 
@@ -30,6 +31,8 @@ const RadioPage = () => {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useKeepAwake();
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -58,16 +61,14 @@ const RadioPage = () => {
         const API_URL =
           "https://de2.api.radio-browser.info/json/stations/search";
         const limit = 10;
-        const url = `${API_URL}?name=${searchTerm}&limit=${limit}&hidebroken=true&order=votes&reverse=true&countrycode=mm`;
-        const resp = await fetch(url);
-        if (!resp.ok) return;
-        const stations = await resp.json();
+        const url = `${API_URL}?name=${searchTerm}&limit=${limit}&hidebroken=true&order=votes&reverse=true&countrycode=mm&languagecodes=my`;
+        const stations = await get(url);
         if (!stations) return;
-        const mapStations: station[] = stations.map((stationData: any) => {
-          const url = stationData.url_resolved;
+        const mapStations: station[] = stations.map((s: station) => {
+          const url = s.url_resolved;
           return {
-            stationuuid: stationData.stationuuid,
-            name: stationData.name,
+            stationuuid: s.stationuuid,
+            name: s.name,
             url_resolved: url,
             player: createStationPlayer(url),
           };

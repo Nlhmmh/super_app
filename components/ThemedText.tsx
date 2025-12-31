@@ -1,12 +1,11 @@
-import { useThemeColor } from "@/theme/useThemeColor";
 import { useTheme } from "@/theme/ThemeContext";
+import * as Clipboard from "expo-clipboard";
 import {
-  Linking,
   Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
-  type TextProps,
+  type TextProps
 } from "react-native";
 
 export enum TextType {
@@ -85,9 +84,10 @@ export function ThemedText({
       <TouchableOpacity
         onPress={async () => {
           if (!link) return;
-          const supported = await Linking.canOpenURL(link || "");
-          if (!supported) return;
-          await Linking.openURL(link || "");
+          await Clipboard.setStringAsync("hello world");
+          // const supported = await Linking.canOpenURL(link || "");
+          // if (!supported) return;
+          // await Linking.openURL(link || "");
         }}
         activeOpacity={!link ? 1 : 0.8}
       >

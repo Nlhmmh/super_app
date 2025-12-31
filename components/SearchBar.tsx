@@ -1,6 +1,6 @@
 import { useTheme } from "@/theme/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
-import { TextInput } from "react-native";
+import { Platform, TextInput } from "react-native";
 import { ThemedView } from "./ThemedView";
 
 export default function SearchBar({
@@ -27,8 +27,8 @@ export default function SearchBar({
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: searchBarColors.background,
-        paddingHorizontal: 16,
-        paddingVertical: 8,
+        paddingHorizontal:  16,
+        paddingVertical: Platform.OS === "ios" ? 16 : 8,
         borderRadius: 24,
         borderWidth: 0.5,
         borderColor: searchBarColors.borderColor,
