@@ -2,7 +2,7 @@ import { useTheme } from "@/theme/ThemeContext";
 import { ActivityIndicator } from "react-native";
 import { ThemedView } from "./ThemedView";
 
-const Loading = () => {
+const Loading = ({ size = "large" }: { size?: "small" | "large" }) => {
   const theme = useTheme();
   return (
     <ThemedView
@@ -12,7 +12,7 @@ const Loading = () => {
         alignItems: "center",
       }}
     >
-      <ActivityIndicator size="large" color={theme.pink} />
+      <ActivityIndicator size={size} color={theme.pink} />
     </ThemedView>
   );
 };
