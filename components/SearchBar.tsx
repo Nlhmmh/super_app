@@ -28,7 +28,7 @@ export default function SearchBar({
         alignItems: "center",
         backgroundColor: searchBarColors.background,
         paddingHorizontal: 16,
-        paddingVertical: 16,
+        paddingVertical: 8,
         borderRadius: 24,
         borderWidth: 0.5,
         borderColor: searchBarColors.borderColor,

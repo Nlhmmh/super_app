@@ -3,7 +3,7 @@ import CustomScrollView from "@/components/CustomScrollView";
 import Loading from "@/components/Loading";
 import Pad from "@/components/Pad";
 import SearchBar from "@/components/SearchBar";
-import { ThemedText } from "@/components/ThemedText";
+import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useTheme } from "@/theme/ThemeContext";
 import { safeAPICall } from "@/utils/api";
@@ -24,7 +24,7 @@ const RadioPage = () => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
   const [stations, setStations] = useState<station[]>([]);
-  const [searchTerm, setSearchTerm] = useState("cherry");
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentStation, setCurrentStation] = useState<station | undefined>(
     undefined
   );
@@ -32,15 +32,20 @@ const RadioPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchStations();
-  }, []);
-
-  useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      // fetchStations();
+      fetchStations();
     }, 500);
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
+
+  useEffect(() => {
+    // Cleanup audio players on unmount
+    return () => {
+      stations.forEach((station) => {
+        station.player.pause();
+      });
+    };
+  }, [stations]);
 
   const createStationPlayer = (url: string) => {
     const player = createAudioPlayer(url);
@@ -53,15 +58,13 @@ const RadioPage = () => {
         const API_URL =
           "https://de2.api.radio-browser.info/json/stations/search";
         const limit = 10;
-        const url = `${API_URL}?name=${searchTerm}&limit=${limit}&hidebroken=true&order=votes&reverse=true`;
+        const url = `${API_URL}?name=${searchTerm}&limit=${limit}&hidebroken=true&order=votes&reverse=true&countrycode=mm`;
         const resp = await fetch(url);
         if (!resp.ok) return;
         const stations = await resp.json();
         if (!stations) return;
         const mapStations: station[] = stations.map((stationData: any) => {
-          const url = stationData.url_resolved.endsWith("/")
-            ? stationData.url_resolved.slice(0, -1)
-            : stationData.url_resolved;
+          const url = stationData.url_resolved;
           return {
             stationuuid: stationData.stationuuid,
             name: stationData.name,
@@ -122,9 +125,6 @@ const RadioPage = () => {
                       player.play();
                       console.log(station.url_resolved);
                     }}
-                    removePlayer={() => {
-                      setCurrentStation(undefined);
-                    }}
                   />
                 );
               })}
@@ -160,9 +160,6 @@ const StationCard = ({
         console.log("Playback status update:", status);
         setIsLoading(status.isBuffering);
         setIsPlaying(status.playing);
-        if (!status.isPlaying) {
-          removePlayer?.();
-        }
       }
     );
     return () => {
@@ -200,7 +197,9 @@ const StationCard = ({
           color={theme.onPrimaryContainer}
         />
       )}
-      <ThemedText>{station.name}</ThemedText>
+      <ThemedText type={TextType.LINK} link={station.url_resolved}>
+        {station.name}
+      </ThemedText>
     </TouchableOpacity>
   );
 };
