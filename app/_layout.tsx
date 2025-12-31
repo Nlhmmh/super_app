@@ -4,7 +4,7 @@ import { DarkTheme, LightTheme } from "@/theme/theme";
 import { ThemeProvider } from "@/theme/ThemeContext";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useColorScheme } from "react-native";
+import { Platform, useColorScheme } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function StackLayout() {
@@ -15,10 +15,10 @@ export default function StackLayout() {
       <ThemeProvider currentTheme={theme}>
         <UserProvider>
           <SafeAreaView
-            edges={["top", "bottom"]}
+            edges={["top", Platform.OS === "ios" ? "bottom" : ""]}
             style={{ flex: 1, backgroundColor: theme.background }}
           >
-            <StatusBar style="light" />
+            <StatusBar />
             <Pad height={5} />
             <Stack screenOptions={{ headerShown: false }} />
           </SafeAreaView>

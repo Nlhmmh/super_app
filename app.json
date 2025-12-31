@@ -3,6 +3,7 @@
     "name": "super_app",
     "slug": "super_app",
     "version": "1.0.0",
+    "scheme": "super-app",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
