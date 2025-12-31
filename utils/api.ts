@@ -4,7 +4,6 @@
     import { get, post } from '@/utils/api';
     const data = await post<{ token: string }>('/auth/login', { email, password });
 */
-import { Language } from "@/model/models";
 import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 
@@ -70,7 +69,6 @@ const getDefaultHeaders = (
   body?: unknown,
   headers?: Record<string, string>,
   token?: string,
-  lang?: string
 ): Record<string, string> => {
   const h: Record<string, string> = {
     Accept: "*/*",
@@ -82,9 +80,6 @@ const getDefaultHeaders = (
   }
   if (token) {
     h["Authorization"] = `Bearer ${token}`;
-  }
-  if (lang) {
-    h["lang"] = lang;
   }
   return h;
 };
@@ -121,16 +116,6 @@ export async function request<T = unknown>(
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-  // Fetch language from SecureStorage, default to "en"
-  let lang = Language.EN;
-  try {
-    const storedLang = await SecureStore.getItemAsync("secure_lang");
-    if (storedLang) {
-      lang = storedLang;
-    }
-  } catch (err) {
-    console.warn("Failed to load language from SecureStore", err);
-  }
 
   // Fetch token from SecureStorage if not provided
   let effectiveToken = token;
@@ -167,11 +152,11 @@ export async function request<T = unknown>(
         initBody instanceof FormData
           ? JSON.stringify(Object.fromEntries(initBody.entries()))
           : initBody ?? ""
-      } ${lang ?? ""}`
+      }`
     );
     const res = await fetch(url, {
       method,
-      headers: getDefaultHeaders(effectiveBody, headers, effectiveToken, lang),
+      headers: getDefaultHeaders(effectiveBody, headers, effectiveToken),
       body: initBody,
       signal: controller.signal,
     });
