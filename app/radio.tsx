@@ -233,8 +233,7 @@ const StationCard = ({
     const subscription = station.player.addListener(
       "playbackStatusUpdate",
       (status) => {
-        console.log(station.name, "Playback status update:", status);
-        // TODO: add some polling to check if the stream is still alive
+        // console.log(station.name, "Playback status update:", status);
         setIsLoading(status.isBuffering);
         setIsPlaying(status.playing);
         if (!status.playing) {
