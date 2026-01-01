@@ -120,7 +120,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const saveCountryCode = useCallback(async (code: string) => {
     try {
       await SecureStore.setItemAsync(SECURE_COUNTRY_CODE_KEY, code);
-      console.log("Saved country code:", code);
       setCountryCode(code);
     } catch (err) {
       console.error("Failed to store country code", err);
@@ -130,7 +129,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const saveLanguageCode = useCallback(async (code: string) => {
     try {
       await SecureStore.setItemAsync(SECURE_LANGUAGE_CODE_KEY, code);
-      console.log("Saved language code:", code);
       setLanguageCode(code);
     } catch (err) {
       console.error("Failed to store language code", err);

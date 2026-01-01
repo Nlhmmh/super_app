@@ -12,6 +12,7 @@ import { useTheme } from "@/theme/ThemeContext";
 import { get, safeAPICall } from "@/utils/api";
 import { COUNTRY_CODES, LANGUAGES } from "@/utils/constants";
 import { labelValuePair } from "@/utils/models";
+import { askNotificationPermission } from "@/utils/permission";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { AudioPlayer, createAudioPlayer } from "expo-audio";
@@ -24,6 +25,9 @@ type station = {
   name: string;
   url_resolved: string;
   player: AudioPlayer;
+  country: string;
+  language: string;
+  votes: number;
 };
 
 const RadioPage = () => {
@@ -58,54 +62,15 @@ const RadioPage = () => {
   }, [searchTerm, selCountry, selLanguage]);
 
   useEffect(() => {
-    // Cleanup audio players on unmount
+    askNotificationPermission();
+  }, []);
+
+  // Cleanup audio players on unmount
+  useEffect(() => {
     return () => {
-      stations.forEach((station) => {
-        station.player.pause();
-      });
+      pauseAndClearAllStations();
     };
   }, [stations]);
-
-  const createStationPlayer = (url: string) => {
-    const player = createAudioPlayer(url);
-    return player;
-  };
-
-  const fetchStations = useCallback(async () => {
-    safeAPICall({
-      fn: async () => {
-        setLoading(true);
-        setStations([]);
-        const API_URL =
-          "https://de2.api.radio-browser.info/json/stations/search";
-        let url = `${API_URL}?limit=${40}&hidebroken=true&order=votes&reverse=true`;
-        if (searchTerm.trim() !== "") url += `&name=${searchTerm}`;
-        if (selCountry && selCountry.value !== "unselected") url += `&countrycode=${selCountry.value}`;
-        if (selLanguage && selLanguage.value !== "unselected") url += `&languagecodes=${selLanguage.value}`;
-        const stations = await get(url);
-        if (!stations) return;
-        const mapStations: station[] = stations.map((s: station) => {
-          const url = s.url_resolved;
-          return {
-            stationuuid: s.stationuuid,
-            name: s.name,
-            url_resolved: url,
-            player: createStationPlayer(url),
-          };
-        });
-        setStations(mapStations);
-      },
-      catchCb: (error) => {
-        console.debug(error);
-        setError(
-          "Could not load radio stations. Please check the network or API."
-        );
-      },
-      finallyCb: () => {
-        setLoading(false);
-      },
-    });
-  }, [searchTerm, selCountry, selLanguage]);
 
   useEffect(() => {
     if (!countryCode) return;
@@ -126,6 +91,81 @@ const RadioPage = () => {
     saveLanguageCode?.(selLanguage?.value || "");
     setOpenLanguageModal(false);
   }, [selLanguage, saveLanguageCode]);
+
+  const createStationPlayer = (url: string) => {
+    const player = createAudioPlayer(url);
+    return player;
+  };
+
+  const pauseAndClearAllStations = () => {
+    stations.forEach((station) => {
+      station.player.pause();
+      station.player.clearLockScreenControls?.();
+    });
+    setCurrentStation(undefined);
+  };
+
+  const fetchStations = useCallback(async () => {
+    safeAPICall({
+      fn: async () => {
+        setLoading(true);
+        pauseAndClearAllStations();
+        setStations([]);
+        const API_URL =
+          "https://de2.api.radio-browser.info/json/stations/search";
+        let url = `${API_URL}?limit=${40}&hidebroken=true&order=votes&reverse=true`;
+        if (searchTerm.trim() !== "") url += `&name=${searchTerm}`;
+        if (selCountry && selCountry.value !== "unselected") {
+          url += `&countrycode=${selCountry.value}`;
+        }
+        if (selLanguage && selLanguage.value !== "unselected") {
+          url += `&languagecodes=${selLanguage.value}`;
+        }
+        const stations = await get(url);
+        if (!stations) return;
+        const mapStations: station[] = stations.map((s: station) => {
+          const url = s.url_resolved;
+          return {
+            stationuuid: s.stationuuid,
+            name: s.name,
+            url_resolved: url,
+            player: createStationPlayer(url),
+            country: s.country,
+            language: s.language,
+            votes: s.votes,
+          };
+        });
+        setStations(mapStations);
+      },
+      catchCb: (error) => {
+        console.debug(error);
+        setError(
+          "Could not load radio stations. Please check the network or API."
+        );
+      },
+      finallyCb: () => {
+        setLoading(false);
+      },
+    });
+  }, [searchTerm, selCountry, selLanguage]);
+
+  const onPressStation = (station: station) => {
+    const player = station.player;
+    if (player.playing) {
+      player.pause();
+      player.clearLockScreenControls?.();
+      setCurrentStation(undefined);
+      return;
+    }
+    player.play();
+
+    // Show lock screen / notification controls to keep service foregrounded when supported.
+    player.setActiveForLockScreen?.(true, {
+      title: station.name,
+      artist: "Super App",
+      albumTitle: station.country,
+    });
+  };
 
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
@@ -157,14 +197,7 @@ const RadioPage = () => {
                       currentStation !== undefined &&
                       currentStation.stationuuid !== station.stationuuid
                     }
-                    onPress={async () => {
-                      const player = station.player;
-                      if (player.playing) {
-                        player.pause();
-                        return;
-                      }
-                      player.play();
-                    }}
+                    onPress={async () => onPressStation(station)}
                     setCurrentStation={setCurrentStation}
                   />
                 );
