@@ -80,8 +80,8 @@ const RadioPage = () => {
           "https://de2.api.radio-browser.info/json/stations/search";
         let url = `${API_URL}?limit=${40}&hidebroken=true&order=votes&reverse=true`;
         if (searchTerm.trim() !== "") url += `&name=${searchTerm}`;
-        if (selCountry) url += `&countrycode=${selCountry.value}`;
-        if (selLanguage) url += `&languagecodes=${selLanguage.value}`;
+        if (selCountry && selCountry.value !== "unselected") url += `&countrycode=${selCountry.value}`;
+        if (selLanguage && selLanguage.value !== "unselected") url += `&languagecodes=${selLanguage.value}`;
         const stations = await get(url);
         if (!stations) return;
         const mapStations: station[] = stations.map((s: station) => {

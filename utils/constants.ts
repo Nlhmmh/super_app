@@ -9,6 +9,7 @@ export const TIME_REGEX = /^\d{1,2}:\d{2}$/;
 export const NUMBER_ONLY_REGEX = /^\d+$/;
 
 export const COUNTRY_CODES: labelValuePair[] = [
+  { label: "Unselected", value: "unselected" },
   { label: "Myanmar", value: "MM" },
   { label: "Afghanistan", value: "AF" },
   { label: "Åland Islands", value: "AX" },
@@ -264,6 +265,7 @@ export const COUNTRY_CODES: labelValuePair[] = [
 ];
 
 export const LANGUAGES: labelValuePair[] = [
+  { label: "Unselected", value: "unselected" },
   { label: "Burmese", value: "my" },
   { label: "Abkhazian", value: "ab" },
   { label: "Afar", value: "aa" },
