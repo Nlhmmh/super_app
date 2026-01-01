@@ -9,7 +9,7 @@ import { useCommonStyles } from "@/utils/useCommonStyles";
 
 export default function SettingPage() {
   const theme = useTheme();
-  const { user, countryCode } = useUser();
+  const { user, countryCode, languageCode } = useUser();
 
   const changeTheme = (newTheme: ColorScheme) => {
     schemeStore.set(newTheme);
@@ -32,6 +32,9 @@ export default function SettingPage() {
       </SettingCard>
       <SettingCard title="Country">
         <ThemedText>{countryCode || "Unselected"}</ThemedText>
+      </SettingCard>
+      <SettingCard title="Language">
+        <ThemedText>{languageCode || "Unselected"}</ThemedText>
       </SettingCard>
     </ThemedView>
   );

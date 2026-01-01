@@ -9,6 +9,7 @@ import React, {
 
 const SECURE_USER_KEY = "secure_user";
 const SECURE_COUNTRY_CODE_KEY = "secure_country_code";
+const SECURE_LANGUAGE_CODE_KEY = "secure_language_code";
 
 export type StoredUser = {
   id: number;
@@ -27,10 +28,12 @@ type UserContextValue = {
   isReady: boolean;
   error: string | null;
   countryCode: string | null;
+  languageCode: string | null;
   saveUser: (value: StoredUser) => Promise<void>;
   loadUser: () => Promise<StoredUser | null>;
   clearUser: () => Promise<void>;
   saveCountryCode?: (code: string) => Promise<void>;
+  saveLanguageCode?: (code: string) => Promise<void>;
 };
 
 const UserContext = createContext<UserContextValue | null>(null);
@@ -41,6 +44,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [countryCode, setCountryCode] = useState<string | null>(null);
+  const [languageCode, setLanguageCode] = useState<string | null>(null);
 
   const saveUser = useCallback(async (value: StoredUser) => {
     setIsLoading(true);
@@ -98,6 +102,21 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     loadCountryCode();
   }, [loadCountryCode]);
 
+  const loadLanguageCode = useCallback(async () => {
+    try {
+      const value = await SecureStore.getItemAsync(SECURE_LANGUAGE_CODE_KEY);
+      setLanguageCode(value);
+      return value;
+    } catch (err) {
+      console.error("Failed to load language code", err);
+      return null;
+    }
+  }, []);
+
+  useEffect(() => {
+    loadLanguageCode();
+  }, [loadLanguageCode]);
+
   const saveCountryCode = useCallback(async (code: string) => {
     try {
       await SecureStore.setItemAsync(SECURE_COUNTRY_CODE_KEY, code);
@@ -105,6 +124,16 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       setCountryCode(code);
     } catch (err) {
       console.error("Failed to store country code", err);
+    }
+  }, []);
+
+  const saveLanguageCode = useCallback(async (code: string) => {
+    try {
+      await SecureStore.setItemAsync(SECURE_LANGUAGE_CODE_KEY, code);
+      console.log("Saved language code:", code);
+      setLanguageCode(code);
+    } catch (err) {
+      console.error("Failed to store language code", err);
     }
   }, []);
 
@@ -140,10 +169,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     isReady,
     error,
     countryCode,
+    languageCode,
     saveUser,
     loadUser,
     clearUser,
-    saveCountryCode
+    saveCountryCode,
+    saveLanguageCode
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

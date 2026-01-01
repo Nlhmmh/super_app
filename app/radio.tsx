@@ -29,7 +29,8 @@ type station = {
 const RadioPage = () => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
-  const { countryCode, saveCountryCode } = useUser();
+  const { countryCode, saveCountryCode, languageCode, saveLanguageCode } =
+    useUser();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [stations, setStations] = useState<station[]>([]);
@@ -43,7 +44,9 @@ const RadioPage = () => {
     undefined
   );
   const [openLanguageModal, setOpenLanguageModal] = useState(false);
-  const [selLanguage, setSelLanguage] = useState<labelValuePair>(undefined);
+  const [selLanguage, setSelLanguage] = useState<labelValuePair | undefined>(
+    undefined
+  );
 
   useKeepAwake();
 
@@ -110,13 +113,19 @@ const RadioPage = () => {
   }, [countryCode]);
 
   useEffect(() => {
+    if (!languageCode) return;
+    setSelLanguage(LANGUAGES.find((v) => v.value === languageCode));
+  }, [languageCode]);
+
+  useEffect(() => {
     saveCountryCode(selCountry?.value || "");
     setOpenCountryModal(false);
   }, [selCountry]);
 
   useEffect(() => {
+    saveLanguageCode?.(selLanguage?.value || "");
     setOpenLanguageModal(false);
-  }, [selLanguage]);
+  }, [selLanguage, saveLanguageCode]);
 
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
