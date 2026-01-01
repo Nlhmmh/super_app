@@ -1,16 +1,20 @@
 import { useTheme } from "@/theme/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
-import { Platform, TextInput } from "react-native";
+import { Platform, TextInput, TouchableOpacity } from "react-native";
 import { ThemedView } from "./ThemedView";
 
 export default function SearchBar({
   placeholder,
   searchText,
   setSearchText,
+  onPressCountryOptions,
+  onPressLanguageOptions,
 }: {
   placeholder: string;
   searchText: string;
   setSearchText: React.Dispatch<React.SetStateAction<string>>;
+  onPressCountryOptions: () => void;
+  onPressLanguageOptions: () => void;
 }) {
   const theme = useTheme();
   const searchBarColors = {
@@ -27,7 +31,7 @@ export default function SearchBar({
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: searchBarColors.background,
-        paddingHorizontal:  16,
+        paddingHorizontal: 16,
         paddingVertical: Platform.OS === "ios" ? 16 : 8,
         borderRadius: 24,
         borderWidth: 0.5,
@@ -52,6 +56,20 @@ export default function SearchBar({
         placeholderTextColor={searchBarColors.placeholderColor}
         placeholder={placeholder}
       />
+      <TouchableOpacity onPress={onPressCountryOptions}>
+        <Ionicons
+          name="earth-outline"
+          size={24}
+          color={searchBarColors.iconColor}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onPressLanguageOptions}>
+        <Ionicons
+          name="language-outline"
+          size={24}
+          color={searchBarColors.iconColor}
+        />
+      </TouchableOpacity>
     </ThemedView>
   );
 }

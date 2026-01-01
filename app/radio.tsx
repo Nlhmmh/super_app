@@ -1,12 +1,15 @@
 import BackBtnWithTitle from "@/components/BackBtnWithTitle";
+import CustomModal from "@/components/CustomModal";
 import CustomScrollView from "@/components/CustomScrollView";
 import Loading from "@/components/Loading";
 import Pad from "@/components/Pad";
 import SearchBar from "@/components/SearchBar";
+import SelectBox from "@/components/SelectBox";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useTheme } from "@/theme/ThemeContext";
 import { get, safeAPICall } from "@/utils/api";
+import { COUNTRY_CODES, LANGUAGES } from "@/utils/constants";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { AudioPlayer, createAudioPlayer } from "expo-audio";
@@ -24,20 +27,25 @@ type station = {
 const RadioPage = () => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
-  const [stations, setStations] = useState<station[]>([]);
+
   const [searchTerm, setSearchTerm] = useState("");
+  const [stations, setStations] = useState<station[]>([]);
   const [currentStation, setCurrentStation] = useState<station | undefined>(
     undefined
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [openCountryModal, setOpenCountryModal] = useState(false);
+  const [selCountry, setSelCountry] = useState<labelValuePair>(undefined);
+  const [openLanguageModal, setOpenLanguageModal] = useState(false);
+  const [selLanguage, setSelLanguage] = useState<labelValuePair>(undefined);
 
   useKeepAwake();
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       fetchStations();
-    }, 500);
+    }, 300);
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
 
@@ -58,10 +66,14 @@ const RadioPage = () => {
   const fetchStations = useCallback(async () => {
     safeAPICall({
       fn: async () => {
+        setLoading(true);
+        setStations([]);
         const API_URL =
           "https://de2.api.radio-browser.info/json/stations/search";
-        const limit = 10;
-        const url = `${API_URL}?name=${searchTerm}&limit=${limit}&hidebroken=true&order=votes&reverse=true&countrycode=mm&languagecodes=my`;
+        let url = `${API_URL}?limit=${40}&hidebroken=true&order=votes&reverse=true`;
+        if (searchTerm.trim() !== "") url += `&name=${searchTerm}`;
+        if (selCountry) url += `&countrycode=${selCountry.value}`;
+        if (selLanguage) url += `&languagecodes=${selLanguage.value}`;
         const stations = await get(url);
         if (!stations) return;
         const mapStations: station[] = stations.map((s: station) => {
@@ -85,19 +97,21 @@ const RadioPage = () => {
         setLoading(false);
       },
     });
-  }, [searchTerm]);
+  }, [searchTerm, selCountry, selLanguage]);
 
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
       <BackBtnWithTitle title="Radio" />
-      <CustomScrollView>
-        <ThemedView style={{ flex: 1, padding: 12 }}>
-          <SearchBar
-            placeholder="Search stations"
-            searchText={searchTerm}
-            setSearchText={setSearchTerm}
-          />
-          <Pad height={16} />
+      <ThemedView style={{ flex: 1, padding: 12 }}>
+        <SearchBar
+          placeholder="Search stations"
+          searchText={searchTerm}
+          setSearchText={setSearchTerm}
+          onPressCountryOptions={() => setOpenCountryModal(true)}
+          onPressLanguageOptions={() => setOpenLanguageModal(true)}
+        />
+        <Pad height={16} />
+        <CustomScrollView childGrow>
           <ThemedView
             style={{
               flexDirection: "row",
@@ -129,10 +143,63 @@ const RadioPage = () => {
                   />
                 );
               })}
-            {loading && <Loading />}
           </ThemedView>
-        </ThemedView>
-      </CustomScrollView>
+          {loading && <Loading />}
+        </CustomScrollView>
+      </ThemedView>
+      <Pad height={16} />
+
+      <CustomModal
+        open={openCountryModal}
+        setOpen={setOpenCountryModal}
+        title="Select Country"
+        onClose={() => setOpenCountryModal(false)}
+        body={
+          <ThemedView
+            style={{
+              borderWidth: 1,
+              borderColor: theme.outline,
+              borderRadius: 12,
+              padding: 12,
+            }}
+          >
+            <CustomScrollView childGrow>
+              <SelectBox
+                options={COUNTRY_CODES}
+                sel={selCountry}
+                setSel={setSelCountry}
+                isWrap
+              />
+            </CustomScrollView>
+          </ThemedView>
+        }
+      />
+
+      <CustomModal
+        open={openLanguageModal}
+        setOpen={setOpenLanguageModal}
+        title="Select Language"
+        onClose={() => setOpenLanguageModal(false)}
+        body={
+          <ThemedView
+            style={{
+              borderWidth: 1,
+              borderColor: theme.outline,
+              borderRadius: 12,
+              padding: 12,
+            }}
+          >
+            <CustomScrollView childGrow>
+              <SelectBox
+                options={LANGUAGES}
+                sel={selLanguage}
+                setSel={setSelLanguage}
+                isWrap
+              />
+            </CustomScrollView>
+          </ThemedView>
+        }
+      />
     </ThemedView>
   );
 };
@@ -172,12 +239,13 @@ const StationCard = ({
     <TouchableOpacity
       style={[
         {
-          borderRadius: 16,
-          backgroundColor: theme.primaryContainer,
+          flexGrow: 1,
           borderWidth: 1,
+          borderRadius: 16,
           borderColor: theme.outline,
-          paddingVertical: 8,
+          backgroundColor: theme.primaryContainer,
           paddingHorizontal: 8,
+          paddingVertical: 8,
           alignItems: "center",
         },
         !pressed ? commonStyles.lightShadow : undefined,

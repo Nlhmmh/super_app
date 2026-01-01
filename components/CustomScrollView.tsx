@@ -6,6 +6,7 @@ import {
   Platform,
   RefreshControl,
   ScrollView,
+  ScrollViewProps,
   TouchableOpacity,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -19,7 +20,8 @@ const CustomScrollView = ({
   onRefresh,
   scrollable = true,
   onPressOutside,
-}: {
+  ...rest
+}: ScrollViewProps & {
   children: React.ReactNode;
   childGrow?: boolean;
   avoidKeyboard?: boolean;
@@ -64,6 +66,7 @@ const CustomScrollView = ({
         ) : undefined
       }
       scrollEnabled={scrollable}
+      {...rest}
     >
       {onPressOutside ? (
         <TouchableOpacity
