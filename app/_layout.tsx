@@ -3,6 +3,7 @@ import { UserProvider } from "@/contexts/UserContext";
 import { schemeStore } from "@/theme/schemeStore";
 import { DarkTheme, LightTheme } from "@/theme/theme";
 import { ThemeProvider } from "@/theme/ThemeContext";
+import { setAudioModeAsync } from "expo-audio";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
@@ -13,6 +14,15 @@ export default function StackLayout() {
   const colorScheme = useColorScheme();
   const [currentScheme, setCurrentScheme] = useState(colorScheme);
   const theme = currentScheme === "dark" ? DarkTheme : LightTheme;
+
+  useEffect(() => {
+    setAudioModeAsync({
+      playsInSilentMode: true,
+      shouldPlayInBackground: true,
+      interruptionMode: "duckOthers",
+      interruptionModeAndroid: "duckOthers",
+    });
+  }, []);
 
   // Load persisted scheme on mount
   useEffect(() => {
