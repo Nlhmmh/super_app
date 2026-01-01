@@ -16,7 +16,7 @@ export const schemeStore = {
     try {
       await SecureStore.setItemAsync(SECURE_COLOR_SCHEME_KEY, scheme);
     } catch (error) {
-      console.warn("Failed to persist color scheme", error);
+      console.warn("Failed to store color scheme", error);
     }
     listeners.forEach((cb) => cb(scheme));
   },
@@ -25,7 +25,7 @@ export const schemeStore = {
       const stored = await SecureStore.getItemAsync(SECURE_COLOR_SCHEME_KEY);
       if (stored === "light" || stored === "dark") return stored;
     } catch (error) {
-      console.warn("Failed to read persisted color scheme", error);
+      console.warn("Failed to load color scheme", error);
     }
     return null;
   },
