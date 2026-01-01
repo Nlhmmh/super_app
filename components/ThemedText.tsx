@@ -84,7 +84,7 @@ export function ThemedText({
       <TouchableOpacity
         onPress={async () => {
           if (!link) return;
-          await Clipboard.setStringAsync("hello world");
+          await Clipboard.setStringAsync(link);
           // const supported = await Linking.canOpenURL(link || "");
           // if (!supported) return;
           // await Linking.openURL(link || "");

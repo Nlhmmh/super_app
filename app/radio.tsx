@@ -47,7 +47,7 @@ const RadioPage = () => {
       fetchStations();
     }, 300);
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm]);
+  }, [searchTerm, selCountry, selLanguage]);
 
   useEffect(() => {
     // Cleanup audio players on unmount
@@ -99,6 +99,14 @@ const RadioPage = () => {
     });
   }, [searchTerm, selCountry, selLanguage]);
 
+  useEffect(() => {
+    setOpenCountryModal(false);
+  }, [selCountry]);
+
+  useEffect(() => {
+    setOpenLanguageModal(false);
+  }, [selLanguage]);
+
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
       <BackBtnWithTitle title="Radio" />
@@ -133,13 +141,11 @@ const RadioPage = () => {
                       const player = station.player;
                       if (player.playing) {
                         player.pause();
-                        setCurrentStation(undefined);
                         return;
                       }
-                      setCurrentStation(station);
                       player.play();
-                      console.log(station.url_resolved);
                     }}
+                    setCurrentStation={setCurrentStation}
                   />
                 );
               })}
@@ -209,11 +215,13 @@ const StationCard = ({
   disabled,
   onPress,
   removePlayer,
+  setCurrentStation,
 }: {
   station: station;
   disabled?: boolean;
   onPress: () => void;
   removePlayer?: () => void;
+  setCurrentStation?: (station: station | undefined) => void;
 }) => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
@@ -225,9 +233,15 @@ const StationCard = ({
     const subscription = station.player.addListener(
       "playbackStatusUpdate",
       (status) => {
-        console.log("Playback status update:", status);
+        console.log(station.name, "Playback status update:", status);
+        // TODO: add some polling to check if the stream is still alive
         setIsLoading(status.isBuffering);
         setIsPlaying(status.playing);
+        if (!status.playing) {
+          setCurrentStation?.(undefined);
+        } else {
+          setCurrentStation?.(station);
+        }
       }
     );
     return () => {
