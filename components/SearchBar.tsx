@@ -22,7 +22,7 @@ export default function SearchBar({
     iconColor: theme.onBackground,
     background: theme.background,
     borderColor: theme.outline,
-    placeholderColor: theme.tint,
+    placeholderColor: theme.textTint,
   };
   return (
     <ThemedView

@@ -1,3 +1,4 @@
+import { ThemeSchemes } from "@/theme/schemeStore";
 import { labelValuePair } from "./models";
 
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -450,4 +451,9 @@ export const LANGUAGES: labelValuePair[] = [
   { label: "Yoruba", value: "yo" },
   { label: "Zhuang, Chuang", value: "za" },
   { label: "Zulu", value: "zu" },
+];
+
+export const THEMES: labelValuePair[] = [
+  { label: "Light", value: ThemeSchemes.LIGHT },
+  { label: "Dark", value: ThemeSchemes.DARK },
 ];

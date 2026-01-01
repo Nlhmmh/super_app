@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  type TextProps
+  type TextProps,
 } from "react-native";
 
 export enum TextType {
@@ -91,7 +91,16 @@ export function ThemedText({
         }}
         activeOpacity={!link ? 1 : 0.8}
       >
-        <Text style={[!link ? styles.m : styles.link, style]} {...rest} />
+        <Text
+          style={[
+            !link ? styles.m : styles.link,
+            style,
+            {
+              color: theme.onBackground,
+            },
+          ]}
+          {...rest}
+        />
       </TouchableOpacity>
     );
   }
@@ -110,6 +119,9 @@ export function ThemedText({
         bold ? styles.bold : undefined,
         subBold ? styles.subBold : undefined,
         style,
+        {
+          color: theme.onBackground,
+        },
       ]}
       {...rest}
     />
