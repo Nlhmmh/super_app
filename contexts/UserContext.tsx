@@ -8,6 +8,7 @@ import React, {
 } from "react";
 
 const SECURE_USER_KEY = "secure_user";
+const SECURE_COUNTRY_CODE_KEY = "secure_country_code";
 
 export type StoredUser = {
   id: number;
@@ -25,9 +26,11 @@ type UserContextValue = {
   isLoading: boolean;
   isReady: boolean;
   error: string | null;
+  countryCode: string | null;
   saveUser: (value: StoredUser) => Promise<void>;
   loadUser: () => Promise<StoredUser | null>;
   clearUser: () => Promise<void>;
+  saveCountryCode?: (code: string) => Promise<void>;
 };
 
 const UserContext = createContext<UserContextValue | null>(null);
@@ -37,10 +40,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadUser();
-  }, [loadUser]);
+  const [countryCode, setCountryCode] = useState<string | null>(null);
 
   const saveUser = useCallback(async (value: StoredUser) => {
     setIsLoading(true);
@@ -79,6 +79,35 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  useEffect(() => {
+    loadUser();
+  }, [loadUser]);
+
+  const loadCountryCode = useCallback(async () => {
+    try {
+      const value = await SecureStore.getItemAsync(SECURE_COUNTRY_CODE_KEY);
+      setCountryCode(value);
+      return value;
+    } catch (err) {
+      console.error("Failed to load country code", err);
+      return null;
+    }
+  }, []);
+
+  useEffect(() => {
+    loadCountryCode();
+  }, [loadCountryCode]);
+
+  const saveCountryCode = useCallback(async (code: string) => {
+    try {
+      await SecureStore.setItemAsync(SECURE_COUNTRY_CODE_KEY, code);
+      console.log("Saved country code:", code);
+      setCountryCode(code);
+    } catch (err) {
+      console.error("Failed to store country code", err);
+    }
+  }, []);
+
   const clearUser = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -110,9 +139,11 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     isLoading,
     isReady,
     error,
+    countryCode,
     saveUser,
     loadUser,
     clearUser,
+    saveCountryCode
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

@@ -135,7 +135,7 @@ const SelectCard = ({
           width: 16,
           height: 16,
           borderRadius: 16,
-          borderColor: theme.outlineVariant,
+          borderColor: theme.outline,
         }}
         color={isChecked ? theme.outline : undefined}
         value={isChecked}

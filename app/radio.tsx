@@ -7,9 +7,11 @@ import SearchBar from "@/components/SearchBar";
 import SelectBox from "@/components/SelectBox";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useUser } from "@/contexts/UserContext";
 import { useTheme } from "@/theme/ThemeContext";
 import { get, safeAPICall } from "@/utils/api";
 import { COUNTRY_CODES, LANGUAGES } from "@/utils/constants";
+import { labelValuePair } from "@/utils/models";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { AudioPlayer, createAudioPlayer } from "expo-audio";
@@ -27,6 +29,7 @@ type station = {
 const RadioPage = () => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
+  const { countryCode, saveCountryCode } = useUser();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [stations, setStations] = useState<station[]>([]);
@@ -36,7 +39,9 @@ const RadioPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openCountryModal, setOpenCountryModal] = useState(false);
-  const [selCountry, setSelCountry] = useState<labelValuePair>(undefined);
+  const [selCountry, setSelCountry] = useState<labelValuePair | undefined>(
+    undefined
+  );
   const [openLanguageModal, setOpenLanguageModal] = useState(false);
   const [selLanguage, setSelLanguage] = useState<labelValuePair>(undefined);
 
@@ -100,6 +105,12 @@ const RadioPage = () => {
   }, [searchTerm, selCountry, selLanguage]);
 
   useEffect(() => {
+    if (!countryCode) return;
+    setSelCountry(COUNTRY_CODES.find((v) => v.value === countryCode));
+  }, [countryCode]);
+
+  useEffect(() => {
+    saveCountryCode(selCountry?.value || "");
     setOpenCountryModal(false);
   }, [selCountry]);
 

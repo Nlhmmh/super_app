@@ -1,4 +1,3 @@
-import Pad from "@/components/Pad";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Toggle from "@/components/Toggle";
@@ -10,28 +9,29 @@ import { useCommonStyles } from "@/utils/useCommonStyles";
 
 export default function SettingPage() {
   const theme = useTheme();
-  const { user } = useUser();
+  const { user, countryCode } = useUser();
 
   const changeTheme = (newTheme: ColorScheme) => {
     schemeStore.set(newTheme);
   };
 
   return (
-    <ThemedView style={{ flex: 1, padding: 12 }} useTheme>
+    <ThemedView style={{ flex: 1, padding: 12, gap: 12 }} useTheme>
       <ThemedText type={TextType.XL}>
         Welcome, {user?.name || "Guest"}!
       </ThemedText>
-      <Pad height={12} />
       <SettingCard title="Username">
         <ThemedText>{user?.username || "Guest"}</ThemedText>
       </SettingCard>
-      <Pad height={12} />
       <SettingCard title="Theme">
         <Toggle
           options={THEMES}
           initSel={THEMES[0]}
           onChange={(value) => changeTheme(value.value as ColorScheme)}
         />
+      </SettingCard>
+      <SettingCard title="Country">
+        <ThemedText>{countryCode || "Unselected"}</ThemedText>
       </SettingCard>
     </ThemedView>
   );
@@ -52,6 +52,8 @@ const SettingCard = ({
         padding: 12,
         borderRadius: 12,
         backgroundColor: theme.secondaryContainer,
+        height: 60,
+        justifyContent: "center",
         ...commonStyles.lightShadow,
       }}
     >
