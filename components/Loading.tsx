@@ -12,7 +12,7 @@ const Loading = ({ size = "large" }: { size?: "small" | "large" }) => {
         alignItems: "center",
       }}
     >
-      <ActivityIndicator size={size} color={theme.pink} />
+      <ActivityIndicator size={size} color={theme.primary} />
     </ThemedView>
   );
 };

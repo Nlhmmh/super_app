@@ -47,7 +47,7 @@ const IconButton = ({
             justifyContent: "center",
             alignItems: "center",
             borderRadius: "100%",
-            backgroundColor: theme.onPrimaryContainer,
+            backgroundColor: color ? color : theme.onPrimaryContainer,
           }}
         >
           <Loading size="small" />
