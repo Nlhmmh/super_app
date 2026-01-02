@@ -1,7 +1,7 @@
 import { useTheme } from "@/theme/ThemeContext";
 import { Stack } from "expo-router";
 
-export default function Layout() {
+export default function RadioLayout() {
   const theme = useTheme();
   return (
     <Stack screenOptions={{ headerShown: false }}>

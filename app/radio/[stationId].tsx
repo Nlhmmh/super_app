@@ -8,6 +8,7 @@ import PriorityImage from "@/components/PriorityImage";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
+import { useUser } from "@/contexts/UserContext";
 import { useTheme } from "@/theme/ThemeContext";
 import { get, safeAPICall } from "@/utils/api";
 import { station } from "@/utils/models";
@@ -18,7 +19,7 @@ import { useKeepAwake } from "expo-keep-awake";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 
-const StationDetailPage = () => {
+const RadioStationDetailPage = () => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
   const {
@@ -31,12 +32,14 @@ const StationDetailPage = () => {
     duration,
     seek,
   } = useAudioPlayer();
+  const { isFavouriteRadioStation, toggleFavouriteRadioStation } = useUser();
 
   const { stationId } = useLocalSearchParams();
   const [station, setStation] = useState<station | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showSeekBar, setShowSeekBar] = useState(false);
+  const [isFavourite, setIsFavourite] = useState(false);
 
   useKeepAwake();
 
@@ -53,6 +56,11 @@ const StationDetailPage = () => {
       currentTrack?.uri === (station?.url_resolved || station?.url)
     );
   }, [currentTrack, station]);
+
+  useEffect(() => {
+    if (!station) return;
+    setIsFavourite(isFavouriteRadioStation(station));
+  }, [station, isFavouriteRadioStation]);
 
   const fetchStation = useCallback(async () => {
     safeAPICall({
@@ -229,53 +237,77 @@ const StationDetailPage = () => {
           ...commonStyles.shadow,
         }}
       >
-        {showSeekBar && (
+        <ThemedView
+          style={{
+            width: "100%",
+            backgroundColor: theme.secondaryContainer,
+            padding: 12,
+            borderRadius: 24,
+            gap: 4,
+          }}
+        >
           <ThemedView
             style={{
-              width: "100%",
-              backgroundColor: theme.secondaryContainer,
-              padding: 12,
-              borderRadius: 24,
-              gap: 4,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingHorizontal: 12,
             }}
           >
-            <ThemedView
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                paddingHorizontal: 12,
-              }}
-            >
-              <ThemedText type={TextType.SM}>{formatTime(position)}</ThemedText>
-              <ThemedText type={TextType.SM}>{formatTime(duration)}</ThemedText>
-            </ThemedView>
-            <Slider
-              minimumValue={0}
-              maximumValue={duration || 100}
-              value={position}
-              disabled={true}
-              minimumTrackTintColor={theme.onSecondaryContainer}
-              maximumTrackTintColor={theme.onSecondaryContainer}
-              thumbTintColor={theme.onSecondaryContainer}
-            />
+            <ThemedText type={TextType.SM}>
+              {formatTime(showSeekBar ? position : 0)}
+            </ThemedText>
+            <ThemedText type={TextType.SM}>{formatTime(duration)}</ThemedText>
           </ThemedView>
-        )}
+          <Slider
+            minimumValue={0}
+            maximumValue={duration || 100}
+            value={showSeekBar ? position : undefined}
+            disabled={true}
+            minimumTrackTintColor={theme.onSecondaryContainer}
+            maximumTrackTintColor={theme.onSecondaryContainer}
+            thumbTintColor={theme.onSecondaryContainer}
+          />
+        </ThemedView>
 
-        <IconButton
-          isOn={
-            isPlaying &&
-            currentTrack?.uri === (station?.url_resolved || station?.url)
-          }
-          onIcon="pause-circle"
-          offIcon="play-circle"
-          size={90}
-          color={theme.onSecondary}
-          loading={playerLoading}
-          onPress={() => onPressPlayPause()}
-        />
+        <ThemedView
+          style={{
+            width: "100%",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <ThemedView style={{ flex: 1 }} />
+          <IconButton
+            isOn={
+              isPlaying &&
+              currentTrack?.uri === (station?.url_resolved || station?.url)
+            }
+            onIcon="pause-circle"
+            offIcon="play-circle"
+            size={90}
+            color={theme.onSecondary}
+            loading={playerLoading}
+            onPress={() => onPressPlayPause()}
+            style={{ flex: 3 }}
+          />
+          <IconButton
+            isOn={isFavourite}
+            onIcon="heart"
+            offIcon="heart-outline"
+            size={36}
+            color={theme.onSecondary}
+            onPress={async () => {
+              if (station) {
+                await toggleFavouriteRadioStation(station);
+                setIsFavourite(!isFavourite);
+              }
+            }}
+            style={{ flex: 1 }}
+          />
+        </ThemedView>
       </ThemedView>
     </ThemedView>
   );
 };
 
-export default StationDetailPage;
+export default RadioStationDetailPage;
