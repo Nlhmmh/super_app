@@ -31,6 +31,7 @@ const RadioPage = () => {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [openCountryModal, setOpenCountryModal] = useState(false);
   const [selCountry, setSelCountry] = useState<labelValuePair | undefined>(
@@ -84,7 +85,7 @@ const RadioPage = () => {
         }
         if (selLanguage && selLanguage.value !== "unselected") {
           const langs = await get(
-            `http://fi1.api.radio-browser.info/json/languages`
+            `https://de2.api.radio-browser.info/json/languages`
           );
           const langObj = langs.find((l) => l.iso_639! === selLanguage.value);
           if (langObj) url += `&language=${langObj.name!}`;
@@ -120,7 +121,11 @@ const RadioPage = () => {
           onPressLanguageOptions={() => setOpenLanguageModal(true)}
         />
         <Pad height={16} />
-        <CustomScrollView childGrow>
+        <CustomScrollView
+          childGrow
+          refreshing={refreshing}
+          onRefresh={fetchStations}
+        >
           <ThemedView
             style={{
               flexDirection: "row",
@@ -188,7 +193,8 @@ const StationCard = ({
     <TouchableOpacity
       style={[
         {
-          flexGrow: 1,
+          // flexGrow: 1,
+          width: "100%",
           borderWidth: 1,
           borderRadius: 16,
           borderColor: theme.outline,
@@ -219,9 +225,11 @@ const StationCard = ({
           style={{ width: 80, height: 80, borderRadius: 16 }}
         />
       )}
-      <ThemedView>
-        <ThemedText type={TextType.L}>{station.name}</ThemedText>
-        <ThemedText>
+      <ThemedView style={{ flex: 1 }}>
+        <ThemedText type={TextType.L} oneLineMode>
+          {station.name}
+        </ThemedText>
+        <ThemedText oneLineMode>
           {station.country} | {station.language}
         </ThemedText>
         <ThemedText>Votes: {station.votes}</ThemedText>

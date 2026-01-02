@@ -26,6 +26,7 @@ export function ThemedText({
   bold = false,
   subBold = false,
   link,
+  oneLineMode,
   style,
   ...rest
 }: TextProps & {
@@ -33,6 +34,7 @@ export function ThemedText({
   bold?: boolean;
   subBold?: boolean;
   link?: string;
+  oneLineMode?: boolean;
 }) {
   const theme = useTheme();
   const styles = StyleSheet.create({
@@ -108,7 +110,12 @@ export function ThemedText({
           },
         ]}
       >
-        <Text style={[styles.link, style]} {...rest} />
+        <Text
+          style={[styles.link, style]}
+          numberOfLines={oneLineMode ? 1 : undefined}
+          ellipsizeMode={oneLineMode ? "tail" : undefined}
+          {...rest}
+        />
       </TouchableOpacity>
     );
   }
@@ -131,6 +138,8 @@ export function ThemedText({
           color: theme.onBackground,
         },
       ]}
+      numberOfLines={oneLineMode ? 1 : undefined}
+      ellipsizeMode={oneLineMode ? "tail" : undefined}
       {...rest}
     />
   );

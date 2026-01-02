@@ -36,6 +36,7 @@ const StationDetailPage = () => {
   const [station, setStation] = useState<station | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showSeekBar, setShowSeekBar] = useState(false);
 
   useKeepAwake();
 
@@ -46,6 +47,12 @@ const StationDetailPage = () => {
   useEffect(() => {
     fetchStation();
   }, [stationId]);
+
+  useEffect(() => {
+    setShowSeekBar(
+      currentTrack?.uri === (station?.url_resolved || station?.url)
+    );
+  }, [currentTrack, station]);
 
   const fetchStation = useCallback(async () => {
     safeAPICall({
@@ -97,11 +104,13 @@ const StationDetailPage = () => {
     title,
     info,
     link,
+    oneLineMode,
     openLink,
   }: {
     title: string;
     info: string;
     link?: string;
+    oneLineMode?: boolean;
     openLink?: boolean;
   }) => {
     return (
@@ -121,6 +130,7 @@ const StationDetailPage = () => {
           }
           link={link || undefined}
           style={{ flex: 2 }}
+          oneLineMode={oneLineMode}
         >
           {info}
         </ThemedText>
@@ -163,14 +173,6 @@ const StationDetailPage = () => {
                 <Pad height={8} />
               </>
             )}
-            <ThemedText
-              type={TextType.LINK}
-              link={station.url_resolved || station.url}
-              style={{ marginBottom: 4 }}
-            >
-              {station.url_resolved || station.url}
-            </ThemedText>
-            <Pad height={8} />
 
             <ThemedView
               style={{
@@ -190,6 +192,7 @@ const StationDetailPage = () => {
                   info={station.homepage}
                   link={station.homepage}
                   openLink
+                  oneLineMode
                 />
               )}
               {station.tags && <InfoCard title="Tags:" info={station.tags} />}
@@ -199,6 +202,13 @@ const StationDetailPage = () => {
               <InfoCard title="Bitrate:" info={`${station.bitrate} kbps`} />
               <InfoCard title="Click Count:" info={`${station.clickcount}`} />
               <InfoCard title="Votes:" info={`${station.votes}`} />
+              <ThemedText
+                type={TextType.LINK}
+                link={station.url_resolved || station.url}
+                style={{ marginBottom: 4 }}
+              >
+                copy radio stream url here!!
+              </ThemedText>
             </ThemedView>
           </>
         )}
@@ -219,7 +229,7 @@ const StationDetailPage = () => {
           ...commonStyles.shadow,
         }}
       >
-        {currentTrack?.uri === (station?.url_resolved || station?.url) && (
+        {showSeekBar && (
           <ThemedView
             style={{
               width: "100%",
