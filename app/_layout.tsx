@@ -65,7 +65,7 @@ export default function StackLayout() {
         <UserProvider>
           <AudioPlayerProvider>
             <SafeAreaView
-              edges={["top", "bottom"]}
+              edges={["top"]}
               style={{ flex: 1, backgroundColor: theme.background }}
             >
               <StatusBar />

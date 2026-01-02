@@ -143,7 +143,7 @@ const StationDetailPage = () => {
         contentContainerStyle={{
           alignItems: "center",
           padding: 12,
-          paddingBottom: 100,
+          paddingBottom: 250,
         }}
       >
         {loading && <Loading size="large" />}
@@ -208,37 +208,47 @@ const StationDetailPage = () => {
       <ThemedView
         style={{
           position: "absolute",
-          bottom: 12,
+          bottom: 4,
           width: "100%",
           alignItems: "center",
           zIndex: 1,
-          paddingHorizontal: 12,
+          padding: 12,
+          backgroundColor: theme.secondary,
+          ...commonStyles.shadow,
+          borderTopLeftRadius: 24,
+          borderTopRightRadius: 24,
         }}
       >
-        {/* Time display - Only show if this station is currently playing */}
         {currentTrack?.uri === (station?.url_resolved || station?.url) && (
-          <>
+          <ThemedView
+            style={{
+              width: "100%",
+              backgroundColor: theme.secondaryContainer,
+              padding: 12,
+              borderRadius: 24,
+              gap: 4,
+            }}
+          >
             <ThemedView
               style={{
-                width: "100%",
                 flexDirection: "row",
                 justifyContent: "space-between",
+                paddingHorizontal: 12,
               }}
             >
-              <ThemedText type={TextType.S}>{formatTime(position)}</ThemedText>
-              <ThemedText type={TextType.S}>{formatTime(duration)}</ThemedText>
+              <ThemedText type={TextType.SM}>{formatTime(position)}</ThemedText>
+              <ThemedText type={TextType.SM}>{formatTime(duration)}</ThemedText>
             </ThemedView>
             <Slider
-              style={{ width: "100%", height: 40 }}
               minimumValue={0}
               maximumValue={duration || 100}
               value={position}
               disabled={true}
-              minimumTrackTintColor={theme.onPrimaryContainer}
-              maximumTrackTintColor={theme.outline}
-              thumbTintColor={theme.onPrimaryContainer}
+              minimumTrackTintColor={theme.onSecondaryContainer}
+              maximumTrackTintColor={theme.onSecondaryContainer}
+              thumbTintColor={theme.onSecondaryContainer}
             />
-          </>
+          </ThemedView>
         )}
 
         <IconButton
@@ -249,7 +259,7 @@ const StationDetailPage = () => {
           onIcon="pause-circle"
           offIcon="play-circle"
           size={90}
-          color={theme.onPrimaryContainer}
+          color={theme.onSecondary}
           loading={playerLoading}
           onPress={() => onPressPlayPause()}
         />
