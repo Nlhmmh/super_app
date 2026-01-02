@@ -51,14 +51,14 @@ const CustomModal = ({
     <Modal
       visible={open}
       transparent
-      animationType="fade"
+      animationType="slide"
       onRequestClose={onClose}
       {...props}
     >
       <TouchableOpacity
         style={{
           flex: 1,
-          justifyContent: "center",
+          justifyContent: "flex-end",
           alignItems: "center",
           backgroundColor: "rgba(0, 0, 0, 0.5)",
         }}
@@ -73,10 +73,17 @@ const CustomModal = ({
             alignItems: flexStart ? undefined : "center",
             ...(atBottom
               ? atBottomStyle
-              : { borderRadius: 32, width: "95%", height: "80%" }),
+              : { borderRadius: 32, width: "100%", height: "95%" }),
             ...commonStyles.shadow,
           }}
         >
+          <TouchableOpacity
+            onPress={onClose}
+            activeOpacity={0.8}
+            style={{ position: "absolute", top: 22, right: 16 }}
+          >
+            <Ionicons name="close" size={24} color={theme.onBackground} />
+          </TouchableOpacity>
           {icon && (
             <>
               <Ionicons name={icon} size={42} color={theme.background} />
