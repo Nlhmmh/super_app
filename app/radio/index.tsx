@@ -1,9 +1,11 @@
+import AssetImage from "@/components/AssetImage";
 import BackBtnWithTitle from "@/components/BackBtnWithTitle";
 import CustomModal from "@/components/CustomModal";
 import CustomScrollView from "@/components/CustomScrollView";
 import Loading from "@/components/Loading";
 import NoData from "@/components/NoData";
 import Pad from "@/components/Pad";
+import PriorityImage from "@/components/PriorityImage";
 import SearchBar from "@/components/SearchBar";
 import SelectBox from "@/components/SelectBox";
 import { TextType, ThemedText } from "@/components/ThemedText";
@@ -219,6 +221,8 @@ const StationCard = ({
           backgroundColor: theme.primaryContainer,
           paddingHorizontal: 8,
           paddingVertical: 8,
+          flexDirection: "row",
+          gap: 8,
           alignItems: "center",
         },
         !pressed ? commonStyles.lightShadow : undefined,
@@ -230,11 +234,24 @@ const StationCard = ({
       onPressOut={() => setPressed(false)}
       activeOpacity={0.8}
     >
-      <ThemedText type={TextType.L}>{station.name}</ThemedText>
-      <ThemedText>
-        {station.country} | {station.language}
-      </ThemedText>
-      <ThemedText>Votes: {station.votes}</ThemedText>
+      {station.favicon ? (
+        <PriorityImage
+          source={{ uri: station.favicon }}
+          style={{ width: 80, height: 80, borderRadius: 16 }}
+        />
+      ) : (
+        <AssetImage
+          path="icon.png"
+          style={{ width: 80, height: 80, borderRadius: 16 }}
+        />
+      )}
+      <ThemedView>
+        <ThemedText type={TextType.L}>{station.name}</ThemedText>
+        <ThemedText>
+          {station.country} | {station.language}
+        </ThemedText>
+        <ThemedText>Votes: {station.votes}</ThemedText>
+      </ThemedView>
     </TouchableOpacity>
   );
 };

@@ -128,7 +128,11 @@ const StationDetailPage = () => {
       <ThemedView
         style={{ flexDirection: "row", gap: 8, alignItems: "center" }}
       >
-        <ThemedText bold style={{ flex: 1 }}>
+        <ThemedText
+          type={TextType.M}
+          bold
+          style={{ flex: 1, alignSelf: "flex-start" }}
+        >
           {title}
         </ThemedText>
         <ThemedText

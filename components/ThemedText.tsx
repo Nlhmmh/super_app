@@ -22,7 +22,7 @@ export enum TextType {
 }
 
 export function ThemedText({
-  type = TextType.DEFAULT,
+  type = TextType.M,
   bold = false,
   subBold = false,
   link,
