@@ -1,7 +1,7 @@
 import { useTheme } from "@/theme/ThemeContext";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { Ionicons } from "@expo/vector-icons";
-import { Modal, Pressable, TouchableOpacity } from "react-native";
+import { Modal, ModalProps, Pressable, TouchableOpacity } from "react-native";
 import CustomButton from "./CustomButton";
 import Pad from "./Pad";
 import { TextType, ThemedText } from "./ThemedText";
@@ -20,7 +20,8 @@ const CustomModal = ({
   onConfirm,
   flexStart = false,
   atBottom = false,
-}: {
+  props,
+}: ModalProps & {
   open: boolean;
   onClose: () => void;
   icon?: string;
@@ -52,6 +53,7 @@ const CustomModal = ({
       transparent
       animationType="fade"
       onRequestClose={onClose}
+      {...props}
     >
       <TouchableOpacity
         style={{

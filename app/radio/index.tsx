@@ -101,7 +101,6 @@ const RadioPage = () => {
 
   const onPressStation = (station: station) => {
     router.push(`/radio/${station.stationuuid}`);
-    return;
   };
 
   return (
