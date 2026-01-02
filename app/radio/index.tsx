@@ -82,7 +82,11 @@ const RadioPage = () => {
           url += `&countrycode=${selCountry.value}`;
         }
         if (selLanguage && selLanguage.value !== "unselected") {
-          url += `&languagecodes=${selLanguage.value}`;
+          const langs = await get(
+            `http://fi1.api.radio-browser.info/json/languages`
+          );
+          const langObj = langs.find((l) => l.iso_639! === selLanguage.value);
+          if (langObj) url += `&language=${langObj.name!}`;
         }
         const stations = await get(url);
         if (!stations) return;
