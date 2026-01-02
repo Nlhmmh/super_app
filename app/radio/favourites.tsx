@@ -1,5 +1,6 @@
 import BackBtnWithTitle from "@/components/BackBtnWithTitle";
 import CustomScrollView from "@/components/CustomScrollView";
+import NoData from "@/components/NoData";
 import StationCard from "@/components/radio/StationCard";
 import { ThemedView } from "@/components/ThemedView";
 import { useUser } from "@/contexts/UserContext";
@@ -28,8 +29,8 @@ const RadioFavouritesPage = () => {
               gap: 12,
             }}
           >
-            {favouriteRadioStations.length > 0 &&
-              favouriteRadioStations.map((station, index) => {
+            {favouriteRadioStations?.length > 0 &&
+              favouriteRadioStations?.map((station, index) => {
                 return (
                   <StationCard
                     key={index}
@@ -39,7 +40,9 @@ const RadioFavouritesPage = () => {
                 );
               })}
           </ThemedView>
-          {favouriteRadioStations.length === 0 && !error && <NoData />}
+          {(!favouriteRadioStations || favouriteRadioStations?.length === 0) && (
+            <NoData text="No Favourite Radio Stations" />
+          )}
         </CustomScrollView>
       </ThemedView>
     </ThemedView>
