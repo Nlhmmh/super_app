@@ -208,15 +208,15 @@ const StationDetailPage = () => {
       <ThemedView
         style={{
           position: "absolute",
-          bottom: 4,
+          bottom: 0,
           width: "100%",
           alignItems: "center",
           zIndex: 1,
           padding: 12,
           backgroundColor: theme.secondary,
-          ...commonStyles.shadow,
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
+          ...commonStyles.shadow,
         }}
       >
         {currentTrack?.uri === (station?.url_resolved || station?.url) && (

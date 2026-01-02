@@ -74,12 +74,15 @@ const CustomTabBar = (props: BottomTabBarProps) => {
   return (
     <ThemedView
       style={{
-        bottom: 0,
+        bottom: 10,
         position: "absolute",
         alignSelf: "center",
         borderRadius: 24,
         overflow: "hidden",
         borderWidth: 1,
+        borderColor: theme.outline,
+        backgroundColor: theme.background,
+        ...commonStyles.lightShadow,
       }}
     >
       <BlurView
@@ -92,7 +95,6 @@ const CustomTabBar = (props: BottomTabBarProps) => {
           paddingHorizontal: 12,
           paddingVertical: 8,
           gap: 8,
-          ...commonStyles.shadow,
         }}
       >
         {visibleRoutes.map((route, index) => {
@@ -117,6 +119,7 @@ const BottomNavRouteCard = (
   navigation
 ) => {
   const theme = useTheme();
+  const commonStyles = useCommonStyles();
   const { options } = descriptors[route.key];
   const isFocused = state.routes[state.index].key === route.key;
   const { tabBarIcon, title } = options;
@@ -142,7 +145,12 @@ const BottomNavRouteCard = (
   }, [isFocused]);
 
   return (
-    <TouchableOpacity key={route.key} onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity
+      key={route.key}
+      onPress={onPress}
+      activeOpacity={0.8}
+      style={[isFocused ? commonStyles.lightShadow : undefined]}
+    >
       <Animated.View
         style={[
           {
