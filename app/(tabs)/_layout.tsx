@@ -15,7 +15,6 @@ export default function TabLayout() {
         tabBarActiveTintColor: theme.onPrimaryContainer,
         tabBarInactiveTintColor: theme.onSecondaryContainer,
         tabBarStyle: {
-          height: 90,
           alignItems: "center",
           justifyContent: "center",
         },
