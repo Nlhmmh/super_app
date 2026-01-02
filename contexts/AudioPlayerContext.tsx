@@ -155,7 +155,7 @@ export function AudioPlayerProvider({
     try {
       if (playerRef.current) {
         playerRef.current.pause();
-        playerRef.current.currentTime = 0;
+        // Note: currentTime is read-only, to reset we need to reload the track
         setPosition(0);
       }
     } catch (err) {
@@ -166,10 +166,11 @@ export function AudioPlayerProvider({
 
   const seek = useCallback(async (positionMs: number) => {
     try {
-      if (playerRef.current) {
-        playerRef.current.currentTime = positionMs / 1000; // Convert to seconds
-        setPosition(positionMs);
-      }
+      // Note: expo-audio's AudioPlayer does not support seeking
+      // currentTime is read-only. This is common for streaming audio.
+      // For seekable audio, you would need to use expo-av's Audio.Sound instead
+      console.warn("Seek not supported for streaming audio with AudioPlayer");
+      setPosition(positionMs); // Update UI only
     } catch (err) {
       console.error("Error seeking audio:", err);
       setError(err instanceof Error ? err.message : "Failed to seek audio");

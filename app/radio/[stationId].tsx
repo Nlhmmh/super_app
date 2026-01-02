@@ -13,6 +13,7 @@ import { get, safeAPICall } from "@/utils/api";
 import { station } from "@/utils/models";
 import { askNotificationPermission } from "@/utils/permission";
 import { useCommonStyles } from "@/utils/useCommonStyles";
+import Slider from "@react-native-community/slider";
 import { useKeepAwake } from "expo-keep-awake";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
@@ -20,7 +21,16 @@ import { useCallback, useEffect, useState } from "react";
 const StationDetailPage = () => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
-  const { play, pause, isPlaying, isLoading: playerLoading, currentTrack } = useAudioPlayer();
+  const {
+    play,
+    pause,
+    isPlaying,
+    isLoading: playerLoading,
+    currentTrack,
+    position,
+    duration,
+    seek,
+  } = useAudioPlayer();
 
   const { stationId } = useLocalSearchParams();
   const [station, setStation] = useState<station | null>(null);
@@ -58,10 +68,11 @@ const StationDetailPage = () => {
 
   const onPressPlayPause = async () => {
     if (!station) return;
-    
+
     // Check if we're already playing this station
-    const isSameStation = currentTrack?.uri === (station.url_resolved || station.url);
-    
+    const isSameStation =
+      currentTrack?.uri === (station.url_resolved || station.url);
+
     if (isPlaying && isSameStation) {
       await pause();
     } else {
@@ -72,6 +83,14 @@ const StationDetailPage = () => {
         artwork: station.favicon,
       });
     }
+  };
+
+  const formatTime = (milliseconds: number) => {
+    if (!milliseconds || milliseconds === 0) return "0:00";
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const InfoCard = ({
@@ -110,7 +129,7 @@ const StationDetailPage = () => {
   };
 
   const imageStyle = {
-    width: "80%",
+    width: "50%",
     aspectRatio: 1,
     borderRadius: 12,
   };
@@ -193,10 +212,40 @@ const StationDetailPage = () => {
           width: "100%",
           alignItems: "center",
           zIndex: 1,
+          paddingHorizontal: 12,
         }}
       >
+        {/* Time display - Only show if this station is currently playing */}
+        {currentTrack?.uri === (station?.url_resolved || station?.url) && (
+          <>
+            <ThemedView
+              style={{
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <ThemedText type={TextType.S}>{formatTime(position)}</ThemedText>
+              <ThemedText type={TextType.S}>{formatTime(duration)}</ThemedText>
+            </ThemedView>
+            <Slider
+              style={{ width: "100%", height: 40 }}
+              minimumValue={0}
+              maximumValue={duration || 100}
+              value={position}
+              disabled={true}
+              minimumTrackTintColor={theme.onPrimaryContainer}
+              maximumTrackTintColor={theme.outline}
+              thumbTintColor={theme.onPrimaryContainer}
+            />
+          </>
+        )}
+
         <IconButton
-          isOn={isPlaying && currentTrack?.uri === (station?.url_resolved || station?.url)}
+          isOn={
+            isPlaying &&
+            currentTrack?.uri === (station?.url_resolved || station?.url)
+          }
           onIcon="pause-circle"
           offIcon="play-circle"
           size={90}
