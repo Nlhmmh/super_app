@@ -1,11 +1,10 @@
 import { TextType, ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import { useUser } from "@/contexts/UserContext";
 import { useTheme } from "@/theme/ThemeContext";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { BlurView } from "expo-blur";
+import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
 import { TouchableOpacity } from "react-native";
 import Animated, {
@@ -72,42 +71,29 @@ const CustomTabBar = (props: BottomTabBarProps) => {
   let visibleRoutes = state.routes;
 
   return (
-    <ThemedView
+    <GlassView
+      tintColor={isLiquidGlassAvailable() ? undefined : theme.background}
       style={{
-        bottom: 10,
         position: "absolute",
+        bottom: 10,
+        gap: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
         alignSelf: "center",
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+        alignItems: "center",
         borderRadius: 24,
-        overflow: "hidden",
-        borderWidth: 1,
-        borderColor: theme.outline,
-        backgroundColor: theme.background,
+        backgroundColor: isLiquidGlassAvailable()
+          ? "transparent"
+          : theme.surface,
         ...commonStyles.lightShadow,
       }}
     >
-      <BlurView
-        intensity={100}
-        tint="default"
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-evenly",
-          alignItems: "center",
-          paddingHorizontal: 12,
-          paddingVertical: 8,
-          gap: 8,
-        }}
-      >
-        {visibleRoutes.map((route, index) => {
-          return BottomNavRouteCard(
-            descriptors,
-            route,
-            state,
-            index,
-            navigation
-          );
-        })}
-      </BlurView>
-    </ThemedView>
+      {visibleRoutes.map((route, index) => {
+        return BottomNavRouteCard(descriptors, route, state, index, navigation);
+      })}
+    </GlassView>
   );
 };
 
