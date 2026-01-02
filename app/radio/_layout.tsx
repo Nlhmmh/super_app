@@ -12,6 +12,12 @@ export default function RadioLayout() {
           presentation: "modal",
         }}
       />
+      <Stack.Screen
+        name="favourites"
+        options={{
+          presentation: "modal",
+        }}
+      />
     </Stack>
   );
 }

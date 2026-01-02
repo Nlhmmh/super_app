@@ -9,12 +9,14 @@ export default function SearchBar({
   setSearchText,
   onPressCountryOptions,
   onPressLanguageOptions,
+  onPressFavourites,
 }: {
   placeholder: string;
   searchText: string;
   setSearchText: React.Dispatch<React.SetStateAction<string>>;
   onPressCountryOptions?: () => void;
   onPressLanguageOptions?: () => void;
+  onPressFavourites?: () => void;
 }) {
   const theme = useTheme();
   const searchBarColors = {
@@ -70,6 +72,15 @@ export default function SearchBar({
         <TouchableOpacity onPress={onPressLanguageOptions}>
           <Ionicons
             name="language-outline"
+            size={24}
+            color={searchBarColors.iconColor}
+          />
+        </TouchableOpacity>
+      )}
+      {onPressFavourites && (
+        <TouchableOpacity onPress={onPressFavourites}>
+          <Ionicons
+            name="heart"
             size={24}
             color={searchBarColors.iconColor}
           />

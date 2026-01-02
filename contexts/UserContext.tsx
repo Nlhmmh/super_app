@@ -32,12 +32,12 @@ type UserContextValue = {
   error: string | null;
   countryCode: string | null;
   languageCode: string | null;
-  favouriteRadioStations: string[] | null;
+  favouriteRadioStations: station[] | null;
   saveUser: (value: StoredUser) => Promise<void>;
   clearUser: () => Promise<void>;
   saveCountryCode?: (code: string) => Promise<void>;
   saveLanguageCode?: (code: string) => Promise<void>;
-  saveFavouriteRadioStations: (uuids: string[]) => Promise<void>;
+  saveFavouriteRadioStations: (stations: station[]) => Promise<void>;
   toggleFavouriteRadioStation: (station: station) => Promise<void>;
   isFavouriteRadioStation: (station: station) => boolean;
 };
@@ -52,7 +52,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [languageCode, setLanguageCode] = useState<string | null>(null);
   const [favouriteRadioStations, setFavouriteRadioStations] = useState<
-    string[] | null
+    station[] | null
   >(null);
 
   // User Data
@@ -202,10 +202,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       if (!value) {
         setFavouriteRadioStations(null);
       } else {
-        const parsed = JSON.parse(value) as string[];
+        const parsed = JSON.parse(value) as station[];
         setFavouriteRadioStations(parsed);
       }
-      return value ? (JSON.parse(value) as string[]) : null;
+      return value ? (JSON.parse(value) as station[]) : null;
     } catch (err) {
       console.error("Failed to load favourite radio stations", err);
       setError("Failed to load favourite radio stations");
@@ -217,15 +217,15 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const saveFavouriteRadioStations = useCallback(async (uuids: string[]) => {
+  const saveFavouriteRadioStations = useCallback(async (stations: station[]) => {
     setIsLoading(true);
     setError(null);
     try {
       await AsyncStorage.setItem(
         SECURE_FAVOURITE_STATIONS_KEY,
-        JSON.stringify(uuids)
+        JSON.stringify(stations)
       );
-      setFavouriteRadioStations(uuids);
+      setFavouriteRadioStations(stations);
     } catch (err) {
       console.error("Failed to store favourite radio stations", err);
       setError("Failed to store favourite radio stations");
@@ -236,21 +236,23 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   const toggleFavouriteRadioStation = useCallback(
     async (station: station) => {
-      const currentUuids = favouriteRadioStations || [];
-      const isAlreadyFavorite = currentUuids.includes(station.stationuuid);
+      const currentStations = favouriteRadioStations || [];
+      const isAlreadyFavorite = currentStations.some(
+        (s) => s.stationuuid === station.stationuuid
+      );
 
-      let updatedUuids: string[];
+      let updatedStations: station[];
       if (isAlreadyFavorite) {
-        // Remove station UUID if already in favorites
-        updatedUuids = currentUuids.filter(
-          (uuid) => uuid !== station.stationuuid
+        // Remove station if already in favorites
+        updatedStations = currentStations.filter(
+          (s) => s.stationuuid !== station.stationuuid
         );
       } else {
-        // Add station UUID to favorites
-        updatedUuids = [...currentUuids, station.stationuuid];
+        // Add station to favorites
+        updatedStations = [...currentStations, station];
       }
 
-      await saveFavouriteRadioStations(updatedUuids);
+      await saveFavouriteRadioStations(updatedStations);
     },
     [favouriteRadioStations, saveFavouriteRadioStations]
   );
@@ -258,7 +260,9 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const isFavouriteRadioStation = useCallback(
     (station: station) => {
       if (!favouriteRadioStations) return false;
-      return favouriteRadioStations.includes(station.stationuuid);
+      return favouriteRadioStations.some(
+        (s) => s.stationuuid === station.stationuuid
+      );
     },
     [favouriteRadioStations]
   );

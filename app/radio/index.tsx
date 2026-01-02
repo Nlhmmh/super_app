@@ -1,11 +1,10 @@
-import AssetImage from "@/components/AssetImage";
 import BackBtnWithTitle from "@/components/BackBtnWithTitle";
 import CustomScrollView from "@/components/CustomScrollView";
 import FilteredSelectionModal from "@/components/FilteredSelectionModal";
 import Loading from "@/components/Loading";
 import NoData from "@/components/NoData";
 import Pad from "@/components/Pad";
-import PriorityImage from "@/components/PriorityImage";
+import StationCard from "@/components/radio/StationCard";
 import SearchBar from "@/components/SearchBar";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -17,7 +16,6 @@ import { labelValuePair, station } from "@/utils/models";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { TouchableOpacity } from "react-native";
 
 const RadioPage = () => {
   const theme = useTheme();
@@ -119,8 +117,10 @@ const RadioPage = () => {
           setSearchText={setSearchTerm}
           onPressCountryOptions={() => setOpenCountryModal(true)}
           onPressLanguageOptions={() => setOpenLanguageModal(true)}
+          onPressFavourites={() => router.push("/radio/favourites")}
         />
         <Pad height={16} />
+
         <CustomScrollView
           childGrow
           refreshing={refreshing}
@@ -173,68 +173,6 @@ const RadioPage = () => {
         defaultOption={LANGUAGES[0]}
       />
     </ThemedView>
-  );
-};
-
-const StationCard = ({
-  station,
-  disabled,
-  onPress,
-}: {
-  station: station;
-  disabled?: boolean;
-  onPress: () => void;
-}) => {
-  const theme = useTheme();
-  const commonStyles = useCommonStyles();
-  const [pressed, setPressed] = useState(false);
-
-  return (
-    <TouchableOpacity
-      style={[
-        {
-          // flexGrow: 1,
-          width: "100%",
-          borderWidth: 1,
-          borderRadius: 16,
-          borderColor: theme.outline,
-          backgroundColor: theme.primaryContainer,
-          paddingHorizontal: 8,
-          paddingVertical: 8,
-          flexDirection: "row",
-          gap: 8,
-          alignItems: "center",
-        },
-        !pressed ? commonStyles.lightShadow : undefined,
-        disabled ? { opacity: 0.5 } : undefined,
-      ]}
-      disabled={disabled}
-      onPress={onPress}
-      onPressIn={() => setPressed(true)}
-      onPressOut={() => setPressed(false)}
-      activeOpacity={0.8}
-    >
-      {station.favicon ? (
-        <PriorityImage
-          source={{ uri: station.favicon }}
-          style={{ width: 80, height: 80, borderRadius: 16 }}
-        />
-      ) : (
-        <AssetImage
-          path="icon.png"
-          style={{ width: 80, height: 80, borderRadius: 16 }}
-        />
-      )}
-      <ThemedView style={{ flex: 1 }}>
-        <ThemedText type={TextType.L} oneLineMode>
-          {station.name}
-        </ThemedText>
-        <ThemedText oneLineMode>
-          {station.country} | {station.language}
-        </ThemedText>
-        <ThemedText>Votes: {station.votes}</ThemedText>
-      </ThemedView>
-    </TouchableOpacity>
   );
 };
 
