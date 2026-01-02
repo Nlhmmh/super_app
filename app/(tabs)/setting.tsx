@@ -7,10 +7,21 @@ import { ColorScheme, schemeStore } from "@/theme/schemeStore";
 import { useTheme } from "@/theme/ThemeContext";
 import { THEMES } from "@/utils/constants";
 import { useCommonStyles } from "@/utils/useCommonStyles";
+import { useEffect, useState } from "react";
 
 export default function SettingPage() {
   const theme = useTheme();
   const { user, countryCode, languageCode } = useUser();
+  const [currentScheme, setCurrentScheme] = useState<ColorScheme | null>(
+    THEMES[0]
+  );
+
+  useEffect(() => {
+    (async () => {
+      const stored = await schemeStore.get();
+      setCurrentScheme(THEMES.find((t) => t.value == stored) || THEMES[0]);
+    })();
+  }, []);
 
   const changeTheme = (newTheme: ColorScheme) => {
     schemeStore.set(newTheme);
@@ -36,7 +47,7 @@ export default function SettingPage() {
       <SettingCard title="Theme">
         <Toggle
           options={THEMES}
-          initSel={THEMES[0]}
+          initSel={currentScheme}
           onChange={(value) => changeTheme(value.value as ColorScheme)}
         />
       </SettingCard>

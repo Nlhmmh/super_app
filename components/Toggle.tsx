@@ -1,6 +1,6 @@
 import { useTheme } from "@/theme/ThemeContext";
 import { labelValuePair } from "@/utils/models";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   LayoutChangeEvent,
@@ -32,6 +32,10 @@ const Toggle = ({
   const innerPadding = 8;
   const containerPadding = 4;
   const pillWidth = (componentWidth - innerPadding) / 2;
+
+  useEffect(() => {
+    handlePress(initSel);
+  }, [initSel]);
 
   const handlePress = useCallback(
     (v: labelValuePair) => {
