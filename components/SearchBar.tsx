@@ -18,11 +18,11 @@ export default function SearchBar({
 }) {
   const theme = useTheme();
   const searchBarColors = {
-    textColor: theme.onBackground,
-    iconColor: theme.onBackground,
+    textColor: theme.accentBlue,
+    iconColor: theme.accentBlue,
     background: theme.background,
     borderColor: theme.outline,
-    placeholderColor: theme.textTint,
+    placeholderColor: theme.accentBlue,
   };
   return (
     <ThemedView
