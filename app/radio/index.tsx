@@ -32,14 +32,43 @@ const RadioPage = () => {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [countryOptions, setCountryOptions] = useState<labelValuePair[]>(COUNTRY_CODES);
+  const [searchCountry, setSearchCountry] = useState<string>("");
   const [openCountryModal, setOpenCountryModal] = useState(false);
   const [selCountry, setSelCountry] = useState<labelValuePair | undefined>(
     undefined
   );
+
+  const [languageOptions, setLanguageOptions] =
+    useState<labelValuePair[]>(LANGUAGES);
+  const [searchLanguage, setSearchLanguage] = useState<string>("");
   const [openLanguageModal, setOpenLanguageModal] = useState(false);
   const [selLanguage, setSelLanguage] = useState<labelValuePair | undefined>(
     undefined
   );
+
+  useEffect(() => {
+    if (searchCountry.trim() === "") {
+      setCountryOptions(COUNTRY_CODES);
+      return;
+    }
+    const filteredCountries = COUNTRY_CODES.filter((country) =>
+      country.label.toLowerCase().includes(searchCountry.toLowerCase())
+    );
+    setCountryOptions(filteredCountries);
+  }, [searchCountry]);
+
+  useEffect(() => {
+    if (searchLanguage.trim() === "") {
+      setLanguageOptions(LANGUAGES);
+      return;
+    }
+    const filteredLanguages = LANGUAGES.filter((lang) =>
+      lang.label.toLowerCase().includes(searchLanguage.toLowerCase())
+    );
+    setLanguageOptions(filteredLanguages);
+  }, [searchLanguage]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -61,11 +90,13 @@ const RadioPage = () => {
   useEffect(() => {
     setOpenCountryModal(false);
     saveCountryCode(selCountry?.value || "");
+    setSearchCountry("");
   }, [selCountry]);
 
   useEffect(() => {
     setOpenLanguageModal(false);
     saveLanguageCode?.(selLanguage?.value || "");
+    setSearchLanguage("");
   }, [selLanguage, saveLanguageCode]);
 
   const fetchStations = useCallback(async () => {
@@ -157,11 +188,17 @@ const RadioPage = () => {
               borderColor: theme.outline,
               borderRadius: 12,
               padding: 12,
+              gap: 8,
             }}
           >
+            <SearchBar
+              searchText={searchCountry}
+              setSearchText={setSearchCountry}
+              placeholder="Search Country"
+            />
             <CustomScrollView childGrow>
               <SelectBox
-                options={COUNTRY_CODES}
+                options={countryOptions}
                 sel={selCountry}
                 setSel={(value) => {
                   if (selCountry?.value === value?.value) {
@@ -189,11 +226,17 @@ const RadioPage = () => {
               borderColor: theme.outline,
               borderRadius: 12,
               padding: 12,
+              gap: 8,
             }}
           >
+            <SearchBar
+              searchText={searchLanguage}
+              setSearchText={setSearchLanguage}
+              placeholder="Search Language"
+            />
             <CustomScrollView childGrow>
               <SelectBox
-                options={LANGUAGES}
+                options={languageOptions}
                 sel={selLanguage}
                 setSel={(value) => {
                   if (selLanguage?.value === value?.value) {

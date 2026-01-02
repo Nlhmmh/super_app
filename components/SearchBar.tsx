@@ -13,8 +13,8 @@ export default function SearchBar({
   placeholder: string;
   searchText: string;
   setSearchText: React.Dispatch<React.SetStateAction<string>>;
-  onPressCountryOptions: () => void;
-  onPressLanguageOptions: () => void;
+  onPressCountryOptions?: () => void;
+  onPressLanguageOptions?: () => void;
 }) {
   const theme = useTheme();
   const searchBarColors = {
@@ -27,6 +27,7 @@ export default function SearchBar({
   return (
     <ThemedView
       style={{
+        width: "100%",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
@@ -56,20 +57,24 @@ export default function SearchBar({
         placeholderTextColor={searchBarColors.placeholderColor}
         placeholder={placeholder}
       />
-      <TouchableOpacity onPress={onPressCountryOptions}>
-        <Ionicons
-          name="earth-outline"
-          size={24}
-          color={searchBarColors.iconColor}
-        />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={onPressLanguageOptions}>
-        <Ionicons
-          name="language-outline"
-          size={24}
-          color={searchBarColors.iconColor}
-        />
-      </TouchableOpacity>
+      {onPressCountryOptions && (
+        <TouchableOpacity onPress={onPressCountryOptions}>
+          <Ionicons
+            name="earth-outline"
+            size={24}
+            color={searchBarColors.iconColor}
+          />
+        </TouchableOpacity>
+      )}
+      {onPressLanguageOptions && (
+        <TouchableOpacity onPress={onPressLanguageOptions}>
+          <Ionicons
+            name="language-outline"
+            size={24}
+            color={searchBarColors.iconColor}
+          />
+        </TouchableOpacity>
+      )}
     </ThemedView>
   );
 }

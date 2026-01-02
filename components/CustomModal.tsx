@@ -73,7 +73,7 @@ const CustomModal = ({
             alignItems: flexStart ? undefined : "center",
             ...(atBottom
               ? atBottomStyle
-              : { borderRadius: 32, width: "95%", maxHeight: "80%" }),
+              : { borderRadius: 32, width: "95%", height: "80%" }),
             ...commonStyles.shadow,
           }}
         >
