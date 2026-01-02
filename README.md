@@ -13,6 +13,11 @@ make a-deploy-local
 ### Features
 - Radio Browser
 
+### TODO Feature
+- Network info viewer
+- File browser
+- Video player
+
 ### Screens
 - Start Page
 - Home Page
