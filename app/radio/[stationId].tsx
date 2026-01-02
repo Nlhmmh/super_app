@@ -1,4 +1,6 @@
+import AssetImage from "@/components/AssetImage";
 import BackBtnWithTitle from "@/components/BackBtnWithTitle";
+import CustomScrollView from "@/components/CustomScrollView";
 import IconButton from "@/components/IconButton";
 import Loading from "@/components/Loading";
 import Pad from "@/components/Pad";
@@ -142,26 +144,38 @@ const StationDetailPage = () => {
     );
   };
 
+  const imageStyle = {
+    width: "80%",
+    aspectRatio: 1,
+    borderRadius: 12,
+  };
+
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
       <BackBtnWithTitle title={station?.name || "Radio"} />
 
-      <ThemedView
-        style={{
-          flex: 1,
-          padding: 12,
+      <CustomScrollView
+        childGrow
+        contentContainerStyle={{
           alignItems: "center",
+          padding: 12,
+          paddingBottom: 100,
         }}
       >
         {loading && <Loading size="large" />}
         {!loading && station && (
           <>
-            {station.favicon && (
+            {station.favicon && station.favicon !== "" ? (
               <>
                 <PriorityImage
                   source={{ uri: station.favicon }}
-                  style={{ width: 100, height: 100 }}
+                  style={imageStyle}
                 />
+                <Pad height={8} />
+              </>
+            ) : (
+              <>
+                <AssetImage path="icon_bright.png" style={imageStyle} />
                 <Pad height={8} />
               </>
             )}
@@ -205,23 +219,26 @@ const StationDetailPage = () => {
           </>
         )}
         {error && <ThemedText type={TextType.ERROR}>{error}</ThemedText>}
+      </CustomScrollView>
 
-        <ThemedView
-          style={{
-            position: "absolute",
-            bottom: 12,
-          }}
-        >
-          <IconButton
-            isOn={playerStatus?.playing}
-            onIcon="pause-circle"
-            offIcon="play-circle"
-            size={90}
-            color={theme.onPrimaryContainer}
-            loading={playerStatus?.isBuffering}
-            onPress={() => onPressPlayPause()}
-          />
-        </ThemedView>
+      <ThemedView
+        style={{
+          position: "absolute",
+          bottom: 12,
+          width: "100%",
+          alignItems: "center",
+          zIndex: 1,
+        }}
+      >
+        <IconButton
+          isOn={playerStatus?.playing}
+          onIcon="pause-circle"
+          offIcon="play-circle"
+          size={90}
+          color={theme.onPrimaryContainer}
+          loading={playerStatus?.isBuffering}
+          onPress={() => onPressPlayPause()}
+        />
       </ThemedView>
     </ThemedView>
   );

@@ -9,7 +9,7 @@ export const useCommonStyles = () => {
       shadowColor: theme.shadow,
       shadowOffset: { width: 2, height: 2 },
       shadowOpacity: 0.2,
-      shadowRadius: 5,
+      shadowRadius: 2,
     },
     lightShadow: {
       elevation: 1,

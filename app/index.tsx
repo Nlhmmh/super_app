@@ -1,10 +1,10 @@
+import AssetImage from "@/components/AssetImage";
 import { ThemedView } from "@/components/ThemedView";
 import { useUser } from "@/contexts/UserContext";
 import { useTheme } from "@/theme/ThemeContext";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Dimensions } from "react-native";
-import AssetImage from "@/components/AssetImage";
 
 export default function StartPage() {
   const theme = useTheme();
@@ -26,8 +26,9 @@ export default function StartPage() {
     >
       <AssetImage
         style={{
-          width: 100,
-          height: 100,
+          width: 200,
+          aspectRatio: 1,
+          borderRadius: 24,
         }}
         path="icon.png"
       />

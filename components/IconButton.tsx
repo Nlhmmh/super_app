@@ -32,14 +32,18 @@ const IconButton = ({
       onPress={() => onPress()}
       onPressIn={() => setPressed(true)}
       onPressOut={() => setPressed(false)}
-      style={[style, { height: size }, pressed && commonStyles.shadow]}
+      style={[
+        style,
+        { height: size, alignItems: "center", justifyContent: "center" },
+        !pressed && commonStyles.shadow,
+      ]}
       activeOpacity={0.9}
     >
       {loading ? (
         <ThemedView
           style={{
-            width: size * 1.25,
-            height: size * 1.25,
+            width: size * 0.75,
+            height: size * 0.75,
             justifyContent: "center",
             alignItems: "center",
             borderRadius: "100%",

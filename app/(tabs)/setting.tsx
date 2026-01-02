@@ -1,3 +1,4 @@
+import AssetImage from "@/components/AssetImage";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Toggle from "@/components/Toggle";
@@ -17,9 +18,18 @@ export default function SettingPage() {
 
   return (
     <ThemedView style={{ flex: 1, padding: 12, gap: 12 }} useTheme>
-      <ThemedText type={TextType.XL}>
-        Welcome, {user?.name || "Guest"}!
+      <ThemedText type={TextType.XXL} style={{ alignSelf: "center" }} bold>
+        Welcome to Super App
       </ThemedText>
+      <AssetImage
+        path="icon.png"
+        style={{
+          width: "100%",
+          height: 160,
+          borderRadius: 12,
+          alignSelf: "center",
+        }}
+      />
       <SettingCard title="Username">
         <ThemedText>{user?.username || "Guest"}</ThemedText>
       </SettingCard>
