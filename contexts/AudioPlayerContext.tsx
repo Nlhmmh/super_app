@@ -1,0 +1,207 @@
+import { AudioPlayer, createAudioPlayer } from "expo-audio";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+export type AudioTrack = {
+  uri: string;
+  title?: string;
+  artist?: string;
+  artwork?: string;
+  [key: string]: unknown;
+};
+
+type AudioPlayerContextValue = {
+  currentTrack: AudioTrack | null;
+  isPlaying: boolean;
+  isLoading: boolean;
+  duration: number;
+  position: number;
+  error: string | null;
+  play: (track?: AudioTrack) => Promise<void>;
+  pause: () => Promise<void>;
+  resume: () => Promise<void>;
+  stop: () => Promise<void>;
+  seek: (position: number) => Promise<void>;
+  loadTrack: (track: AudioTrack) => Promise<void>;
+};
+
+const AudioPlayerContext = createContext<AudioPlayerContextValue | null>(null);
+
+export function AudioPlayerProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [currentTrack, setCurrentTrack] = useState<AudioTrack | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [position, setPosition] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+
+  const playerRef = useRef<AudioPlayer | null>(null);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (playerRef.current) {
+        if (playerRef.current.playing) {
+          playerRef.current.pause();
+        }
+        playerRef.current.remove();
+      }
+    };
+  }, []);
+
+  const loadTrack = useCallback(async (track: AudioTrack) => {
+    try {
+      setError(null);
+
+      // Stop and remove previous player
+      if (playerRef.current) {
+        if (playerRef.current.playing) {
+          playerRef.current.pause();
+        }
+        playerRef.current.remove();
+        playerRef.current = null;
+      }
+
+      // Create new player
+      const player = createAudioPlayer(track.uri);
+      
+      // Add listener for playback status updates
+      player.addListener("playbackStatusUpdate", (status) => {
+        setIsPlaying(status.playing || false);
+        setIsLoading(status.isBuffering || false);
+        setPosition((status.currentTime || 0) * 1000); // Convert to milliseconds
+        setDuration((status.duration || 0) * 1000); // Convert to milliseconds
+        
+        // Auto-stop when finished
+        if (status.didJustFinish) {
+          setIsPlaying(false);
+          setPosition(0);
+        }
+      });
+      
+      playerRef.current = player;
+      setCurrentTrack(track);
+      setPosition(0);
+      setDuration(0);
+    } catch (err) {
+      console.error("Error loading track:", err);
+      setError(err instanceof Error ? err.message : "Failed to load track");
+      setIsLoading(false);
+    }
+  }, []);
+
+  const play = useCallback(
+    async (track?: AudioTrack) => {
+      try {
+        setError(null);
+
+        // If a new track is provided, load it first
+        if (track) {
+          await loadTrack(track);
+        }
+
+        // Play the current player
+        if (playerRef.current) {
+          playerRef.current.play();
+        } else if (currentTrack) {
+          // If no player loaded but we have a current track, reload it
+          await loadTrack(currentTrack);
+          if (playerRef.current) {
+            playerRef.current.play();
+          }
+        }
+      } catch (err) {
+        console.error("Error playing audio:", err);
+        setError(err instanceof Error ? err.message : "Failed to play audio");
+        setIsPlaying(false);
+      }
+    },
+    [currentTrack, loadTrack]
+  );
+
+  const pause = useCallback(async () => {
+    try {
+      if (playerRef.current) {
+        playerRef.current.pause();
+      }
+    } catch (err) {
+      console.error("Error pausing audio:", err);
+      setError(err instanceof Error ? err.message : "Failed to pause audio");
+    }
+  }, []);
+
+  const resume = useCallback(async () => {
+    try {
+      if (playerRef.current) {
+        playerRef.current.play();
+      }
+    } catch (err) {
+      console.error("Error resuming audio:", err);
+      setError(err instanceof Error ? err.message : "Failed to resume audio");
+    }
+  }, []);
+
+  const stop = useCallback(async () => {
+    try {
+      if (playerRef.current) {
+        playerRef.current.pause();
+        playerRef.current.currentTime = 0;
+        setPosition(0);
+      }
+    } catch (err) {
+      console.error("Error stopping audio:", err);
+      setError(err instanceof Error ? err.message : "Failed to stop audio");
+    }
+  }, []);
+
+  const seek = useCallback(async (positionMs: number) => {
+    try {
+      if (playerRef.current) {
+        playerRef.current.currentTime = positionMs / 1000; // Convert to seconds
+        setPosition(positionMs);
+      }
+    } catch (err) {
+      console.error("Error seeking audio:", err);
+      setError(err instanceof Error ? err.message : "Failed to seek audio");
+    }
+  }, []);
+
+  const value: AudioPlayerContextValue = {
+    currentTrack,
+    isPlaying,
+    isLoading,
+    duration,
+    position,
+    error,
+    play,
+    pause,
+    resume,
+    stop,
+    seek,
+    loadTrack,
+  };
+
+  return (
+    <AudioPlayerContext.Provider value={value}>
+      {children}
+    </AudioPlayerContext.Provider>
+  );
+}
+
+export function useAudioPlayer() {
+  const context = useContext(AudioPlayerContext);
+  if (!context) {
+    throw new Error("useAudioPlayer must be used within AudioPlayerProvider");
+  }
+  return context;
+}

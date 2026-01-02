@@ -1,4 +1,5 @@
 import Pad from "@/components/Pad";
+import { AudioPlayerProvider } from "@/contexts/AudioPlayerContext";
 import { UserProvider } from "@/contexts/UserContext";
 import { schemeStore } from "@/theme/schemeStore";
 import { DarkTheme, LightTheme } from "@/theme/theme";
@@ -62,14 +63,16 @@ export default function StackLayout() {
     <SafeAreaProvider>
       <ThemeProvider currentTheme={theme}>
         <UserProvider>
-          <SafeAreaView
-            edges={["top"]}
-            style={{ flex: 1, backgroundColor: theme.background }}
-          >
-            <StatusBar />
-            <Pad height={5} />
-            <Stack screenOptions={{ headerShown: false }} />
-          </SafeAreaView>
+          <AudioPlayerProvider>
+            <SafeAreaView
+              edges={["top"]}
+              style={{ flex: 1, backgroundColor: theme.background }}
+            >
+              <StatusBar />
+              <Pad height={5} />
+              <Stack screenOptions={{ headerShown: false }} />
+            </SafeAreaView>
+          </AudioPlayerProvider>
         </UserProvider>
       </ThemeProvider>
     </SafeAreaProvider>

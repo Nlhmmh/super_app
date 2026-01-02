@@ -7,41 +7,23 @@ import Pad from "@/components/Pad";
 import PriorityImage from "@/components/PriorityImage";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { useTheme } from "@/theme/ThemeContext";
 import { get, safeAPICall } from "@/utils/api";
 import { station } from "@/utils/models";
 import { askNotificationPermission } from "@/utils/permission";
 import { useCommonStyles } from "@/utils/useCommonStyles";
-import { AudioPlayer, createAudioPlayer } from "expo-audio";
 import { useKeepAwake } from "expo-keep-awake";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 
-type playerStatus = {
-  currentTime: number;
-  didJustFinish: boolean;
-  duration: number;
-  id: string;
-  isBuffering: boolean;
-  isLoaded: boolean;
-  loop: boolean;
-  mute: boolean;
-  playbackRate: number;
-  playbackState: string;
-  playing: boolean;
-  reasonForWaitingToPlay: string;
-  shouldCorrectPitch: boolean;
-  timeControlStatus: string;
-};
-
 const StationDetailPage = () => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
+  const { play, pause, isPlaying, isLoading: playerLoading, currentTrack } = useAudioPlayer();
 
   const { stationId } = useLocalSearchParams();
   const [station, setStation] = useState<station | null>(null);
-  const [player, setPlayer] = useState<AudioPlayer | null>(null);
-  const [playerStatus, setPlayerStatus] = useState<playerStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,14 +37,6 @@ const StationDetailPage = () => {
     fetchStation();
   }, [stationId]);
 
-  useEffect(() => {
-    return () => {
-      if (!player) return;
-      if (player.playing) player.pause();
-      player.clearLockScreenControls?.();
-    };
-  }, [player]);
-
   const fetchStation = useCallback(async () => {
     safeAPICall({
       fn: async () => {
@@ -71,14 +45,7 @@ const StationDetailPage = () => {
         const stations = await get(API_URL);
         if (!stations || stations.length === 0) return;
         const station = stations[0];
-        const player = createAudioPlayer(
-          station.url_resolved || station.url || ""
-        );
-        player.addListener("playbackStatusUpdate", (status) => {
-          setPlayerStatus(status);
-        });
         setStation(station);
-        setPlayer(player);
       },
       catchCb: (error) => {
         setError("Could not load radio station. Please check your network.");
@@ -89,28 +56,22 @@ const StationDetailPage = () => {
     });
   }, [stationId]);
 
-  const onPressPlayPause = () => {
-    if (!player) return;
-    if (player.playing) {
-      player.pause();
-      player.clearLockScreenControls?.();
-      return;
-    }
-    player.play();
-
-    // Show lock screen / notification controls to keep service foregrounded when supported.
-    player.setActiveForLockScreen?.(
-      true,
-      {
+  const onPressPlayPause = async () => {
+    if (!station) return;
+    
+    // Check if we're already playing this station
+    const isSameStation = currentTrack?.uri === (station.url_resolved || station.url);
+    
+    if (isPlaying && isSameStation) {
+      await pause();
+    } else {
+      await play({
+        uri: station.url_resolved || station.url || "",
         title: station.name,
         artist: "Super App",
-        albumTitle: station.country,
-      },
-      {
-        showSeekBackward: true,
-        showSeekForward: true,
-      }
-    );
+        artwork: station.favicon,
+      });
+    }
   };
 
   const InfoCard = ({
@@ -235,12 +196,12 @@ const StationDetailPage = () => {
         }}
       >
         <IconButton
-          isOn={playerStatus?.playing}
+          isOn={isPlaying && currentTrack?.uri === (station?.url_resolved || station?.url)}
           onIcon="pause-circle"
           offIcon="play-circle"
           size={90}
           color={theme.onPrimaryContainer}
-          loading={playerStatus?.isBuffering}
+          loading={playerLoading}
           onPress={() => onPressPlayPause()}
         />
       </ThemedView>
