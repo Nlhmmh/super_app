@@ -42,6 +42,7 @@ export const Colors = {
     inversePrimary: "#DAC76F",
     text: "#1E1C13",
     textTint: "#4B4739",
+    accentBlue: "#0066CC",
   },
   dark: {
     primary: "#DAC76F",
@@ -76,6 +77,7 @@ export const Colors = {
     inversePrimary: "#6D5E0F",
     text: "#E8E2D4",
     textTint: "#CDC6B4",
+    accentBlue: "#3399FF",
   },
 };
 

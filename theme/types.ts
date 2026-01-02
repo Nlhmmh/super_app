@@ -33,6 +33,7 @@ export type ColorPalette = {
   inversePrimary: string
   text: string
   textTint: string
+  accentBlue: string
 }
 
 export type LightTheme = Omit<typeof DefaultTheme, 'colors'> & ColorPalette

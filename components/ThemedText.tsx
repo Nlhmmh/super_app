@@ -1,6 +1,7 @@
 import { useTheme } from "@/theme/ThemeContext";
 import * as Clipboard from "expo-clipboard";
 import {
+  Linking,
   Platform,
   StyleSheet,
   Text,
@@ -16,6 +17,7 @@ export enum TextType {
   XL = "xl",
   XXL = "xxl",
   LINK = "link",
+  OPEN_LINK = "open_link",
   ERROR = "error",
 }
 
@@ -63,8 +65,7 @@ export function ThemedText({
     },
     link: {
       fontSize: 14,
-      lineHeight: 24,
-      fontWeight: "500",
+      lineHeight: Platform.OS === "ios" ? 26 : 24,
       textDecorationLine: "underline",
       color: theme.accentBlue,
     },
@@ -79,28 +80,35 @@ export function ThemedText({
     },
   });
 
-  if (type === TextType.LINK) {
+  if (type === TextType.LINK || type === TextType.OPEN_LINK) {
     return (
       <TouchableOpacity
         onPress={async () => {
           if (!link) return;
-          await Clipboard.setStringAsync(link);
-          // const supported = await Linking.canOpenURL(link || "");
-          // if (!supported) return;
-          // await Linking.openURL(link || "");
+          if (type === TextType.LINK) {
+            await Clipboard.setStringAsync(link);
+            return;
+          }
+          if (type === TextType.OPEN_LINK) {
+            try {
+              const supported = await Linking.canOpenURL(link);
+              if (supported) {
+                await Linking.openURL(link);
+              }
+            } catch (e) {
+              // ignore
+            }
+          }
         }}
         activeOpacity={!link ? 1 : 0.8}
+        style={[
+          style,
+          {
+            flexDirection: "row",
+          },
+        ]}
       >
-        <Text
-          style={[
-            !link ? styles.m : styles.link,
-            style,
-            {
-              color: theme.onBackground,
-            },
-          ]}
-          {...rest}
-        />
+        <Text style={[styles.link, style]} {...rest} />
       </TouchableOpacity>
     );
   }

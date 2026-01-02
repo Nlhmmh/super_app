@@ -11,31 +11,17 @@ import { useUser } from "@/contexts/UserContext";
 import { useTheme } from "@/theme/ThemeContext";
 import { get, safeAPICall } from "@/utils/api";
 import { COUNTRY_CODES, LANGUAGES } from "@/utils/constants";
-import { labelValuePair } from "@/utils/models";
-import { askNotificationPermission } from "@/utils/permission";
+import { labelValuePair, station } from "@/utils/models";
 import { useCommonStyles } from "@/utils/useCommonStyles";
-import { Ionicons } from "@expo/vector-icons";
-import { AudioPlayer, createAudioPlayer } from "expo-audio";
-import { useKeepAwake } from "expo-keep-awake";
+import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
-
-type station = {
-  stationuuid: string;
-  name: string;
-  url_resolved: string;
-  player: AudioPlayer;
-  country: string;
-  language: string;
-  votes: number;
-};
 
 const RadioPage = () => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
   const { countryCode, saveCountryCode, languageCode, saveLanguageCode } =
     useUser();
-
   const [searchTerm, setSearchTerm] = useState("");
   const [stations, setStations] = useState<station[]>([]);
   const [currentStation, setCurrentStation] = useState<station | undefined>(
@@ -52,25 +38,12 @@ const RadioPage = () => {
     undefined
   );
 
-  useKeepAwake();
-
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       fetchStations();
     }, 300);
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm, selCountry, selLanguage]);
-
-  useEffect(() => {
-    askNotificationPermission();
-  }, []);
-
-  // Cleanup audio players on unmount
-  useEffect(() => {
-    return () => {
-      pauseAndClearAllStations();
-    };
-  }, [stations]);
 
   useEffect(() => {
     if (!countryCode) return;
@@ -92,24 +65,10 @@ const RadioPage = () => {
     setOpenLanguageModal(false);
   }, [selLanguage, saveLanguageCode]);
 
-  const createStationPlayer = (url: string) => {
-    const player = createAudioPlayer(url);
-    return player;
-  };
-
-  const pauseAndClearAllStations = () => {
-    stations.forEach((station) => {
-      station.player.pause();
-      station.player.clearLockScreenControls?.();
-    });
-    setCurrentStation(undefined);
-  };
-
   const fetchStations = useCallback(async () => {
     safeAPICall({
       fn: async () => {
         setLoading(true);
-        pauseAndClearAllStations();
         setStations([]);
         const API_URL =
           "https://de2.api.radio-browser.info/json/stations/search";
@@ -123,22 +82,9 @@ const RadioPage = () => {
         }
         const stations = await get(url);
         if (!stations) return;
-        const mapStations: station[] = stations.map((s: station) => {
-          const url = s.url_resolved;
-          return {
-            stationuuid: s.stationuuid,
-            name: s.name,
-            url_resolved: url,
-            player: createStationPlayer(url),
-            country: s.country,
-            language: s.language,
-            votes: s.votes,
-          };
-        });
-        setStations(mapStations);
+        setStations(stations);
       },
       catchCb: (error) => {
-        console.debug(error);
         setError(
           "Could not load radio stations. Please check the network or API."
         );
@@ -150,21 +96,8 @@ const RadioPage = () => {
   }, [searchTerm, selCountry, selLanguage]);
 
   const onPressStation = (station: station) => {
-    const player = station.player;
-    if (player.playing) {
-      player.pause();
-      player.clearLockScreenControls?.();
-      setCurrentStation(undefined);
-      return;
-    }
-    player.play();
-
-    // Show lock screen / notification controls to keep service foregrounded when supported.
-    player.setActiveForLockScreen?.(true, {
-      title: station.name,
-      artist: "Super App",
-      albumTitle: station.country,
-    });
+    router.push(`/radio/${station.stationuuid}`);
+    return;
   };
 
   return (
@@ -193,12 +126,7 @@ const RadioPage = () => {
                   <StationCard
                     key={station.stationuuid}
                     station={station}
-                    disabled={
-                      currentStation !== undefined &&
-                      currentStation.stationuuid !== station.stationuuid
-                    }
                     onPress={async () => onPressStation(station)}
-                    setCurrentStation={setCurrentStation}
                   />
                 );
               })}
@@ -267,39 +195,14 @@ const StationCard = ({
   station,
   disabled,
   onPress,
-  removePlayer,
-  setCurrentStation,
 }: {
   station: station;
   disabled?: boolean;
   onPress: () => void;
-  removePlayer?: () => void;
-  setCurrentStation?: (station: station | undefined) => void;
 }) => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
   const [pressed, setPressed] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const subscription = station.player.addListener(
-      "playbackStatusUpdate",
-      (status) => {
-        // console.log(station.name, "Playback status update:", status);
-        setIsLoading(status.isBuffering);
-        setIsPlaying(status.playing);
-        if (!status.playing) {
-          setCurrentStation?.(undefined);
-        } else {
-          setCurrentStation?.(station);
-        }
-      }
-    );
-    return () => {
-      subscription.remove();
-    };
-  }, [station.player]);
 
   return (
     <TouchableOpacity
@@ -323,18 +226,11 @@ const StationCard = ({
       onPressOut={() => setPressed(false)}
       activeOpacity={0.8}
     >
-      {isLoading ? (
-        <Loading size="small" />
-      ) : (
-        <Ionicons
-          name={isPlaying ? "pause-circle" : "play-circle"}
-          size={28}
-          color={theme.onPrimaryContainer}
-        />
-      )}
-      <ThemedText type={TextType.LINK} link={station.url_resolved}>
-        {station.name}
+      <ThemedText type={TextType.L}>{station.name}</ThemedText>
+      <ThemedText>
+        {station.country} | {station.language}
       </ThemedText>
+      <ThemedText>Votes: {station.votes}</ThemedText>
     </TouchableOpacity>
   );
 };
