@@ -47,6 +47,24 @@ export function AudioPlayerProvider({
 
   const playerRef = useRef<AudioPlayer | null>(null);
 
+  // Helper function to set lock screen controls
+  const setLockScreenControls = useCallback((track: AudioTrack | null) => {
+    if (playerRef.current && track) {
+      playerRef.current.setActiveForLockScreen?.(
+        true,
+        {
+          title: track.title || "Audio",
+          artist: track.artist || "Super App",
+          albumTitle: "Radio",
+        },
+        {
+          showSeekBackward: true,
+          showSeekForward: true,
+        }
+      );
+    }
+  }, []);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -113,11 +131,13 @@ export function AudioPlayerProvider({
         // Play the current player
         if (playerRef.current) {
           playerRef.current.play();
+          setLockScreenControls(track || currentTrack);
         } else if (currentTrack) {
           // If no player loaded but we have a current track, reload it
           await loadTrack(currentTrack);
           if (playerRef.current) {
             playerRef.current.play();
+            setLockScreenControls(currentTrack);
           }
         }
       } catch (err) {
@@ -126,13 +146,14 @@ export function AudioPlayerProvider({
         setIsPlaying(false);
       }
     },
-    [currentTrack, loadTrack]
+    [currentTrack, loadTrack, setLockScreenControls]
   );
 
   const pause = useCallback(async () => {
     try {
       if (playerRef.current) {
         playerRef.current.pause();
+        playerRef.current.clearLockScreenControls?.();
       }
     } catch (err) {
       console.error("Error pausing audio:", err);
@@ -142,19 +163,21 @@ export function AudioPlayerProvider({
 
   const resume = useCallback(async () => {
     try {
-      if (playerRef.current) {
+      if (playerRef.current && currentTrack) {
         playerRef.current.play();
+        setLockScreenControls(currentTrack);
       }
     } catch (err) {
       console.error("Error resuming audio:", err);
       setError(err instanceof Error ? err.message : "Failed to resume audio");
     }
-  }, []);
+  }, [currentTrack, setLockScreenControls]);
 
   const stop = useCallback(async () => {
     try {
       if (playerRef.current) {
         playerRef.current.pause();
+        playerRef.current.clearLockScreenControls?.();
         // Note: currentTime is read-only, to reset we need to reload the track
         setPosition(0);
       }
