@@ -35,9 +35,12 @@ export default function StackLayout() {
 
   // Listen for system appearance changes
   useEffect(() => {
-    const subscription = Appearance.addChangeListener(({ colorScheme }) => {
-      setCurrentScheme(colorScheme);
-    });
+    const subscription = Appearance.addChangeListener(
+      async ({ colorScheme }) => {
+        const storedScheme = await schemeStore.get();
+        if (!storedScheme) setCurrentScheme(colorScheme);
+      }
+    );
     return () => subscription.remove();
   }, []);
 

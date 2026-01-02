@@ -2,6 +2,7 @@ import BackBtnWithTitle from "@/components/BackBtnWithTitle";
 import CustomModal from "@/components/CustomModal";
 import CustomScrollView from "@/components/CustomScrollView";
 import Loading from "@/components/Loading";
+import NoData from "@/components/NoData";
 import Pad from "@/components/Pad";
 import SearchBar from "@/components/SearchBar";
 import SelectBox from "@/components/SelectBox";
@@ -68,6 +69,7 @@ const RadioPage = () => {
   const fetchStations = useCallback(async () => {
     safeAPICall({
       fn: async () => {
+        setError(null);
         setLoading(true);
         setStations([]);
         const API_URL =
@@ -132,6 +134,8 @@ const RadioPage = () => {
               })}
           </ThemedView>
           {loading && <Loading />}
+          {error && <ThemedText type={TextType.ERROR}>{error}</ThemedText>}
+          {!loading && stations.length === 0 && !error && <NoData />}
         </CustomScrollView>
       </ThemedView>
       <Pad height={16} />

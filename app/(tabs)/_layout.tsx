@@ -14,6 +14,11 @@ export default function TabLayout() {
         tabBarInactiveBackgroundColor: theme.secondaryContainer,
         tabBarActiveTintColor: theme.onPrimaryContainer,
         tabBarInactiveTintColor: theme.onSecondaryContainer,
+        tabBarStyle: {
+          height: 90,
+          alignItems: "center",
+          justifyContent: "center",
+        },
       }}
     >
       <Tabs.Screen
