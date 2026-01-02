@@ -10,4 +10,5 @@ run: ## run
 	npm start
 
 a-deploy-local: ## Build and deploy Android app
-	eas build -p android --local --profile production
+	sh build-android.sh
+  # eas build -p android --local --profile production
