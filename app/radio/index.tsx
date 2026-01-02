@@ -59,13 +59,13 @@ const RadioPage = () => {
   }, [languageCode]);
 
   useEffect(() => {
-    saveCountryCode(selCountry?.value || "");
     setOpenCountryModal(false);
+    saveCountryCode(selCountry?.value || "");
   }, [selCountry]);
 
   useEffect(() => {
-    saveLanguageCode?.(selLanguage?.value || "");
     setOpenLanguageModal(false);
+    saveLanguageCode?.(selLanguage?.value || "");
   }, [selLanguage, saveLanguageCode]);
 
   const fetchStations = useCallback(async () => {
@@ -163,7 +163,13 @@ const RadioPage = () => {
               <SelectBox
                 options={COUNTRY_CODES}
                 sel={selCountry}
-                setSel={setSelCountry}
+                setSel={(value) => {
+                  if (selCountry?.value === value?.value) {
+                    setSelCountry(COUNTRY_CODES[0]);
+                    return;
+                  }
+                  setSelCountry(value);
+                }}
                 isWrap
               />
             </CustomScrollView>
@@ -189,7 +195,13 @@ const RadioPage = () => {
               <SelectBox
                 options={LANGUAGES}
                 sel={selLanguage}
-                setSel={setSelLanguage}
+                setSel={(value) => {
+                  if (selLanguage?.value === value?.value) {
+                    setSelLanguage(LANGUAGES[0]);
+                    return;
+                  }
+                  setSelLanguage(value);
+                }}
                 isWrap
               />
             </CustomScrollView>
