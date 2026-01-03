@@ -6,6 +6,7 @@ import FilteredSelectionModal from "@/components/FilteredSelectionModal";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Toggle from "@/components/Toggle";
+import { useAudioPlayer } from "@/contexts";
 import { useCountryCode } from "@/contexts/CountryCodeContext";
 import { useLanguageCode } from "@/contexts/LanguageCodeContext";
 import { useUser } from "@/contexts/UserContext";
@@ -31,6 +32,7 @@ export default function SettingPage() {
   const { countryCode, saveCountryCode, clearCountryCode } = useCountryCode();
   const { languageCode, saveLanguageCode, clearLanguageCode } =
     useLanguageCode();
+  const { clearCurrentStation } = useAudioPlayer();
   const [currentScheme, setCurrentScheme] = useState<ColorScheme | null>(
     THEMES[0]
   );
@@ -88,6 +90,7 @@ export default function SettingPage() {
           await clearUser();
           await clearCountryCode();
           await clearLanguageCode();
+          await clearCurrentStation();
           schemeStore.clear();
           setCurrentScheme(THEMES[0]);
           changeTheme(THEMES[0]);

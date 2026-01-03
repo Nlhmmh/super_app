@@ -37,10 +37,10 @@ export default function HomePage() {
         style={[
           {
             alignItems: "center",
-            borderWidth: 1,
+            borderWidth: 0.2,
             borderColor: theme.outline,
             borderRadius: 12,
-            padding: 16,
+            padding: 12,
             backgroundColor: theme.primaryContainer,
           },
           !pressed ? commonStyles.shadow : undefined,

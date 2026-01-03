@@ -1,4 +1,5 @@
 import { station } from "@/utils/models";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AudioPlayer, createAudioPlayer } from "expo-audio";
 import React, {
   createContext,
@@ -8,6 +9,8 @@ import React, {
   useRef,
   useState,
 } from "react";
+
+const SECURE_CURRENT_STATION_KEY = "secure_current_station";
 
 export type AudioTrack = {
   station: station;
@@ -31,6 +34,7 @@ type AudioPlayerContextValue = {
   stop: () => Promise<void>;
   seek: (position: number) => Promise<void>;
   loadTrack: (track: AudioTrack) => Promise<void>;
+  clearCurrentStation: () => Promise<void>;
 };
 
 const AudioPlayerContext = createContext<AudioPlayerContextValue | null>(null);
@@ -48,6 +52,58 @@ export function AudioPlayerProvider({
   const [error, setError] = useState<string | null>(null);
 
   const playerRef = useRef<AudioPlayer | null>(null);
+
+  useEffect(() => {
+    loadCurrentStation();
+  }, [loadCurrentStation]);
+
+  const loadCurrentStation = useCallback(async () => {
+    setError(null);
+    try {
+      const value = await AsyncStorage.getItem(SECURE_CURRENT_STATION_KEY);
+      if (value) {
+        const parsed = JSON.parse(value) as AudioTrack;
+        setCurrentTrack(parsed);
+        return parsed;
+      } else {
+        setCurrentTrack(null);
+        return null;
+      }
+    } catch (err) {
+      console.error("Failed to load current station", err);
+      setError("Failed to load current station");
+      setCurrentTrack(null);
+      return null;
+    }
+  }, []);
+
+  const saveCurrentStation = useCallback(async (track: AudioTrack | null) => {
+    setError(null);
+    try {
+      if (track) {
+        await AsyncStorage.setItem(
+          SECURE_CURRENT_STATION_KEY,
+          JSON.stringify(track)
+        );
+      } else {
+        await AsyncStorage.removeItem(SECURE_CURRENT_STATION_KEY);
+      }
+    } catch (err) {
+      console.error("Failed to save current station", err);
+      setError("Failed to save current station");
+    }
+  }, []);
+
+  const clearCurrentStation = useCallback(async () => {
+    setError(null);
+    try {
+      await AsyncStorage.removeItem(SECURE_CURRENT_STATION_KEY);
+      setCurrentTrack(null);
+    } catch (err) {
+      console.error("Failed to clear current station", err);
+      setError("Failed to clear current station");
+    }
+  }, []);
 
   // Helper function to set lock screen controls
   const setLockScreenControls = useCallback((track: AudioTrack | null) => {
@@ -129,6 +185,7 @@ export function AudioPlayerProvider({
         // If a new track is provided, load it first
         if (track) {
           await loadTrack(track);
+          await saveCurrentStation(track);
         }
 
         // Play the current player
@@ -216,6 +273,7 @@ export function AudioPlayerProvider({
     stop,
     seek,
     loadTrack,
+    clearCurrentStation,
   };
 
   return (
