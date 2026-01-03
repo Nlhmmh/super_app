@@ -1,14 +1,16 @@
 import AssetImage from "@/components/AssetImage";
 import BackBtnWithTitle from "@/components/BackBtnWithTitle";
 import CustomButton from "@/components/CustomButton";
+import FilteredSelectionModal from "@/components/FilteredSelectionModal";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Toggle from "@/components/Toggle";
 import { useUser } from "@/contexts/UserContext";
 import { ColorScheme, schemeStore } from "@/theme/schemeStore";
 import { useTheme } from "@/theme/ThemeContext";
-import { THEMES } from "@/utils/constants";
+import { COUNTRY_CODES, LANGUAGES, THEMES } from "@/utils/constants";
 import { useCommonStyles } from "@/utils/useCommonStyles";
+import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import {
   Alert,
@@ -25,6 +27,8 @@ export default function SettingPage() {
     user,
     countryCode,
     languageCode,
+    saveCountryCode,
+    saveLanguageCode,
     clearUserLanguageAndCountry,
     saveUser,
   } = useUser();
@@ -34,12 +38,41 @@ export default function SettingPage() {
   const [usernameEditable, setUsernameEditable] = useState(false);
   const [username, setUsername] = useState(user?.username || "");
 
+  const [openCountryModal, setOpenCountryModal] = useState(false);
+  const [selCountry, setSelCountry] = useState<labelValuePair | undefined>(
+    undefined
+  );
+  const [openLanguageModal, setOpenLanguageModal] = useState(false);
+  const [selLanguage, setSelLanguage] = useState<labelValuePair | undefined>(
+    undefined
+  );
+
   useEffect(() => {
     (async () => {
       const stored = await schemeStore.get();
       setCurrentScheme(THEMES.find((t) => t.value == stored) || THEMES[0]);
     })();
   }, []);
+
+  useEffect(() => {
+    if (!countryCode) return;
+    setSelCountry(COUNTRY_CODES.find((v) => v.value === countryCode));
+  }, [countryCode]);
+
+  useEffect(() => {
+    if (!languageCode) return;
+    setSelLanguage(LANGUAGES.find((v) => v.value === languageCode));
+  }, [languageCode]);
+
+  useEffect(() => {
+    setOpenCountryModal(false);
+    saveCountryCode(selCountry?.value || "");
+  }, [selCountry, saveCountryCode]);
+
+  useEffect(() => {
+    setOpenLanguageModal(false);
+    saveLanguageCode?.(selLanguage?.value || "");
+  }, [selLanguage, saveLanguageCode]);
 
   const changeTheme = (newTheme: ColorScheme) => {
     schemeStore.set(newTheme);
@@ -64,7 +97,7 @@ export default function SettingPage() {
               alignSelf: "center",
             }}
           />
-          <SettingCard title="Username">
+          <SettingCard title="Username" icon="person">
             <TouchableOpacity
               onPress={() => setUsernameEditable(!usernameEditable)}
               activeOpacity={0.8}
@@ -90,22 +123,38 @@ export default function SettingPage() {
               )}
             </TouchableOpacity>
           </SettingCard>
-          <SettingCard title="Theme">
+          <SettingCard title="Theme" icon="color-palette">
             <Toggle
               options={THEMES}
               initSel={currentScheme}
               onChange={(value) => changeTheme(value.value as ColorScheme)}
             />
           </SettingCard>
-          <SettingCard title="Country">
-            <ThemedText>{countryCode || "Unselected"}</ThemedText>
+          <SettingCard title="Country" icon="globe">
+            <TouchableOpacity
+              onPress={() => setOpenCountryModal(true)}
+              activeOpacity={0.8}
+            >
+              <ThemedText>
+                {countryCode ||
+                  (user?.countryCode ? user.countryCode : "Unselected")}
+              </ThemedText>
+            </TouchableOpacity>
           </SettingCard>
-          <SettingCard title="Language">
-            <ThemedText>{languageCode || "Unselected"}</ThemedText>
+          <SettingCard title="Language" icon="language">
+            <TouchableOpacity
+              onPress={() => setOpenLanguageModal(true)}
+              activeOpacity={0.8}
+            >
+              <ThemedText>
+                {languageCode ||
+                  (user?.languageCode ? user.languageCode : "Unselected")}
+              </ThemedText>
+            </TouchableOpacity>
           </SettingCard>
           <CustomButton
             title="Clear Setting"
-            variant="primary"
+            variant="tertiary"
             large
             onPress={() => {
               Alert.alert("Clear Settings", "Are you sure to clear settings?", [
@@ -115,21 +164,50 @@ export default function SettingPage() {
                 },
                 {
                   text: "OK",
-                  onPress: async () => await clearUserLanguageAndCountry(),
+                  onPress: async () => {
+                    await clearUserLanguageAndCountry();
+                    schemeStore.clear();
+                    setCurrentScheme(THEMES[0]);
+                    changeTheme(THEMES[0]);
+                  },
                 },
               ]);
             }}
           />
         </ThemedView>
       </TouchableWithoutFeedback>
+
+      <FilteredSelectionModal
+        open={openCountryModal}
+        setOpen={setOpenCountryModal}
+        title="Select Country"
+        placeholder="Search Country"
+        allOptions={COUNTRY_CODES}
+        selectedValue={selCountry}
+        onSelect={setSelCountry}
+        defaultOption={COUNTRY_CODES[0]}
+      />
+
+      <FilteredSelectionModal
+        open={openLanguageModal}
+        setOpen={setOpenLanguageModal}
+        title="Select Language"
+        placeholder="Search Language"
+        allOptions={LANGUAGES}
+        selectedValue={selLanguage}
+        onSelect={setSelLanguage}
+        defaultOption={LANGUAGES[0]}
+      />
     </ThemedView>
   );
 }
 
 const SettingCard = ({
+  icon,
   title,
   children,
 }: {
+  icon?: string;
   title: string;
   children?: React.ReactNode;
 }) => {
@@ -154,9 +232,22 @@ const SettingCard = ({
           gap: 8,
         }}
       >
-        <ThemedText type={TextType.M} bold style={{ marginBottom: 4 }}>
-          {title}
-        </ThemedText>
+        <ThemedView
+          style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
+        >
+          <Ionicons
+            name={icon || "settings-outline"}
+            size={20}
+            color={theme.onSecondaryContainer}
+          />
+          <ThemedText
+            type={TextType.M}
+            bold
+            style={{ color: theme.onSecondaryContainer }}
+          >
+            {title}
+          </ThemedText>
+        </ThemedView>
         {children && <>{children}</>}
       </ThemedView>
     </ThemedView>

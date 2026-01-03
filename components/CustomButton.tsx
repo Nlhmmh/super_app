@@ -12,7 +12,7 @@ import { TextType, ThemedText } from "./ThemedText";
 type Props = {
   title: string;
   onPress: (event: GestureResponderEvent) => void;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "tertiary";
   large?: boolean;
   textType?: TextType;
   loading?: boolean;
@@ -57,6 +57,11 @@ const CustomButton = React.forwardRef<TouchableOpacity, Props>(
         paddingHorizontal: 16,
         paddingVertical: large ? 16 : 8,
       },
+      tertiaryContainer: {
+        backgroundColor: theme.tertiaryContainer,
+        paddingHorizontal: 16,
+        paddingVertical: large ? 16 : 8,
+      },
       disabledContainer: {
         opacity: 0.5,
       },
@@ -65,6 +70,10 @@ const CustomButton = React.forwardRef<TouchableOpacity, Props>(
         fontWeight: "700",
       },
       secondaryText: {
+        color: theme.onSecondaryContainer,
+        fontWeight: "700",
+      },
+      tertiaryText: {
         color: theme.onSecondaryContainer,
         fontWeight: "700",
       },
@@ -77,6 +86,7 @@ const CustomButton = React.forwardRef<TouchableOpacity, Props>(
           styles.container,
           variant === "primary" ? styles.primaryContainer : undefined,
           variant === "secondary" ? styles.secondaryContainer : undefined,
+          variant === "tertiary" ? styles.tertiaryContainer : undefined,
           disabled && styles.disabledContainer,
           stretch && { width: "100%" },
           !stretch && width && { width },
@@ -116,6 +126,8 @@ const CustomButton = React.forwardRef<TouchableOpacity, Props>(
             style={[
               variant === "secondary"
                 ? styles.secondaryText
+                : variant === "tertiary"
+                ? styles.tertiaryText
                 : styles.primaryText,
             ]}
           >

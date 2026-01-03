@@ -29,6 +29,14 @@ export const schemeStore = {
     }
     return null;
   },
+  clear: async () => {
+    try {
+      await SecureStore.deleteItemAsync(SECURE_COLOR_SCHEME_KEY);
+    } catch (error) {
+      console.warn("Failed to clear color scheme", error);
+    }
+    listeners.forEach((cb) => cb(ThemeSchemes.LIGHT));
+  },
   subscribe: (cb: (scheme: ColorScheme) => void) => {
     listeners.add(cb);
     return () => listeners.delete(cb);
