@@ -1,5 +1,6 @@
 import { useTheme } from "@/theme/ThemeContext";
 import { labelValuePair } from "@/utils/models";
+import { useCommonStyles } from "@/utils/useCommonStyles";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -22,6 +23,7 @@ const Toggle = ({
   onChange?: (value: labelValuePair) => void;
 }) => {
   const theme = useTheme();
+  const commonStyles = useCommonStyles();
   const [sel, setSel] = useState<labelValuePair>(initSel);
   const [componentWidth, setComponentWidth] = useState(0);
 
@@ -78,7 +80,8 @@ const Toggle = ({
       padding: containerPadding,
       width: 120,
       height: 40,
-      overflow: "hidden",
+      // overflow: "hidden",
+      ...commonStyles.shadow,
     } as ViewStyle,
     optionWrapper: {
       flex: 1,
@@ -94,6 +97,7 @@ const Toggle = ({
       top: containerPadding,
       bottom: containerPadding,
       left: containerPadding,
+      ...commonStyles.lightShadow,
     } as ViewStyle,
     baseText: {
       fontSize: 14,

@@ -81,6 +81,7 @@ export default function SettingPage() {
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
       <BackBtnWithTitle title="Settings" showBack={false} />
+
       <TouchableWithoutFeedback
         onPress={() => {
           setUsernameEditable(false);
@@ -97,10 +98,12 @@ export default function SettingPage() {
               alignSelf: "center",
             }}
           />
+
           <SettingCard title="Username" icon="person">
             <TouchableOpacity
               onPress={() => setUsernameEditable(!usernameEditable)}
               activeOpacity={0.8}
+              style={{ ...commonStyles.lightShadow }}
             >
               {!usernameEditable && (
                 <ThemedText>{user?.username || "Guest"}</ThemedText>
@@ -123,6 +126,7 @@ export default function SettingPage() {
               )}
             </TouchableOpacity>
           </SettingCard>
+
           <SettingCard title="Theme" icon="color-palette">
             <Toggle
               options={THEMES}
@@ -130,10 +134,12 @@ export default function SettingPage() {
               onChange={(value) => changeTheme(value.value as ColorScheme)}
             />
           </SettingCard>
+
           <SettingCard title="Country" icon="globe">
             <TouchableOpacity
               onPress={() => setOpenCountryModal(true)}
               activeOpacity={0.8}
+              style={{ ...commonStyles.lightShadow }}
             >
               <ThemedText>
                 {countryCode ||
@@ -141,10 +147,12 @@ export default function SettingPage() {
               </ThemedText>
             </TouchableOpacity>
           </SettingCard>
+
           <SettingCard title="Language" icon="language">
             <TouchableOpacity
               onPress={() => setOpenLanguageModal(true)}
               activeOpacity={0.8}
+              style={{ ...commonStyles.lightShadow }}
             >
               <ThemedText>
                 {languageCode ||
@@ -152,6 +160,7 @@ export default function SettingPage() {
               </ThemedText>
             </TouchableOpacity>
           </SettingCard>
+
           <CustomButton
             title="Clear Setting"
             variant="tertiary"
