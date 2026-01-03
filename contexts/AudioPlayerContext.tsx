@@ -56,10 +56,11 @@ export function AudioPlayerProvider({
           title: track.title || "Audio",
           artist: track.artist || "Super App",
           albumTitle: "Radio",
+          artworkUrl: track.artwork || undefined,
         },
         {
-          showSeekBackward: true,
-          showSeekForward: true,
+          showSeekBackward: false,
+          showSeekForward: false,
         }
       );
     }
