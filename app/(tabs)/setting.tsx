@@ -1,5 +1,6 @@
 import AssetImage from "@/components/AssetImage";
 import BackBtnWithTitle from "@/components/BackBtnWithTitle";
+import CustomButton from "@/components/CustomButton";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Toggle from "@/components/Toggle";
@@ -9,11 +10,13 @@ import { useTheme } from "@/theme/ThemeContext";
 import { THEMES } from "@/utils/constants";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { useEffect, useState } from "react";
+import { Alert } from "react-native";
 
 export default function SettingPage() {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
-  const { user, countryCode, languageCode } = useUser();
+  const { user, countryCode, languageCode, clearUserLanguageAndCountry } =
+    useUser();
   const [currentScheme, setCurrentScheme] = useState<ColorScheme | null>(
     THEMES[0]
   );
@@ -59,6 +62,23 @@ export default function SettingPage() {
         <SettingCard title="Language">
           <ThemedText>{languageCode || "Unselected"}</ThemedText>
         </SettingCard>
+        <CustomButton
+          title="Clear Setting"
+          variant="primary"
+          large
+          onPress={() => {
+            Alert.alert("Clear Settings", "Are you sure to clear settings?", [
+              {
+                text: "Cancel",
+                style: "cancel",
+              },
+              {
+                text: "OK",
+                onPress: async () => await clearUserLanguageAndCountry(),
+              },
+            ]);
+          }}
+        />
       </ThemedView>
     </ThemedView>
   );

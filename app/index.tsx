@@ -6,7 +6,7 @@ import { router } from "expo-router";
 import { useEffect } from "react";
 import { Dimensions } from "react-native";
 
-export default function StartPage() {
+export default function IndexPage() {
   const theme = useTheme();
   const { width, height } = Dimensions.get("window");
   const { isReady } = useUser();
@@ -14,7 +14,7 @@ export default function StartPage() {
   useEffect(() => {
     if (!isReady) return;
     const timeout = setTimeout(() => {
-      router.replace("/home");
+      router.replace("/start");
     }, 300);
     return () => clearTimeout(timeout);
   }, [isReady]);

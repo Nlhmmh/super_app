@@ -53,7 +53,7 @@ export default function HomePage() {
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
       <BackBtnWithTitle
-        title={`Welcome ${user?.name || "Guest"}!`}
+        title={`Welcome ${user?.username || "Guest"}!`}
         showBack={false}
       />
 

@@ -134,9 +134,13 @@ export function ThemedText({
         bold ? styles.bold : undefined,
         subBold ? styles.subBold : undefined,
         style,
-        {
-          color: theme.onBackground,
-        },
+        type !== TextType.ERROR
+          ? {
+              color: theme.onBackground,
+            }
+          : {
+              color: styles.error.color,
+            },
       ]}
       numberOfLines={oneLineMode ? 1 : undefined}
       ellipsizeMode={oneLineMode ? "tail" : undefined}

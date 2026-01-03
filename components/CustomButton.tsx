@@ -1,6 +1,6 @@
 import { useTheme } from "@/theme/ThemeContext";
 import { useCommonStyles } from "@/utils/useCommonStyles";
-import React from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   GestureResponderEvent,
@@ -39,6 +39,7 @@ const CustomButton = React.forwardRef<TouchableOpacity, Props>(
   ) {
     const theme = useTheme();
     const commonStyle = useCommonStyles();
+    const [pressed, setPressed] = useState(false);
 
     const styles = StyleSheet.create({
       container: {
@@ -47,12 +48,12 @@ const CustomButton = React.forwardRef<TouchableOpacity, Props>(
         justifyContent: "center",
       },
       primaryContainer: {
-        backgroundColor: theme.onPrimaryContainer,
+        backgroundColor: theme.primaryContainer,
         paddingHorizontal: 16,
         paddingVertical: large ? 16 : 8,
       },
       secondaryContainer: {
-        backgroundColor: theme.onSecondaryContainer,
+        backgroundColor: theme.secondaryContainer,
         paddingHorizontal: 16,
         paddingVertical: large ? 16 : 8,
       },
@@ -60,11 +61,11 @@ const CustomButton = React.forwardRef<TouchableOpacity, Props>(
         opacity: 0.5,
       },
       primaryText: {
-        color: theme.onPrimary,
+        color: theme.onPrimaryContainer,
         fontWeight: "700",
       },
       secondaryText: {
-        color: theme.onSecondary,
+        color: theme.onSecondaryContainer,
         fontWeight: "700",
       },
     });
@@ -79,10 +80,12 @@ const CustomButton = React.forwardRef<TouchableOpacity, Props>(
           disabled && styles.disabledContainer,
           stretch && { width: "100%" },
           !stretch && width && { width },
-          commonStyle.shadow,
+          !pressed && commonStyle.shadow,
         ]}
         activeOpacity={0.8}
         onPress={onPress}
+        onPressIn={() => setPressed(true)}
+        onPressOut={() => setPressed(false)}
         disabled={disabled}
         accessibilityRole="button"
         focusable

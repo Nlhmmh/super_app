@@ -37,6 +37,7 @@ type UserContextValue = {
   clearUser: () => Promise<void>;
   saveCountryCode?: (code: string) => Promise<void>;
   saveLanguageCode?: (code: string) => Promise<void>;
+  clearUserLanguageAndCountry: () => Promise<void>;
   saveFavouriteRadioStations: (stations: station[]) => Promise<void>;
   toggleFavouriteRadioStation: (station: station) => Promise<void>;
   isFavouriteRadioStation: (station: station) => boolean;
@@ -188,6 +189,24 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const clearUserLanguageAndCountry = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await SecureStore.deleteItemAsync(SECURE_USER_KEY);
+      await AsyncStorage.removeItem(SECURE_LANGUAGE_CODE_KEY);
+      await AsyncStorage.removeItem(SECURE_COUNTRY_CODE_KEY);
+      setUser(null);
+      setLanguageCode(null);
+      setCountryCode(null);
+    } catch (err) {
+      console.error("Failed to clear user, language, and country", err);
+      setError("Failed to clear user, language, and country");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   // Favourite Radio Stations
 
   useEffect(() => {
@@ -280,6 +299,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     saveUser,
     saveCountryCode,
     saveLanguageCode,
+    clearUserLanguageAndCountry,
     saveFavouriteRadioStations,
     isFavouriteRadioStation,
     toggleFavouriteRadioStation,
