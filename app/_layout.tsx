@@ -1,5 +1,8 @@
 import Pad from "@/components/Pad";
 import { AudioPlayerProvider } from "@/contexts/AudioPlayerContext";
+import { CountryCodeProvider } from "@/contexts/CountryCodeContext";
+import { FavouriteStationsProvider } from "@/contexts/FavouriteStationsContext";
+import { LanguageCodeProvider } from "@/contexts/LanguageCodeContext";
 import { UserProvider } from "@/contexts/UserContext";
 import { schemeStore } from "@/theme/schemeStore";
 import { DarkTheme, LightTheme } from "@/theme/theme";
@@ -63,16 +66,22 @@ export default function StackLayout() {
     <SafeAreaProvider>
       <ThemeProvider currentTheme={theme}>
         <UserProvider>
-          <AudioPlayerProvider>
-            <SafeAreaView
-              edges={["top", "bottom"]}
-              style={{ flex: 1, backgroundColor: theme.background }}
-            >
-              <StatusBar />
-              <Pad height={5} />
-              <Stack screenOptions={{ headerShown: false }} />
-            </SafeAreaView>
-          </AudioPlayerProvider>
+          <CountryCodeProvider>
+            <LanguageCodeProvider>
+              <FavouriteStationsProvider>
+                <AudioPlayerProvider>
+                  <SafeAreaView
+                    edges={["top", "bottom"]}
+                    style={{ flex: 1, backgroundColor: theme.background }}
+                  >
+                    <StatusBar />
+                    <Pad height={5} />
+                    <Stack screenOptions={{ headerShown: false }} />
+                  </SafeAreaView>
+                </AudioPlayerProvider>
+              </FavouriteStationsProvider>
+            </LanguageCodeProvider>
+          </CountryCodeProvider>
         </UserProvider>
       </ThemeProvider>
     </SafeAreaProvider>

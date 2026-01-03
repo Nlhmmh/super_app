@@ -90,7 +90,7 @@ const CustomButton = React.forwardRef<TouchableOpacity, Props>(
           disabled && styles.disabledContainer,
           stretch && { width: "100%" },
           !stretch && width && { width },
-          !pressed && commonStyle.shadow,
+          !pressed && commonStyle.lightShadow,
         ]}
         activeOpacity={0.8}
         onPress={onPress}

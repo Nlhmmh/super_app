@@ -3,15 +3,16 @@ import CustomScrollView from "@/components/CustomScrollView";
 import NoData from "@/components/NoData";
 import StationCard from "@/components/radio/StationCard";
 import { ThemedView } from "@/components/ThemedView";
-import { useUser } from "@/contexts/UserContext";
+import { useFavouriteStations } from "@/contexts/FavouriteStationsContext";
+import { useTheme } from "@/theme/ThemeContext";
+import { station } from "@/utils/models";
 import { useCommonStyles } from "@/utils/useCommonStyles";
-import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
 
 const RadioFavouritesPage = () => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
-  const { favouriteRadioStations } = useUser();
+  const { favouriteRadioStations } = useFavouriteStations();
 
   const onPressStation = (station: station) => {
     router.push(`/radio/${station.stationuuid}`);

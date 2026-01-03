@@ -1,14 +1,18 @@
 import AssetImage from "@/components/AssetImage";
 import BackBtnWithTitle from "@/components/BackBtnWithTitle";
 import CustomButton from "@/components/CustomButton";
+import CustomScrollView from "@/components/CustomScrollView";
 import FilteredSelectionModal from "@/components/FilteredSelectionModal";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Toggle from "@/components/Toggle";
+import { useCountryCode } from "@/contexts/CountryCodeContext";
+import { useLanguageCode } from "@/contexts/LanguageCodeContext";
 import { useUser } from "@/contexts/UserContext";
 import { ColorScheme, schemeStore } from "@/theme/schemeStore";
 import { useTheme } from "@/theme/ThemeContext";
 import { COUNTRY_CODES, LANGUAGES, THEMES } from "@/utils/constants";
+import { labelValuePair } from "@/utils/models";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
@@ -23,21 +27,15 @@ import {
 export default function SettingPage() {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
-  const {
-    user,
-    countryCode,
-    languageCode,
-    saveCountryCode,
-    saveLanguageCode,
-    clearUserLanguageAndCountry,
-    saveUser,
-  } = useUser();
+  const { user, saveUser, clearUser } = useUser();
+  const { countryCode, saveCountryCode, clearCountryCode } = useCountryCode();
+  const { languageCode, saveLanguageCode, clearLanguageCode } =
+    useLanguageCode();
   const [currentScheme, setCurrentScheme] = useState<ColorScheme | null>(
     THEMES[0]
   );
   const [usernameEditable, setUsernameEditable] = useState(false);
   const [username, setUsername] = useState(user?.username || "");
-
   const [openCountryModal, setOpenCountryModal] = useState(false);
   const [selCountry, setSelCountry] = useState<labelValuePair | undefined>(
     undefined
@@ -78,6 +76,26 @@ export default function SettingPage() {
     schemeStore.set(newTheme);
   };
 
+  const onClearSettings = () => {
+    Alert.alert("Clear Settings", "Are you sure to clear settings?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: async () => {
+          await clearUser();
+          await clearCountryCode();
+          await clearLanguageCode();
+          schemeStore.clear();
+          setCurrentScheme(THEMES[0]);
+          changeTheme(THEMES[0]);
+        },
+      },
+    ]);
+  };
+
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
       <BackBtnWithTitle title="Settings" showBack={false} />
@@ -88,7 +106,7 @@ export default function SettingPage() {
           Keyboard.dismiss();
         }}
       >
-        <ThemedView style={{ padding: 12, gap: 12 }}>
+        <CustomScrollView contentContainerStyle={{ padding: 12, gap: 12 }}>
           <AssetImage
             path="icon.png"
             style={{
@@ -165,25 +183,9 @@ export default function SettingPage() {
             title="Clear Setting"
             variant="tertiary"
             large
-            onPress={() => {
-              Alert.alert("Clear Settings", "Are you sure to clear settings?", [
-                {
-                  text: "Cancel",
-                  style: "cancel",
-                },
-                {
-                  text: "OK",
-                  onPress: async () => {
-                    await clearUserLanguageAndCountry();
-                    schemeStore.clear();
-                    setCurrentScheme(THEMES[0]);
-                    changeTheme(THEMES[0]);
-                  },
-                },
-              ]);
-            }}
+            onPress={onClearSettings}
           />
-        </ThemedView>
+        </CustomScrollView>
       </TouchableWithoutFeedback>
 
       <FilteredSelectionModal

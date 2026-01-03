@@ -77,7 +77,7 @@ const CustomModal = ({
                   borderRadius: 24,
                   width: "100%",
                   height: "90%",
-                  marginBottom: 12,
+                  marginBottom: 24,
                 }),
             ...commonStyles.shadow,
           }}

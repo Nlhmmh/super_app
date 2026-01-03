@@ -71,7 +71,7 @@ const FilteredSelectionModal = ({
             borderRadius: 12,
             padding: 12,
             gap: 8,
-            height: "100%",
+            flex: 1,
           }}
         >
           <SearchBar

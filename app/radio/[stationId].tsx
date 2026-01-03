@@ -9,7 +9,7 @@ import PriorityImage from "@/components/PriorityImage";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
-import { useUser } from "@/contexts/UserContext";
+import { useFavouriteStations } from "@/contexts/FavouriteStationsContext";
 import { useTheme } from "@/theme/ThemeContext";
 import { get, safeAPICall } from "@/utils/api";
 import { station } from "@/utils/models";
@@ -35,7 +35,7 @@ const RadioStationDetailPage = () => {
     duration,
     seek,
   } = useAudioPlayer();
-  const { isFavouriteRadioStation, toggleFavouriteRadioStation } = useUser();
+  const { isFavouriteRadioStation, toggleFavouriteRadioStation } = useFavouriteStations();
 
   const [station, setStation] = useState<station | null>(null);
   const [loading, setLoading] = useState(true);

@@ -9,7 +9,8 @@ import SearchBar from "@/components/SearchBar";
 import SelectBox from "@/components/SelectBox";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useUser } from "@/contexts/UserContext";
+import { useCountryCode } from "@/contexts/CountryCodeContext";
+import { useLanguageCode } from "@/contexts/LanguageCodeContext";
 import { useTheme } from "@/theme/ThemeContext";
 import { get, safeAPICall } from "@/utils/api";
 import { COUNTRY_CODES, LANGUAGES } from "@/utils/constants";
@@ -21,8 +22,8 @@ import { useCallback, useEffect, useState } from "react";
 const RadioPage = () => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
-  const { countryCode, saveCountryCode, languageCode, saveLanguageCode } =
-    useUser();
+  const { countryCode, saveCountryCode } = useCountryCode();
+  const { languageCode, saveLanguageCode } = useLanguageCode();
   const [searchTerm, setSearchTerm] = useState("");
   const [stations, setStations] = useState<station[]>([]);
   const [currentStation, setCurrentStation] = useState<station | undefined>(

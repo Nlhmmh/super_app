@@ -59,14 +59,12 @@ export default function InputField({
   return (
     <ThemedView
       style={{
-        width: "100%",
-        alignSelf: "center",
         alignItems: alignCenter ? "center" : "flex-start",
       }}
     >
       {!hideLabel && (
         <>
-          <ThemedText bold style={{ color: theme.onSecondaryContainer }}>
+          <ThemedText bold style={{ color: theme.onBackground }}>
             {label}
           </ThemedText>
           <Pad height={8} />
@@ -80,20 +78,19 @@ export default function InputField({
           alignItems: "center",
           gap: 8,
           borderBottomWidth: 1,
-          borderColor: errorMsg !== "" ? theme.error : theme.outline,
+          borderColor: errorMsg !== "" ? theme.error : theme.onBackground,
         }}
       >
         {icon && (
-          <Ionicons
-            name={icon as any}
-            size={20}
-            color={theme.onSecondaryContainer}
-          />
+          <Ionicons name={icon as any} size={20} color={theme.onBackground} />
         )}
         <TextInput
-          style={{ color: theme.onSecondaryContainer, flex: 1 }}
+          style={{
+            color: theme.onBackground,
+            textAlign: alignCenter ? "center" : "left",
+          }}
           placeholder={placeholder}
-          placeholderTextColor={theme.onSecondaryContainer + "99"}
+          placeholderTextColor={theme.onBackground + "99"}
           value={value}
           onChangeText={onChangeText}
           keyboardType={keyboardType}
@@ -106,14 +103,13 @@ export default function InputField({
           textContentType={textContentType as any}
           autoComplete={autoComplete as any}
           secureTextEntry={secureTextEntry}
-          style={{ textAlign: alignCenter ? "center" : "left" }}
         />
         {onTogglePassword && (
           <Pressable onPress={onTogglePassword}>
             <Ionicons
               name={showPassword ? "eye" : "eye-off"}
               size={20}
-              color={theme.onSecondaryContainer}
+              color={theme.onBackground}
             />
           </Pressable>
         )}
