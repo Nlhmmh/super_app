@@ -10,7 +10,13 @@ import { useTheme } from "@/theme/ThemeContext";
 import { THEMES } from "@/utils/constants";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { useEffect, useState } from "react";
-import { Alert, TextInput, TouchableOpacity } from "react-native";
+import {
+  Alert,
+  Keyboard,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from "react-native";
 
 export default function SettingPage() {
   const theme = useTheme();
@@ -42,73 +48,80 @@ export default function SettingPage() {
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
       <BackBtnWithTitle title="Settings" showBack={false} />
-
-      <ThemedView style={{ padding: 12, gap: 12 }}>
-        <AssetImage
-          path="icon.png"
-          style={{
-            width: "100%",
-            height: 160,
-            borderRadius: 12,
-            alignSelf: "center",
-          }}
-        />
-        <SettingCard title="Username">
-          <TouchableOpacity
-            onPress={() => setUsernameEditable(!usernameEditable)}
-            activeOpacity={0.8}
-          >
-            {!usernameEditable && (
-              <ThemedText>{user?.username || "Guest"}</ThemedText>
-            )}
-            {usernameEditable && (
-              <TextInput
-                value={username}
-                onChangeText={setUsername}
-                onSubmitEditing={() => {
-                  saveUser({ ...user, username });
-                  setUsernameEditable(false);
-                }}
-                style={{
-                  color: theme.onSecondaryContainer,
-                  borderBottomWidth: 1,
-                  borderColor: theme.outline,
-                }}
-              />
-            )}
-          </TouchableOpacity>
-        </SettingCard>
-        <SettingCard title="Theme">
-          <Toggle
-            options={THEMES}
-            initSel={currentScheme}
-            onChange={(value) => changeTheme(value.value as ColorScheme)}
+      <TouchableWithoutFeedback
+        onPress={() => {
+          setUsernameEditable(false);
+          Keyboard.dismiss();
+        }}
+      >
+        <ThemedView style={{ padding: 12, gap: 12 }}>
+          <AssetImage
+            path="icon.png"
+            style={{
+              width: "100%",
+              height: 160,
+              borderRadius: 12,
+              alignSelf: "center",
+            }}
           />
-        </SettingCard>
-        <SettingCard title="Country">
-          <ThemedText>{countryCode || "Unselected"}</ThemedText>
-        </SettingCard>
-        <SettingCard title="Language">
-          <ThemedText>{languageCode || "Unselected"}</ThemedText>
-        </SettingCard>
-        <CustomButton
-          title="Clear Setting"
-          variant="primary"
-          large
-          onPress={() => {
-            Alert.alert("Clear Settings", "Are you sure to clear settings?", [
-              {
-                text: "Cancel",
-                style: "cancel",
-              },
-              {
-                text: "OK",
-                onPress: async () => await clearUserLanguageAndCountry(),
-              },
-            ]);
-          }}
-        />
-      </ThemedView>
+          <SettingCard title="Username">
+            <TouchableOpacity
+              onPress={() => setUsernameEditable(!usernameEditable)}
+              activeOpacity={0.8}
+            >
+              {!usernameEditable && (
+                <ThemedText>{user?.username || "Guest"}</ThemedText>
+              )}
+              {usernameEditable && (
+                <TextInput
+                  autoFocus
+                  value={username}
+                  onChangeText={setUsername}
+                  onSubmitEditing={() => {
+                    saveUser({ ...user, username });
+                    setUsernameEditable(false);
+                  }}
+                  style={{
+                    color: theme.onSecondaryContainer,
+                    borderBottomWidth: 1,
+                    borderColor: theme.outline,
+                  }}
+                />
+              )}
+            </TouchableOpacity>
+          </SettingCard>
+          <SettingCard title="Theme">
+            <Toggle
+              options={THEMES}
+              initSel={currentScheme}
+              onChange={(value) => changeTheme(value.value as ColorScheme)}
+            />
+          </SettingCard>
+          <SettingCard title="Country">
+            <ThemedText>{countryCode || "Unselected"}</ThemedText>
+          </SettingCard>
+          <SettingCard title="Language">
+            <ThemedText>{languageCode || "Unselected"}</ThemedText>
+          </SettingCard>
+          <CustomButton
+            title="Clear Setting"
+            variant="primary"
+            large
+            onPress={() => {
+              Alert.alert("Clear Settings", "Are you sure to clear settings?", [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "OK",
+                  onPress: async () => await clearUserLanguageAndCountry(),
+                },
+              ]);
+            }}
+          />
+        </ThemedView>
+      </TouchableWithoutFeedback>
     </ThemedView>
   );
 }

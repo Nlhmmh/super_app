@@ -9,7 +9,14 @@ import { useTheme } from "@/theme/ThemeContext";
 import { validateField } from "@/utils/validation";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Dimensions, TextInput } from "react-native";
+import {
+  Dimensions,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  TextInput,
+  TouchableWithoutFeedback,
+} from "react-native";
 
 export default function StartPage() {
   const theme = useTheme();
@@ -47,46 +54,61 @@ export default function StartPage() {
   };
 
   return (
-    <ThemedView
-      useTheme
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 12,
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
       }}
     >
-      <ThemedText bold type={TextType.XXL}>
-        Welcome to Super App
-      </ThemedText>
-      <Pad height={16} />
-      <AssetImage
-        style={{
-          width: 200,
-          aspectRatio: 1,
-          borderRadius: 24,
-        }}
-        path="icon.png"
-      />
-      <Pad height={16} />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ThemedView
+          useTheme
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 12,
+          }}
+        >
+          <ThemedText bold type={TextType.XXL}>
+            Welcome to Super App
+          </ThemedText>
+          <Pad height={16} />
+          <AssetImage
+            style={{
+              width: 200,
+              aspectRatio: 1,
+              borderRadius: 24,
+            }}
+            path="icon.png"
+          />
+          <Pad height={16} />
 
-      <ThemedView style={{ width: "100%", alignSelf: "center" }}>
-        <InputField
-          hideLabel
-          placeholder={"Hello Guest! Please enter your name..."}
-          value={name}
-          onChangeText={handleNameChange}
-          errorMsg={nameErrMsg}
-          inputRef={nameRef}
-          returnKeyType="next"
-          onSubmitEditing={() => onContinue()}
-          alignCenter
-        />
-        <Pad height={16} />
-        <ThemedView style={{ width: "80%", alignSelf: "center" }}>
-          <CustomButton title="Continue" onPress={onContinue} ref={btnRef} />
+          <ThemedView style={{ width: "100%", alignSelf: "center" }}>
+            <InputField
+              hideLabel
+              placeholder={"Hello Guest! Please enter your name..."}
+              value={name}
+              onChangeText={handleNameChange}
+              errorMsg={nameErrMsg}
+              inputRef={nameRef}
+              returnKeyType="next"
+              onSubmitEditing={() => onContinue()}
+              alignCenter
+            />
+            <Pad height={16} />
+            <ThemedView style={{ width: "80%", alignSelf: "center" }}>
+              <CustomButton
+                title="Continue"
+                onPress={onContinue}
+                ref={btnRef}
+              />
+            </ThemedView>
+          </ThemedView>
         </ThemedView>
-      </ThemedView>
-    </ThemedView>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
