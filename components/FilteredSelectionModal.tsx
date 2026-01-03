@@ -30,7 +30,8 @@ const FilteredSelectionModal = ({
 }: FilteredSelectionModalProps) => {
   const theme = useTheme();
   const [searchText, setSearchText] = useState("");
-  const [filteredOptions, setFilteredOptions] = useState<labelValuePair[]>(allOptions);
+  const [filteredOptions, setFilteredOptions] =
+    useState<labelValuePair[]>(allOptions);
 
   useEffect(() => {
     if (searchText.trim() === "") {
@@ -70,6 +71,7 @@ const FilteredSelectionModal = ({
             borderRadius: 12,
             padding: 12,
             gap: 8,
+            height: "100%",
           }}
         >
           <SearchBar
@@ -77,7 +79,7 @@ const FilteredSelectionModal = ({
             setSearchText={setSearchText}
             placeholder={placeholder}
           />
-          <CustomScrollView childGrow>
+          <CustomScrollView>
             <SelectBox
               options={filteredOptions}
               sel={selectedValue}

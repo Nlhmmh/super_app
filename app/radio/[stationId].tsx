@@ -1,5 +1,6 @@
 import AssetImage from "@/components/AssetImage";
 import BackBtnWithTitle from "@/components/BackBtnWithTitle";
+import CustomModal from "@/components/CustomModal";
 import CustomScrollView from "@/components/CustomScrollView";
 import IconButton from "@/components/IconButton";
 import Loading from "@/components/Loading";
@@ -14,6 +15,7 @@ import { get, safeAPICall } from "@/utils/api";
 import { station } from "@/utils/models";
 import { askNotificationPermission } from "@/utils/permission";
 import { useCommonStyles } from "@/utils/useCommonStyles";
+import { formatMillisecondsToTime } from "@/utils/utils";
 import Slider from "@react-native-community/slider";
 import { useKeepAwake } from "expo-keep-awake";
 import { useLocalSearchParams } from "expo-router";
@@ -22,6 +24,7 @@ import { useCallback, useEffect, useState } from "react";
 const RadioStationDetailPage = () => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
+  const { stationId } = useLocalSearchParams();
   const {
     play,
     pause,
@@ -34,12 +37,12 @@ const RadioStationDetailPage = () => {
   } = useAudioPlayer();
   const { isFavouriteRadioStation, toggleFavouriteRadioStation } = useUser();
 
-  const { stationId } = useLocalSearchParams();
   const [station, setStation] = useState<station | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showSeekBar, setShowSeekBar] = useState(false);
   const [isFavourite, setIsFavourite] = useState(false);
+  const [openDetailModal, setOpenDetailModal] = useState(false);
 
   useKeepAwake();
 
@@ -100,54 +103,8 @@ const RadioStationDetailPage = () => {
     }
   };
 
-  const formatTime = (milliseconds: number) => {
-    if (!milliseconds || milliseconds === 0) return "0:00";
-    const totalSeconds = Math.floor(milliseconds / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  };
-
-  const InfoCard = ({
-    title,
-    info,
-    link,
-    oneLineMode,
-    openLink,
-  }: {
-    title: string;
-    info: string;
-    link?: string;
-    oneLineMode?: boolean;
-    openLink?: boolean;
-  }) => {
-    return (
-      <ThemedView
-        style={{ flexDirection: "row", gap: 8, alignItems: "center" }}
-      >
-        <ThemedText
-          type={TextType.M}
-          bold
-          style={{ flex: 1, alignSelf: "flex-start" }}
-        >
-          {title}
-        </ThemedText>
-        <ThemedText
-          type={
-            link ? (openLink ? TextType.OPEN_LINK : TextType.LINK) : TextType.M
-          }
-          link={link || undefined}
-          style={{ flex: 2 }}
-          oneLineMode={oneLineMode}
-        >
-          {info}
-        </ThemedText>
-      </ThemedView>
-    );
-  };
-
   const imageStyle = {
-    width: "50%",
+    width: "100%",
     aspectRatio: 1,
     borderRadius: 12,
   };
@@ -167,57 +124,22 @@ const RadioStationDetailPage = () => {
         {loading && <Loading size="large" />}
         {!loading && station && (
           <>
-            {station.favicon && station.favicon !== "" ? (
-              <>
+            <ThemedView style={{ ...commonStyles.shadow }}>
+              {station.favicon && station.favicon !== "" ? (
                 <PriorityImage
                   source={{ uri: station.favicon }}
                   style={imageStyle}
                 />
-                <Pad height={8} />
-              </>
-            ) : (
-              <>
+              ) : (
                 <AssetImage path="icon_bright.png" style={imageStyle} />
-                <Pad height={8} />
-              </>
-            )}
-
-            <ThemedView
-              style={{
-                width: "100%",
-                borderWidth: 1,
-                borderColor: theme.outline,
-                padding: 12,
-                borderRadius: 8,
-                gap: 4,
-                backgroundColor: theme.secondaryContainer,
-                ...commonStyles.lightShadow,
-              }}
-            >
-              {station.homepage && (
-                <InfoCard
-                  title="Homepage:"
-                  info={station.homepage}
-                  link={station.homepage}
-                  openLink
-                  oneLineMode
-                />
               )}
-              {station.tags && <InfoCard title="Tags:" info={station.tags} />}
-              <InfoCard title="Country:" info={station.country} />
-              <InfoCard title="Language:" info={station.language} />
-              <InfoCard title="Codec:" info={station.codec} />
-              <InfoCard title="Bitrate:" info={`${station.bitrate} kbps`} />
-              <InfoCard title="Click Count:" info={`${station.clickcount}`} />
-              <InfoCard title="Votes:" info={`${station.votes}`} />
-              <ThemedText
-                type={TextType.LINK}
-                link={station.url_resolved || station.url}
-                style={{ marginBottom: 4 }}
-              >
-                copy radio stream url here!!
-              </ThemedText>
             </ThemedView>
+            <Pad height={8} />
+            <ThemedText>
+              {station.country} | {station.language}
+            </ThemedText>
+            <Pad height={8} />
+            <ThemedText type={TextType.SM}>{station.tags}</ThemedText>
           </>
         )}
         {error && <ThemedText type={TextType.ERROR}>{error}</ThemedText>}
@@ -254,9 +176,11 @@ const RadioStationDetailPage = () => {
             }}
           >
             <ThemedText type={TextType.SM}>
-              {formatTime(showSeekBar ? position : 0)}
+              {formatMillisecondsToTime(showSeekBar ? position : 0)}
             </ThemedText>
-            <ThemedText type={TextType.SM}>{formatTime(duration)}</ThemedText>
+            <ThemedText type={TextType.SM}>
+              {formatMillisecondsToTime(duration)}
+            </ThemedText>
           </ThemedView>
           <Slider
             minimumValue={0}
@@ -276,7 +200,16 @@ const RadioStationDetailPage = () => {
             alignItems: "center",
           }}
         >
-          <ThemedView style={{ flex: 1 }} />
+          <IconButton
+            onIcon="information-circle"
+            offIcon="information-circle"
+            size={36}
+            color={theme.onSecondary}
+            onPress={async () => {
+              setOpenDetailModal(true);
+            }}
+            style={{ flex: 1 }}
+          />
           <IconButton
             isOn={
               isPlaying &&
@@ -306,6 +239,87 @@ const RadioStationDetailPage = () => {
           />
         </ThemedView>
       </ThemedView>
+
+      <CustomModal
+        open={openDetailModal}
+        onClose={() => setOpenDetailModal(false)}
+        title={"Station Details"}
+        body={
+          <ThemedView
+            style={{
+              borderWidth: 1,
+              borderColor: theme.outline,
+              borderRadius: 12,
+              padding: 12,
+              gap: 4,
+              backgroundColor: theme.background,
+              ...commonStyles.shadow,
+            }}
+          >
+            <InfoCard title="Name:" info={station?.name} />
+            {station?.homepage && (
+              <InfoCard
+                title="Homepage:"
+                info={station?.homepage}
+                link={station?.homepage}
+                openLink
+                oneLineMode
+              />
+            )}
+            {station?.tags && <InfoCard title="Tags:" info={station?.tags} />}
+            <InfoCard title="Country:" info={station?.country} />
+            <InfoCard title="Language:" info={station?.language} />
+            <InfoCard title="Codec:" info={station?.codec} />
+            <InfoCard title="Bitrate:" info={`${station?.bitrate} kbps`} />
+            <InfoCard title="Click Count:" info={`${station?.clickcount}`} />
+            <InfoCard title="Votes:" info={`${station?.votes}`} />
+            <ThemedText
+              type={TextType.LINK}
+              link={station?.url_resolved || station?.url}
+              style={{ marginBottom: 4 }}
+            >
+              copy radio stream url here!!
+            </ThemedText>
+          </ThemedView>
+        }
+      />
+    </ThemedView>
+  );
+};
+
+const InfoCard = ({
+  title,
+  info,
+  link,
+  oneLineMode,
+  openLink,
+}: {
+  title: string;
+  info: string;
+  link?: string;
+  oneLineMode?: boolean;
+  openLink?: boolean;
+}) => {
+  const theme = useTheme();
+  return (
+    <ThemedView style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
+      <ThemedText
+        type={TextType.M}
+        bold
+        style={{ flex: 1, alignSelf: "flex-start" }}
+      >
+        {title}
+      </ThemedText>
+      <ThemedText
+        type={
+          link ? (openLink ? TextType.OPEN_LINK : TextType.LINK) : TextType.M
+        }
+        link={link || undefined}
+        style={{ flex: 2 }}
+        oneLineMode={oneLineMode}
+      >
+        {info}
+      </ThemedText>
     </ThemedView>
   );
 };

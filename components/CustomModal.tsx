@@ -41,7 +41,6 @@ const CustomModal = ({
   const atBottomStyle = {
     position: "absolute",
     bottom: 0,
-    overflow: "hidden",
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     width: "100%",
@@ -71,6 +70,7 @@ const CustomModal = ({
             backgroundColor: theme.background,
             padding: 16,
             alignItems: flexStart ? undefined : "center",
+            zIndex: 1000,
             ...(atBottom
               ? atBottomStyle
               : {
@@ -115,7 +115,9 @@ const CustomModal = ({
               <Pad height={24} />
             </>
           )}
-          {body && <ThemedView style={{ flexShrink: 1 }}>{body}</ThemedView>}
+          {body && (
+            <ThemedView style={{ flex: 1, width: "100%" }}>{body}</ThemedView>
+          )}
           {errMsg && (
             <>
               <ThemedText
