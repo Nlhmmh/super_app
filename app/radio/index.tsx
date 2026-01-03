@@ -30,8 +30,10 @@ const RadioPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [limit, setLimit] = useState(40);
+  const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const [openCountryModal, setOpenCountryModal] = useState(false);
   const [selCountry, setSelCountry] = useState<labelValuePair | undefined>(
@@ -43,8 +45,10 @@ const RadioPage = () => {
   );
 
   useEffect(() => {
+    setOffset(0);
+    setHasMore(true);
     const delayDebounceFn = setTimeout(() => {
-      fetchStations();
+      fetchStations(true);
     }, 300);
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm, selCountry, selLanguage]);
@@ -69,40 +73,74 @@ const RadioPage = () => {
     saveLanguageCode?.(selLanguage?.value || "");
   }, [selLanguage, saveLanguageCode]);
 
-  const fetchStations = useCallback(async () => {
-    safeAPICall({
-      fn: async () => {
-        setError(null);
-        setLoading(true);
-        setStations([]);
-        const API_URL =
-          "https://de2.api.radio-browser.info/json/stations/search";
-        let url = `${API_URL}?limit=${limit}&offset=${offset}&hidebroken=true&order=votes&reverse=true`;
-        if (searchTerm.trim() !== "") url += `&name=${searchTerm}`;
-        if (selCountry && selCountry.value !== "unselected") {
-          url += `&countrycode=${selCountry.value}`;
-        }
-        if (selLanguage && selLanguage.value !== "unselected") {
-          const langs = await get(
-            `https://de2.api.radio-browser.info/json/languages`
+  const fetchStations = useCallback(
+    async (reset: boolean = false) => {
+      if (!reset && loadingMore) return;
+      if (!reset && !hasMore) return;
+
+      safeAPICall({
+        fn: async () => {
+          setError(null);
+          if (reset) {
+            setLoading(true);
+            setStations([]);
+          } else {
+            setLoadingMore(true);
+          }
+
+          const currentOffset = reset ? 0 : offset;
+          const API_URL =
+            "https://de2.api.radio-browser.info/json/stations/search";
+          let url = `${API_URL}?limit=${limit}&offset=${currentOffset}&hidebroken=true&order=votes&reverse=true`;
+          if (searchTerm.trim() !== "") url += `&name=${searchTerm}`;
+          if (selCountry && selCountry.value !== "unselected") {
+            url += `&countrycode=${selCountry.value}`;
+          }
+          if (selLanguage && selLanguage.value !== "unselected") {
+            const langs = await get(
+              `https://de2.api.radio-browser.info/json/languages`
+            );
+            const langObj = langs.find((l) => l.iso_639! === selLanguage.value);
+            if (langObj) url += `&language=${langObj.name!}`;
+          }
+          const newStations = await get(url);
+          if (!newStations) return;
+
+          if (reset) {
+            setStations(newStations);
+          } else {
+            setStations((prev) => [...prev, ...newStations]);
+          }
+
+          setHasMore(newStations.length === limit);
+          if (!reset) {
+            setOffset((prev) => prev + limit);
+          }
+        },
+        catchCb: (error) => {
+          setError(
+            "Could not load radio stations. Please check the network or API."
           );
-          const langObj = langs.find((l) => l.iso_639! === selLanguage.value);
-          if (langObj) url += `&language=${langObj.name!}`;
-        }
-        const stations = await get(url);
-        if (!stations) return;
-        setStations(stations);
-      },
-      catchCb: (error) => {
-        setError(
-          "Could not load radio stations. Please check the network or API."
-        );
-      },
-      finallyCb: () => {
-        setLoading(false);
-      },
-    });
-  }, [searchTerm, selCountry, selLanguage]);
+        },
+        finallyCb: () => {
+          setLoading(false);
+          setLoadingMore(false);
+        },
+      });
+    },
+    [searchTerm, selCountry, selLanguage, offset, limit, hasMore, loadingMore]
+  );
+
+  const handleScroll = (event: any) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const paddingToBottom = 20;
+    const isCloseToBottom =
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom;
+    if (isCloseToBottom && !loadingMore && hasMore) {
+      fetchStations(false);
+    }
+  };
 
   const onPressStation = (station: station) => {
     router.push(`/radio/${station.stationuuid}`);
@@ -125,7 +163,9 @@ const RadioPage = () => {
         <CustomScrollView
           childGrow
           refreshing={refreshing}
-          onRefresh={fetchStations}
+          onRefresh={() => fetchStations(true)}
+          onScroll={handleScroll}
+          scrollEventThrottle={400}
         >
           <ThemedView
             style={{
@@ -135,10 +175,10 @@ const RadioPage = () => {
             }}
           >
             {stations.length > 0 &&
-              stations.map((station) => {
+              stations.map((station, index) => {
                 return (
                   <StationCard
-                    key={station.stationuuid}
+                    key={station.stationuuid + index}
                     station={station}
                     onPress={async () => onPressStation(station)}
                   />
@@ -146,6 +186,11 @@ const RadioPage = () => {
               })}
           </ThemedView>
           {loading && <Loading />}
+          {loadingMore && !loading && (
+            <ThemedText style={{ textAlign: "center" }}>
+              Loading more...
+            </ThemedText>
+          )}
           {error && <ThemedText type={TextType.ERROR}>{error}</ThemedText>}
           {!loading && stations.length === 0 && !error && <NoData />}
         </CustomScrollView>
