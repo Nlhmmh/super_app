@@ -10,16 +10,23 @@ import { useTheme } from "@/theme/ThemeContext";
 import { THEMES } from "@/utils/constants";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { Alert, TextInput, TouchableOpacity } from "react-native";
 
 export default function SettingPage() {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
-  const { user, countryCode, languageCode, clearUserLanguageAndCountry } =
-    useUser();
+  const {
+    user,
+    countryCode,
+    languageCode,
+    clearUserLanguageAndCountry,
+    saveUser,
+  } = useUser();
   const [currentScheme, setCurrentScheme] = useState<ColorScheme | null>(
     THEMES[0]
   );
+  const [usernameEditable, setUsernameEditable] = useState(false);
+  const [username, setUsername] = useState(user?.username || "");
 
   useEffect(() => {
     (async () => {
@@ -47,7 +54,29 @@ export default function SettingPage() {
           }}
         />
         <SettingCard title="Username">
-          <ThemedText>{user?.username || "Guest"}</ThemedText>
+          <TouchableOpacity
+            onPress={() => setUsernameEditable(!usernameEditable)}
+            activeOpacity={0.8}
+          >
+            {!usernameEditable && (
+              <ThemedText>{user?.username || "Guest"}</ThemedText>
+            )}
+            {usernameEditable && (
+              <TextInput
+                value={username}
+                onChangeText={setUsername}
+                onSubmitEditing={() => {
+                  saveUser({ ...user, username });
+                  setUsernameEditable(false);
+                }}
+                style={{
+                  color: theme.onSecondaryContainer,
+                  borderBottomWidth: 1,
+                  borderColor: theme.outline,
+                }}
+              />
+            )}
+          </TouchableOpacity>
         </SettingCard>
         <SettingCard title="Theme">
           <Toggle

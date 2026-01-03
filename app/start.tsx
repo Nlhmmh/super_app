@@ -22,7 +22,6 @@ export default function StartPage() {
 
   useEffect(() => {
     if (!isReady) return;
-    console.log(user);
     if (user) router.replace("/home");
   }, [isReady, user]);
 
