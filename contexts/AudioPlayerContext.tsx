@@ -1,3 +1,4 @@
+import { station } from "@/utils/models";
 import { AudioPlayer, createAudioPlayer } from "expo-audio";
 import React, {
   createContext,
@@ -9,6 +10,7 @@ import React, {
 } from "react";
 
 export type AudioTrack = {
+  station: station;
   uri: string;
   title?: string;
   artist?: string;
@@ -93,21 +95,21 @@ export function AudioPlayerProvider({
 
       // Create new player
       const player = createAudioPlayer(track.uri);
-      
+
       // Add listener for playback status updates
       player.addListener("playbackStatusUpdate", (status) => {
         setIsPlaying(status.playing || false);
         setIsLoading(status.isBuffering || false);
         setPosition((status.currentTime || 0) * 1000); // Convert to milliseconds
         setDuration((status.duration || 0) * 1000); // Convert to milliseconds
-        
+
         // Auto-stop when finished
         if (status.didJustFinish) {
           setIsPlaying(false);
           setPosition(0);
         }
       });
-      
+
       playerRef.current = player;
       setCurrentTrack(track);
       setPosition(0);

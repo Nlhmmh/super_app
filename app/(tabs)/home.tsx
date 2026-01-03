@@ -1,6 +1,9 @@
 import BackBtnWithTitle from "@/components/BackBtnWithTitle";
+import Pad from "@/components/Pad";
+import TrackPlayer from "@/components/radio/TrackPlayer";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useAudioPlayer } from "@/contexts";
 import { useUser } from "@/contexts/UserContext";
 import { useTheme } from "@/theme/ThemeContext";
 import { useCommonStyles } from "@/utils/useCommonStyles";
@@ -13,6 +16,7 @@ export default function HomePage() {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
   const { user } = useUser();
+  const { currentTrack } = useAudioPlayer();
 
   const ItemCard = ({
     iconName,
@@ -34,7 +38,7 @@ export default function HomePage() {
           {
             alignItems: "center",
             borderWidth: 1,
-            borderColor: theme.secondary,
+            borderColor: theme.outline,
             borderRadius: 12,
             padding: 16,
             backgroundColor: theme.primaryContainer,
@@ -61,11 +65,16 @@ export default function HomePage() {
         <ItemCard
           iconName="radio"
           text="Radio"
-          onPress={() => {
-            router.push("/radio");
-          }}
+          onPress={() => router.push("/radio")}
         />
       </ThemedView>
+
+      {currentTrack && (
+        <ThemedView style={{ position: "absolute", bottom: 80, alignSelf: "center" }}>
+          <TrackPlayer />
+          <Pad size={12} />
+        </ThemedView>
+      )}
     </ThemedView>
   );
 }

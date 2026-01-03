@@ -14,9 +14,12 @@ make a-deploy-local
 - Radio Browser
 
 ### TODO Feature
-- Network info viewer
+- Network, Cellular
+- Barometer, Gyroscope, LightSensor, Magnetometer, Pedometer (Expo Sensors)
+- Battery, Brightness, Device, 
 - File browser
 - Video player
+- Localization
 
 ### Screens
 - Start Page

@@ -35,7 +35,8 @@ const RadioStationDetailPage = () => {
     duration,
     seek,
   } = useAudioPlayer();
-  const { isFavouriteRadioStation, toggleFavouriteRadioStation } = useFavouriteStations();
+  const { isFavouriteRadioStation, toggleFavouriteRadioStation } =
+    useFavouriteStations();
 
   const [station, setStation] = useState<station | null>(null);
   const [loading, setLoading] = useState(true);
@@ -99,6 +100,7 @@ const RadioStationDetailPage = () => {
         title: station.name,
         artist: "Super App",
         artwork: station.favicon,
+        station,
       });
     }
   };
