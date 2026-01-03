@@ -40,12 +40,12 @@ const SelectBox = ({
           horizontal
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ maxWidth: "400%" }}
+          // contentContainerStyle={{ maxWidth: "1000%" }}
           style={{ maxHeight: height }}
         >
           <ScrollView
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={true}
+            showsVerticalScrollIndicator={true}
           >
             <SelectBoxContent
               options={options}

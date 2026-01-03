@@ -6,6 +6,7 @@ import NoData from "@/components/NoData";
 import Pad from "@/components/Pad";
 import StationCard from "@/components/radio/StationCard";
 import SearchBar from "@/components/SearchBar";
+import SelectBox from "@/components/SelectBox";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useUser } from "@/contexts/UserContext";
@@ -34,6 +35,8 @@ const RadioPage = () => {
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [tags, setTags] = useState<labelValuePair[]>([]);
+  const [selTag, setSelTag] = useState<labelValuePair>("");
 
   const [openCountryModal, setOpenCountryModal] = useState(false);
   const [selCountry, setSelCountry] = useState<labelValuePair | undefined>(
@@ -45,13 +48,17 @@ const RadioPage = () => {
   );
 
   useEffect(() => {
+    fetchTags();
+  }, [fetchTags]);
+
+  useEffect(() => {
     setOffset(0);
     setHasMore(true);
     const delayDebounceFn = setTimeout(() => {
       fetchStations(true);
     }, 300);
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, selCountry, selLanguage]);
+  }, [searchTerm, selCountry, selLanguage, selTag]);
 
   useEffect(() => {
     if (!countryCode) return;
@@ -103,6 +110,9 @@ const RadioPage = () => {
             const langObj = langs.find((l) => l.iso_639! === selLanguage.value);
             if (langObj) url += `&language=${langObj.name!}`;
           }
+          if (selTag && selTag !== "") {
+            url += `&tag=${selTag.value}`;
+          }
           const newStations = await get(url);
           if (!newStations) return;
 
@@ -128,8 +138,36 @@ const RadioPage = () => {
         },
       });
     },
-    [searchTerm, selCountry, selLanguage, offset, limit, hasMore, loadingMore]
+    [
+      searchTerm,
+      selCountry,
+      selLanguage,
+      selTag,
+      offset,
+      limit,
+      hasMore,
+      loadingMore,
+    ]
   );
+
+  const fetchTags = useCallback(async () => {
+    safeAPICall({
+      fn: async () => {
+        const tags = await get(
+          `https://de2.api.radio-browser.info/json/tags?order=stationcount&hidebroken=true&limit=100`
+        );
+        if (tags) {
+          const tagNames: labelValuePair[] = tags.map((tag: any) => {
+            return { label: tag.name, value: tag.name } as labelValuePair;
+          });
+          setTags(tagNames);
+        }
+      },
+      catchCb: (error) => {
+        console.error("Error fetching tags:", error);
+      },
+    });
+  }, []);
 
   const handleScroll = (event: any) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
@@ -149,6 +187,7 @@ const RadioPage = () => {
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
       <BackBtnWithTitle title="Radio" />
+
       <ThemedView style={{ flex: 1, padding: 12 }}>
         <SearchBar
           placeholder="Search stations"
@@ -158,6 +197,20 @@ const RadioPage = () => {
           onPressLanguageOptions={() => setOpenLanguageModal(true)}
           onPressFavourites={() => router.push("/radio/favourites")}
         />
+        <Pad height={16} />
+        <ThemedView
+          style={{
+            ...commonStyles.shadow,
+          }}
+        >
+          <SelectBox
+            options={tags}
+            sel={selTag}
+            setSel={setSelTag}
+            isScrollable
+            isWrap
+          />
+        </ThemedView>
         <Pad height={16} />
 
         <CustomScrollView
