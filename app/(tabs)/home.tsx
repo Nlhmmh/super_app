@@ -1,5 +1,5 @@
-import Pad from "@/components/Pad";
-import { TextType, ThemedText } from "@/components/ThemedText";
+import BackBtnWithTitle from "@/components/BackBtnWithTitle";
+import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useUser } from "@/contexts/UserContext";
 import { useTheme } from "@/theme/ThemeContext";
@@ -51,18 +51,21 @@ export default function HomePage() {
   };
 
   return (
-    <ThemedView style={{ flex: 1, padding: 12 }} useTheme>
-      <ThemedText type={TextType.XL}>
-        Welcome, {user?.name || "Guest"}!
-      </ThemedText>
-      <Pad size={16} />
-      <ItemCard
-        iconName="radio"
-        text="Radio"
-        onPress={() => {
-          router.push("/radio");
-        }}
+    <ThemedView style={{ flex: 1 }} useTheme>
+      <BackBtnWithTitle
+        title={`Welcome ${user?.name || "Guest"}!`}
+        showBack={false}
       />
+
+      <ThemedView style={{ padding: 12 }}>
+        <ItemCard
+          iconName="radio"
+          text="Radio"
+          onPress={() => {
+            router.push("/radio");
+          }}
+        />
+      </ThemedView>
     </ThemedView>
   );
 }

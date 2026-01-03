@@ -1,4 +1,5 @@
 import AssetImage from "@/components/AssetImage";
+import BackBtnWithTitle from "@/components/BackBtnWithTitle";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Toggle from "@/components/Toggle";
@@ -11,6 +12,7 @@ import { useEffect, useState } from "react";
 
 export default function SettingPage() {
   const theme = useTheme();
+  const commonStyles = useCommonStyles();
   const { user, countryCode, languageCode } = useUser();
   const [currentScheme, setCurrentScheme] = useState<ColorScheme | null>(
     THEMES[0]
@@ -28,35 +30,36 @@ export default function SettingPage() {
   };
 
   return (
-    <ThemedView style={{ flex: 1, padding: 12, gap: 12 }} useTheme>
-      <ThemedText type={TextType.XXL} style={{ alignSelf: "center" }} bold>
-        Welcome to Super App
-      </ThemedText>
-      <AssetImage
-        path="icon.png"
-        style={{
-          width: "100%",
-          height: 160,
-          borderRadius: 12,
-          alignSelf: "center",
-        }}
-      />
-      <SettingCard title="Username">
-        <ThemedText>{user?.username || "Guest"}</ThemedText>
-      </SettingCard>
-      <SettingCard title="Theme">
-        <Toggle
-          options={THEMES}
-          initSel={currentScheme}
-          onChange={(value) => changeTheme(value.value as ColorScheme)}
+    <ThemedView style={{ flex: 1 }} useTheme>
+      <BackBtnWithTitle title="Settings" showBack={false} />
+
+      <ThemedView style={{ padding: 12, gap: 12 }}>
+        <AssetImage
+          path="icon.png"
+          style={{
+            width: "100%",
+            height: 160,
+            borderRadius: 12,
+            alignSelf: "center",
+          }}
         />
-      </SettingCard>
-      <SettingCard title="Country">
-        <ThemedText>{countryCode || "Unselected"}</ThemedText>
-      </SettingCard>
-      <SettingCard title="Language">
-        <ThemedText>{languageCode || "Unselected"}</ThemedText>
-      </SettingCard>
+        <SettingCard title="Username">
+          <ThemedText>{user?.username || "Guest"}</ThemedText>
+        </SettingCard>
+        <SettingCard title="Theme">
+          <Toggle
+            options={THEMES}
+            initSel={currentScheme}
+            onChange={(value) => changeTheme(value.value as ColorScheme)}
+          />
+        </SettingCard>
+        <SettingCard title="Country">
+          <ThemedText>{countryCode || "Unselected"}</ThemedText>
+        </SettingCard>
+        <SettingCard title="Language">
+          <ThemedText>{languageCode || "Unselected"}</ThemedText>
+        </SettingCard>
+      </ThemedView>
     </ThemedView>
   );
 }

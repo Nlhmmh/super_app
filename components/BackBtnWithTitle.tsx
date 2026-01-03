@@ -1,12 +1,20 @@
 import { useTheme } from "@/theme/ThemeContext";
+import { useCommonStyles } from "@/utils/useCommonStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { TouchableOpacity } from "react-native";
 import { TextType, ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 
-const BackBtnWithTitle = ({ title }: { title: string }) => {
+const BackBtnWithTitle = ({
+  title,
+  showBack = true,
+}: {
+  title: string;
+  showBack: boolean;
+}) => {
   const theme = useTheme();
+  const commonStyles = useCommonStyles();
   return (
     <ThemedView
       style={{
@@ -15,28 +23,37 @@ const BackBtnWithTitle = ({ title }: { title: string }) => {
         alignItems: "center",
         padding: 10,
         gap: 10,
+        backgroundColor: theme.background,
+        ...commonStyles.lightShadow,
       }}
     >
-      <TouchableOpacity
-        onPress={() => router.back()}
-        activeOpacity={0.8}
-        style={{ position: "absolute", left: 0, padding: 10, zIndex: 1 }}
-      >
-        <Ionicons name="arrow-back" size={20} color={theme.text} />
-      </TouchableOpacity>
+      {showBack && (
+        <TouchableOpacity
+          onPress={() => router.back()}
+          activeOpacity={0.8}
+          style={{
+            position: "absolute",
+            left: 0,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            zIndex: 1,
+          }}
+        >
+          <Ionicons name="arrow-back" size={24} color={theme.text} />
+        </TouchableOpacity>
+      )}
       <ThemedView
         style={{
           flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          paddingHorizontal: 25,
+          justifyContent: showBack ? "center" : "flex-start",
+          alignItems: showBack ? "center" : "flex-start",
+          paddingHorizontal: showBack ? 25 : 0,
         }}
       >
         <ThemedText
           type={TextType.XL}
           style={{
             color: theme.text,
-            textAlign: "center",
             flexShrink: 1,
           }}
           numberOfLines={1}
