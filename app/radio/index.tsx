@@ -30,12 +30,13 @@ const RadioPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [limit, setLimit] = useState(40);
+  const [offset, setOffset] = useState(0);
 
   const [openCountryModal, setOpenCountryModal] = useState(false);
   const [selCountry, setSelCountry] = useState<labelValuePair | undefined>(
     undefined
   );
-
   const [openLanguageModal, setOpenLanguageModal] = useState(false);
   const [selLanguage, setSelLanguage] = useState<labelValuePair | undefined>(
     undefined
@@ -76,7 +77,7 @@ const RadioPage = () => {
         setStations([]);
         const API_URL =
           "https://de2.api.radio-browser.info/json/stations/search";
-        let url = `${API_URL}?limit=${40}&hidebroken=true&order=votes&reverse=true`;
+        let url = `${API_URL}?limit=${limit}&offset=${offset}&hidebroken=true&order=votes&reverse=true`;
         if (searchTerm.trim() !== "") url += `&name=${searchTerm}`;
         if (selCountry && selCountry.value !== "unselected") {
           url += `&countrycode=${selCountry.value}`;

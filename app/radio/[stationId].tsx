@@ -135,7 +135,7 @@ const RadioStationDetailPage = () => {
               )}
             </ThemedView>
             <Pad height={8} />
-            <ThemedText>
+            <ThemedText subBold>
               {station.country} | {station.language}
             </ThemedText>
             <Pad height={8} />
