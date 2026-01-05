@@ -1,6 +1,6 @@
-import { useCommonStyles } from "@/hooks/useCommonStyles";
 import { useTheme } from "@/theme/ThemeContext";
 import { labelValuePair } from "@/utils/models";
+import { useCommonStyles } from "@/utils/useCommonStyles";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useCallback, useEffect } from "react";
 import { Pressable, ScrollView } from "react-native";

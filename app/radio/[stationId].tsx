@@ -17,6 +17,7 @@ import { askNotificationPermission } from "@/utils/permission";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { formatMillisecondsToTime } from "@/utils/utils";
 import Slider from "@react-native-community/slider";
+import { ImageStyle } from "expo-image";
 import { useKeepAwake } from "expo-keep-awake";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
@@ -71,7 +72,7 @@ const RadioStationDetailPage = () => {
       fn: async () => {
         setLoading(true);
         const API_URL = `https://de2.api.radio-browser.info/json/stations/byuuid?uuids=${stationId}`;
-        const stations = await get(API_URL);
+        const stations: station[] = await get(API_URL);
         if (!stations || stations.length === 0) return;
         const station = stations[0];
         setStation(station);
@@ -105,7 +106,7 @@ const RadioStationDetailPage = () => {
     }
   };
 
-  const imageStyle = {
+  const imageStyle: ImageStyle = {
     width: "100%",
     aspectRatio: 1,
     borderRadius: 12,
@@ -297,7 +298,7 @@ const InfoCard = ({
   openLink,
 }: {
   title: string;
-  info: string;
+  info: string | null | undefined;
   link?: string;
   oneLineMode?: boolean;
   openLink?: boolean;

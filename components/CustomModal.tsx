@@ -2,6 +2,7 @@ import { useTheme } from "@/theme/ThemeContext";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { Modal, ModalProps, Pressable, TouchableOpacity } from "react-native";
+import { StyleProps } from "react-native-reanimated";
 import CustomButton from "./CustomButton";
 import Pad from "./Pad";
 import { TextType, ThemedText } from "./ThemedText";
@@ -20,11 +21,11 @@ const CustomModal = ({
   onConfirm,
   flexStart = false,
   atBottom = false,
-  props,
+  ...props
 }: ModalProps & {
   open: boolean;
   onClose: () => void;
-  icon?: string;
+  icon?: keyof typeof Ionicons.glyphMap;
   title?: string;
   description?: string;
   buttonTitle?: string;
@@ -38,7 +39,7 @@ const CustomModal = ({
   const theme = useTheme();
   const commonStyles = useCommonStyles();
 
-  const atBottomStyle = {
+  const atBottomStyle: StyleProps = {
     position: "absolute",
     bottom: 0,
     borderTopLeftRadius: 32,

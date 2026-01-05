@@ -4,14 +4,10 @@ import NoData from "@/components/NoData";
 import StationCard from "@/components/radio/StationCard";
 import { ThemedView } from "@/components/ThemedView";
 import { useFavouriteStations } from "@/contexts/FavouriteStationsContext";
-import { useTheme } from "@/theme/ThemeContext";
 import { station } from "@/utils/models";
-import { useCommonStyles } from "@/utils/useCommonStyles";
 import { router } from "expo-router";
 
 const RadioFavouritesPage = () => {
-  const theme = useTheme();
-  const commonStyles = useCommonStyles();
   const { favouriteRadioStations } = useFavouriteStations();
 
   const onPressStation = (station: station) => {
@@ -30,7 +26,8 @@ const RadioFavouritesPage = () => {
               gap: 12,
             }}
           >
-            {favouriteRadioStations?.length > 0 &&
+            {favouriteRadioStations &&
+              favouriteRadioStations?.length > 0 &&
               favouriteRadioStations?.map((station, index) => {
                 return (
                   <StationCard
@@ -41,7 +38,8 @@ const RadioFavouritesPage = () => {
                 );
               })}
           </ThemedView>
-          {(!favouriteRadioStations || favouriteRadioStations?.length === 0) && (
+          {(!favouriteRadioStations ||
+            favouriteRadioStations?.length === 0) && (
             <NoData text="No Favourite Radio Stations" />
           )}
         </CustomScrollView>

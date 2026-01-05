@@ -1,5 +1,4 @@
 import BackBtnWithTitle from "@/components/BackBtnWithTitle";
-import Pad from "@/components/Pad";
 import TrackPlayer from "@/components/radio/TrackPlayer";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -10,11 +9,13 @@ import { useCommonStyles } from "@/utils/useCommonStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native";
 
 export default function HomePage() {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
+  const { t } = useTranslation();
   const { user } = useUser();
   const { currentTrack } = useAudioPlayer();
 
@@ -23,7 +24,7 @@ export default function HomePage() {
     text,
     onPress,
   }: {
-    iconName: string;
+    iconName: keyof typeof Ionicons.glyphMap;
     text: string;
     onPress: () => void;
   }) => {
@@ -57,7 +58,7 @@ export default function HomePage() {
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
       <BackBtnWithTitle
-        title={`Welcome ${user?.username || "Guest"}!`}
+        title={`${t("home.welcome")} ${user?.username || "Guest"}!`}
         showBack={false}
       />
 
@@ -70,9 +71,10 @@ export default function HomePage() {
       </ThemedView>
 
       {currentTrack && (
-        <ThemedView style={{ position: "absolute", bottom: 80, alignSelf: "center" }}>
+        <ThemedView
+          style={{ position: "absolute", bottom: 80, alignSelf: "center" }}
+        >
           <TrackPlayer />
-          <Pad size={12} />
         </ThemedView>
       )}
     </ThemedView>

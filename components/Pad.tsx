@@ -1,9 +1,5 @@
 import { View } from "react-native";
 
-export type PadProps = {
-  height: number;
-};
-
-export default function Pad({ height = 10 }: PadProps) {
+export default function Pad({ height = 10 }: { height?: number }) {
   return <View style={{ height: height }} />;
 }

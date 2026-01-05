@@ -53,10 +53,6 @@ export function AudioPlayerProvider({
 
   const playerRef = useRef<AudioPlayer | null>(null);
 
-  useEffect(() => {
-    loadCurrentStation();
-  }, [loadCurrentStation]);
-
   const loadCurrentStation = useCallback(async () => {
     setError(null);
     try {
@@ -122,18 +118,6 @@ export function AudioPlayerProvider({
         }
       );
     }
-  }, []);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (playerRef.current) {
-        if (playerRef.current.playing) {
-          playerRef.current.pause();
-        }
-        playerRef.current.remove();
-      }
-    };
   }, []);
 
   const loadTrack = useCallback(async (track: AudioTrack) => {
@@ -258,6 +242,22 @@ export function AudioPlayerProvider({
       console.error("Error seeking audio:", err);
       setError(err instanceof Error ? err.message : "Failed to seek audio");
     }
+  }, []);
+
+  useEffect(() => {
+    loadCurrentStation();
+  }, [loadCurrentStation]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (playerRef.current) {
+        if (playerRef.current.playing) {
+          playerRef.current.pause();
+        }
+        playerRef.current.remove();
+      }
+    };
   }, []);
 
   const value: AudioPlayerContextValue = {

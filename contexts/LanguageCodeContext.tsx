@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 
-const SECURE_LANGUAGE_CODE_KEY = "secure_language_code";
+export const SECURE_LANGUAGE_CODE_KEY = "secure_language_code";
 
 type LanguageCodeContextValue = {
   languageCode: string | null;
@@ -17,16 +17,18 @@ type LanguageCodeContextValue = {
   clearLanguageCode: () => Promise<void>;
 };
 
-const LanguageCodeContext = createContext<LanguageCodeContextValue | null>(null);
+const LanguageCodeContext = createContext<LanguageCodeContextValue | null>(
+  null
+);
 
-export function LanguageCodeProvider({ children }: { children: React.ReactNode }) {
+export function LanguageCodeProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [languageCode, setLanguageCode] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadLanguageCode();
-  }, [loadLanguageCode]);
 
   const loadLanguageCode = useCallback(async () => {
     setIsLoading(true);
@@ -79,6 +81,10 @@ export function LanguageCodeProvider({ children }: { children: React.ReactNode }
     saveLanguageCode,
     clearLanguageCode,
   };
+
+  useEffect(() => {
+    loadLanguageCode();
+  }, [loadLanguageCode]);
 
   return (
     <LanguageCodeContext.Provider value={value}>

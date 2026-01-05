@@ -19,7 +19,8 @@ type FavouriteStationsContextValue = {
   isFavouriteRadioStation: (station: station) => boolean;
 };
 
-const FavouriteStationsContext = createContext<FavouriteStationsContextValue | null>(null);
+const FavouriteStationsContext =
+  createContext<FavouriteStationsContextValue | null>(null);
 
 export function FavouriteStationsProvider({
   children,
@@ -31,10 +32,6 @@ export function FavouriteStationsProvider({
   >(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadFavouriteRadioStations();
-  }, [loadFavouriteRadioStations]);
 
   const loadFavouriteRadioStations = useCallback(async () => {
     setIsLoading(true);
@@ -58,22 +55,25 @@ export function FavouriteStationsProvider({
     }
   }, []);
 
-  const saveFavouriteRadioStations = useCallback(async (stations: station[]) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      await AsyncStorage.setItem(
-        SECURE_FAVOURITE_STATIONS_KEY,
-        JSON.stringify(stations)
-      );
-      setFavouriteRadioStations(stations);
-    } catch (err) {
-      console.error("Failed to store favourite radio stations", err);
-      setError("Failed to store favourite radio stations");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const saveFavouriteRadioStations = useCallback(
+    async (stations: station[]) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        await AsyncStorage.setItem(
+          SECURE_FAVOURITE_STATIONS_KEY,
+          JSON.stringify(stations)
+        );
+        setFavouriteRadioStations(stations);
+      } catch (err) {
+        console.error("Failed to store favourite radio stations", err);
+        setError("Failed to store favourite radio stations");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
 
   const toggleFavouriteRadioStation = useCallback(
     async (station: station) => {
@@ -116,6 +116,10 @@ export function FavouriteStationsProvider({
     toggleFavouriteRadioStation,
     isFavouriteRadioStation,
   };
+
+  useEffect(() => {
+    loadFavouriteRadioStations();
+  }, [loadFavouriteRadioStations]);
 
   return (
     <FavouriteStationsContext.Provider value={value}>

@@ -1,14 +1,10 @@
 import AssetImage from "@/components/AssetImage";
 import { ThemedView } from "@/components/ThemedView";
 import { useUser } from "@/contexts/UserContext";
-import { useTheme } from "@/theme/ThemeContext";
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { Dimensions } from "react-native";
 
 export default function IndexPage() {
-  const theme = useTheme();
-  const { width, height } = Dimensions.get("window");
   const { isReady } = useUser();
 
   useEffect(() => {

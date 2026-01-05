@@ -52,11 +52,23 @@ export default function TabLayout() {
   );
 }
 
-const NavIcon = ({ iconName, focused, size, color }) => {
+const NavIcon = ({
+  iconName,
+  focused,
+  size,
+  color,
+}: {
+  iconName: keyof typeof Ionicons.glyphMap;
+  focused: boolean;
+  size: number;
+  color: string;
+}) => {
   const iconNameOutline = iconName + "-outline";
   return (
     <Ionicons
-      name={focused ? iconName : iconNameOutline}
+      name={
+        focused ? iconName : (iconNameOutline as keyof typeof Ionicons.glyphMap)
+      }
       size={size}
       color={color}
     />
@@ -98,11 +110,11 @@ const CustomTabBar = (props: BottomTabBarProps) => {
 };
 
 const BottomNavRouteCard = (
-  descriptors,
-  route,
-  state,
+  descriptors: BottomTabBarProps["descriptors"],
+  route: BottomTabBarProps["state"]["routes"][0],
+  state: BottomTabBarProps["state"],
   index: number,
-  navigation
+  navigation: BottomTabBarProps["navigation"]
 ) => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();

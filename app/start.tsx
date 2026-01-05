@@ -5,22 +5,18 @@ import Pad from "@/components/Pad";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useUser } from "@/contexts/UserContext";
-import { useTheme } from "@/theme/ThemeContext";
 import { validateField } from "@/utils/validation";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
-  Dimensions,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   TextInput,
-  TouchableWithoutFeedback,
 } from "react-native";
 
 export default function StartPage() {
-  const theme = useTheme();
-  const { width, height } = Dimensions.get("window");
   const { user, isReady, saveUser } = useUser();
   const nameRef = useRef<TextInput>(null);
   const [name, setName] = useState("");
@@ -54,8 +50,10 @@ export default function StartPage() {
   };
 
   return (
-    <TouchableWithoutFeedback
+    <Pressable
+      style={{ flex: 1 }}
       onPress={() => {
+        if (nameRef.current?.isFocused()) return;
         Keyboard.dismiss();
       }}
     >
@@ -109,6 +107,6 @@ export default function StartPage() {
           </ThemedView>
         </ThemedView>
       </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+    </Pressable>
   );
 }

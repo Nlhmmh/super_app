@@ -16,9 +16,9 @@ const IconButton = ({
   loading,
   onPress,
 }: TouchableOpacityProps & {
-  isOn: boolean;
-  onIcon: string;
-  offIcon: string;
+  isOn?: boolean;
+  onIcon: keyof typeof Ionicons.glyphMap;
+  offIcon: keyof typeof Ionicons.glyphMap;
   size?: number;
   color?: string;
   loading?: boolean;

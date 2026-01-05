@@ -11,10 +11,19 @@ const BackBtnWithTitle = ({
   showBack = true,
 }: {
   title: string;
-  showBack: boolean;
+  showBack?: boolean;
 }) => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
+
+  const goBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+    router.replace("/(tabs)/home");
+  };
+
   return (
     <ThemedView
       style={{
@@ -29,7 +38,7 @@ const BackBtnWithTitle = ({
     >
       {showBack && (
         <TouchableOpacity
-          onPress={() => router.back()}
+          onPress={goBack}
           activeOpacity={0.8}
           style={{
             position: "absolute",

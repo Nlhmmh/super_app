@@ -1,5 +1,5 @@
-import { labelValuePair } from "@/model/models";
 import { useTheme } from "@/theme/ThemeContext";
+import { labelValuePair } from "@/utils/models";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import Checkbox from "expo-checkbox";
 import { ScrollView, TouchableOpacity } from "react-native";
@@ -29,7 +29,7 @@ const SelectBox = ({
     <ThemedView>
       {title && (
         <>
-          <ThemedText bold style={{ color: theme.whiteText }}>
+          <ThemedText bold style={{ color: theme.text }}>
             {title}
           </ThemedText>
           <Pad height={8} />

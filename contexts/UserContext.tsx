@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, {
   createContext,
   useCallback,
@@ -10,11 +10,11 @@ import React, {
 const SECURE_USER_KEY = "secure_user";
 
 export type StoredUser = {
-  id: number;
+  id?: number;
   username: string;
-  email: string;
-  token: string;
-  phone: string;
+  email?: string;
+  token?: string;
+  phone?: string;
   expiresAt?: string;
   [key: string]: unknown;
 };
@@ -37,15 +37,11 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadUser();
-  }, [loadUser]);
-
   const loadUser = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const value = await SecureStore.getItemAsync(SECURE_USER_KEY);
+      const value = await AsyncStorage.getItem(SECURE_USER_KEY);
       if (!value) {
         setUser(null);
       } else {
@@ -77,10 +73,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         phone: value.phone,
         expiresAt: value.expiresAt,
       };
-      await SecureStore.setItemAsync(
-        SECURE_USER_KEY,
-        JSON.stringify(userToStore)
-      );
+      await AsyncStorage.setItem(SECURE_USER_KEY, JSON.stringify(userToStore));
       setUser(value);
     } catch (err) {
       console.error("Failed to store user", err);
@@ -94,7 +87,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     setError(null);
     try {
-      await SecureStore.deleteItemAsync(SECURE_USER_KEY);
+      await AsyncStorage.removeItem(SECURE_USER_KEY);
       setUser(null);
     } catch (err) {
       console.error("Failed to clear user", err);
@@ -115,6 +108,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
     return true;
   })();
+
+  useEffect(() => {
+    loadUser();
+  }, [loadUser]);
 
   const value: UserContextValue = {
     user,

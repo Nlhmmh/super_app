@@ -1,20 +1,21 @@
-import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Simple pub/sub store to broadcast color scheme changes across the app and persist the choice.
 const listeners = new Set<(scheme: ColorScheme) => void>();
 const SECURE_COLOR_SCHEME_KEY = "colorScheme";
 
 export const ThemeSchemes = {
-  LIGHT: "light" as ColorScheme,
-  DARK: "dark" as ColorScheme,
-};
+  LIGHT: "light",
+  DARK: "dark",
+} as const;
 
-export type ColorScheme = (typeof ThemeSchemes)[keyof typeof ThemeSchemes];
+export type ColorScheme =
+  (typeof ThemeSchemes)[keyof typeof ThemeSchemes];
 
 export const schemeStore = {
   set: async (scheme: ColorScheme) => {
     try {
-      await SecureStore.setItemAsync(SECURE_COLOR_SCHEME_KEY, scheme);
+      await AsyncStorage.setItem(SECURE_COLOR_SCHEME_KEY, scheme);
     } catch (error) {
       console.warn("Failed to store color scheme", error);
     }
@@ -22,7 +23,7 @@ export const schemeStore = {
   },
   get: async (): Promise<ColorScheme | null> => {
     try {
-      const stored = await SecureStore.getItemAsync(SECURE_COLOR_SCHEME_KEY);
+      const stored = await AsyncStorage.getItem(SECURE_COLOR_SCHEME_KEY);
       if (stored === "light" || stored === "dark") return stored;
     } catch (error) {
       console.warn("Failed to load color scheme", error);
@@ -31,7 +32,7 @@ export const schemeStore = {
   },
   clear: async () => {
     try {
-      await SecureStore.deleteItemAsync(SECURE_COLOR_SCHEME_KEY);
+      await AsyncStorage.removeItem(SECURE_COLOR_SCHEME_KEY);
     } catch (error) {
       console.warn("Failed to clear color scheme", error);
     }

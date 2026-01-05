@@ -1,7 +1,7 @@
 import { useTheme } from "@/theme/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import Pad from "./Pad";
-import { TextType, ThemedText } from "./ThemedText";
+import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 
 const NoData = ({ text }: { text?: string }) => {
@@ -17,7 +17,7 @@ const NoData = ({ text }: { text?: string }) => {
     >
       <Ionicons name="alert-circle-outline" size={24} color={theme.textTint} />
       <Pad />
-      <ThemedText type={TextType.DEFAULT} style={{ color: theme.textTint }}>
+      <ThemedText style={{ color: theme.textTint }}>
         {text || "No Data Found"}
       </ThemedText>
     </ThemedView>

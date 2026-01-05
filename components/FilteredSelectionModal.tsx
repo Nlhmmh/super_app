@@ -60,7 +60,7 @@ const FilteredSelectionModal = ({
   return (
     <CustomModal
       open={open}
-      setOpen={setOpen}
+      // setOpen={setOpen}
       title={title}
       onClose={handleClose}
       body={

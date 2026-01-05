@@ -1,11 +1,8 @@
-import { labelValuePair } from "@/model/models";
 import {
   EMAIL_REGEX,
   MIN_PASSWORD_LENGTH,
-  NUMBER_ONLY_REGEX,
   PHONE_REGEX,
-  TIME_REGEX,
-  URL_REGEX,
+  URL_REGEX
 } from "@/utils/constants";
 
 /**

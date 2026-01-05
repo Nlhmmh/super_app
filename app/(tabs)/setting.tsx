@@ -163,8 +163,10 @@ export default function SettingPage() {
               style={{ ...commonStyles.lightShadow }}
             >
               <ThemedText>
-                {countryCode ||
-                  (user?.countryCode ? user.countryCode : "Unselected")}
+                <>
+                  {countryCode ||
+                    (user?.countryCode ? user.countryCode : "Unselected")}
+                </>
               </ThemedText>
             </TouchableOpacity>
           </SettingCard>
@@ -176,8 +178,10 @@ export default function SettingPage() {
               style={{ ...commonStyles.lightShadow }}
             >
               <ThemedText>
-                {languageCode ||
-                  (user?.languageCode ? user.languageCode : "Unselected")}
+                <>
+                  {languageCode ||
+                    (user?.languageCode ? user.languageCode : "Unselected")}
+                </>
               </ThemedText>
             </TouchableOpacity>
           </SettingCard>
@@ -221,7 +225,7 @@ const SettingCard = ({
   title,
   children,
 }: {
-  icon?: string;
+  icon?: keyof typeof Ionicons.glyphMap;
   title: string;
   children?: React.ReactNode;
 }) => {
@@ -250,7 +254,9 @@ const SettingCard = ({
           style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
         >
           <Ionicons
-            name={icon || "settings-outline"}
+            name={
+              icon || ("settings-outline" as keyof typeof Ionicons.glyphMap)
+            }
             size={20}
             color={theme.onSecondaryContainer}
           />

@@ -4,6 +4,7 @@ import { CountryCodeProvider } from "@/contexts/CountryCodeContext";
 import { FavouriteStationsProvider } from "@/contexts/FavouriteStationsContext";
 import { LanguageCodeProvider } from "@/contexts/LanguageCodeContext";
 import { UserProvider } from "@/contexts/UserContext";
+import { initI18n } from "@/i18n";
 import { schemeStore } from "@/theme/schemeStore";
 import { DarkTheme, LightTheme } from "@/theme/theme";
 import { ThemeProvider } from "@/theme/ThemeContext";
@@ -18,6 +19,10 @@ export default function StackLayout() {
   const colorScheme = useColorScheme();
   const [currentScheme, setCurrentScheme] = useState(colorScheme);
   const theme = currentScheme === "dark" ? DarkTheme : LightTheme;
+
+  useEffect(() => {
+    initI18n();
+  }, []);
 
   useEffect(() => {
     setAudioModeAsync({
@@ -54,7 +59,7 @@ export default function StackLayout() {
       setCurrentScheme(scheme);
       Appearance.setColorScheme(scheme);
     });
-    return unsubscribe;
+    unsubscribe;
   }, []);
 
   // Keep in sync with useColorScheme changes

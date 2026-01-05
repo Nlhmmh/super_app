@@ -129,7 +129,6 @@ export function ThemedText({
         type === TextType.L ? styles.l : undefined,
         type === TextType.XL ? styles.xl : undefined,
         type === TextType.XXL ? styles.xxl : undefined,
-        type === TextType.LINK ? styles.link : undefined,
         type === TextType.ERROR ? styles.error : undefined,
         bold ? styles.bold : undefined,
         subBold ? styles.subBold : undefined,

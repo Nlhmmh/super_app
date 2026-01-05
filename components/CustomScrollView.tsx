@@ -57,8 +57,8 @@ const CustomScrollView = ({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={theme.colors.primary}
-            colors={[theme.colors.primary]}
+            tintColor={theme.primary}
+            colors={[theme.primary]}
             progressViewOffset={
               Platform.OS === "android" ? verticalOffset : undefined
             }

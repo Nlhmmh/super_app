@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 
-const SECURE_COUNTRY_CODE_KEY = "secure_country_code";
+export const SECURE_COUNTRY_CODE_KEY = "secure_country_code";
 
 type CountryCodeContextValue = {
   countryCode: string | null;
@@ -19,14 +19,14 @@ type CountryCodeContextValue = {
 
 const CountryCodeContext = createContext<CountryCodeContextValue | null>(null);
 
-export function CountryCodeProvider({ children }: { children: React.ReactNode }) {
+export function CountryCodeProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadCountryCode();
-  }, [loadCountryCode]);
 
   const loadCountryCode = useCallback(async () => {
     setIsLoading(true);
@@ -79,6 +79,10 @@ export function CountryCodeProvider({ children }: { children: React.ReactNode })
     saveCountryCode,
     clearCountryCode,
   };
+
+  useEffect(() => {
+    loadCountryCode();
+  }, [loadCountryCode]);
 
   return (
     <CountryCodeContext.Provider value={value}>

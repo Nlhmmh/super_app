@@ -37,7 +37,7 @@ const RadioPage = () => {
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [tags, setTags] = useState<labelValuePair[]>([]);
-  const [selTag, setSelTag] = useState<labelValuePair>("");
+  const [selTag, setSelTag] = useState<labelValuePair | null>(null);
 
   const [openCountryModal, setOpenCountryModal] = useState(false);
   const [selCountry, setSelCountry] = useState<labelValuePair | undefined>(
@@ -47,39 +47,6 @@ const RadioPage = () => {
   const [selLanguage, setSelLanguage] = useState<labelValuePair | undefined>(
     undefined
   );
-
-  useEffect(() => {
-    fetchTags();
-  }, [fetchTags]);
-
-  useEffect(() => {
-    setOffset(0);
-    setHasMore(true);
-    const delayDebounceFn = setTimeout(() => {
-      fetchStations(true);
-    }, 300);
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, selCountry, selLanguage, selTag]);
-
-  useEffect(() => {
-    if (!countryCode) return;
-    setSelCountry(COUNTRY_CODES.find((v) => v.value === countryCode));
-  }, [countryCode]);
-
-  useEffect(() => {
-    if (!languageCode) return;
-    setSelLanguage(LANGUAGES.find((v) => v.value === languageCode));
-  }, [languageCode]);
-
-  useEffect(() => {
-    setOpenCountryModal(false);
-    saveCountryCode(selCountry?.value || "");
-  }, [selCountry, saveCountryCode]);
-
-  useEffect(() => {
-    setOpenLanguageModal(false);
-    saveLanguageCode?.(selLanguage?.value || "");
-  }, [selLanguage, saveLanguageCode]);
 
   const fetchStations = useCallback(
     async (reset: boolean = false) => {
@@ -105,16 +72,16 @@ const RadioPage = () => {
             url += `&countrycode=${selCountry.value}`;
           }
           if (selLanguage && selLanguage.value !== "unselected") {
-            const langs = await get(
+            const langs: any[] = await get(
               `https://de2.api.radio-browser.info/json/languages`
             );
             const langObj = langs.find((l) => l.iso_639! === selLanguage.value);
             if (langObj) url += `&language=${langObj.name!}`;
           }
-          if (selTag && selTag !== "") {
+          if (selTag) {
             url += `&tag=${selTag.value}`;
           }
-          const newStations = await get(url);
+          const newStations: station[] = await get(url);
           if (!newStations) return;
 
           if (reset) {
@@ -154,7 +121,7 @@ const RadioPage = () => {
   const fetchTags = useCallback(async () => {
     safeAPICall({
       fn: async () => {
-        const tags = await get(
+        const tags: any[] = await get(
           `https://de2.api.radio-browser.info/json/tags?order=stationcount&hidebroken=true&limit=100`
         );
         if (tags) {
@@ -184,6 +151,39 @@ const RadioPage = () => {
   const onPressStation = (station: station) => {
     router.push(`/radio/${station.stationuuid}`);
   };
+
+  useEffect(() => {
+    fetchTags();
+  }, [fetchTags]);
+
+  useEffect(() => {
+    setOffset(0);
+    setHasMore(true);
+    const delayDebounceFn = setTimeout(() => {
+      fetchStations(true);
+    }, 300);
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, selCountry, selLanguage, selTag]);
+
+  useEffect(() => {
+    if (!countryCode) return;
+    setSelCountry(COUNTRY_CODES.find((v) => v.value === countryCode));
+  }, [countryCode]);
+
+  useEffect(() => {
+    if (!languageCode) return;
+    setSelLanguage(LANGUAGES.find((v) => v.value === languageCode));
+  }, [languageCode]);
+
+  useEffect(() => {
+    setOpenCountryModal(false);
+    saveCountryCode(selCountry?.value || "");
+  }, [selCountry, saveCountryCode]);
+
+  useEffect(() => {
+    setOpenLanguageModal(false);
+    saveLanguageCode?.(selLanguage?.value || "");
+  }, [selLanguage, saveLanguageCode]);
 
   return (
     <ThemedView style={{ flex: 1 }} useTheme>

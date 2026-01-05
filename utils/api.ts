@@ -4,8 +4,8 @@
     import { get, post } from '@/utils/api';
     const data = await post<{ token: string }>('/auth/login', { email, password });
 */
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
-import * as SecureStore from "expo-secure-store";
 
 export type QueryParams = Record<
   string,
@@ -68,7 +68,7 @@ const resolveUrl = (
 const getDefaultHeaders = (
   body?: unknown,
   headers?: Record<string, string>,
-  token?: string,
+  token?: string
 ): Record<string, string> => {
   const h: Record<string, string> = {
     Accept: "*/*",
@@ -116,12 +116,11 @@ export async function request<T = unknown>(
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-
   // Fetch token from SecureStorage if not provided
   let effectiveToken = token;
   if (!effectiveToken) {
     try {
-      const storedUser = await SecureStore.getItemAsync(SECURE_USER_KEY);
+      const storedUser = await AsyncStorage.getItem(SECURE_USER_KEY);
       if (storedUser) {
         const parsed = JSON.parse(storedUser) as { token?: string };
         if (parsed?.token) {
@@ -129,7 +128,7 @@ export async function request<T = unknown>(
         }
       }
     } catch (err) {
-      console.warn("Failed to load token from SecureStore", err);
+      console.warn("Failed to load token from AsyncStorage", err);
     }
   }
 
@@ -150,14 +149,20 @@ export async function request<T = unknown>(
     console.debug(
       `API Request: ${method} ${url} ${
         initBody instanceof FormData
-          ? JSON.stringify(Object.fromEntries(initBody.entries()))
+          ? (() => {
+              const obj: Record<string, unknown> = {};
+              initBody.forEach((value, key) => {
+                obj[key] = value;
+              });
+              return JSON.stringify(obj);
+            })()
           : initBody ?? ""
       }`
     );
     const res = await fetch(url, {
       method,
       headers: getDefaultHeaders(effectiveBody, headers, effectiveToken),
-      body: initBody,
+      body: initBody as BodyInit || null || undefined,
       signal: controller.signal,
     });
     console.debug(`API Response: ${method} ${url} ${res.status}`);

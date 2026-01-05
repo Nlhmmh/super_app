@@ -11,16 +11,7 @@ import { ThemedText } from "../ThemedText";
 const TrackPlayer = () => {
   const theme = useTheme();
   const commonStyles = useCommonStyles();
-  const {
-    isPlaying,
-    isLoading,
-    currentTrack,
-    position,
-    duration,
-    play,
-    pause,
-    seek,
-  } = useAudioPlayer();
+  const { isPlaying, isLoading, currentTrack, play, pause } = useAudioPlayer();
   const [pressed, setPressed] = useState(false);
 
   const onPressPlayPause = async () => {
@@ -44,6 +35,7 @@ const TrackPlayer = () => {
         style={{
           padding: 12,
           borderRadius: 12,
+          gap: 8,
           alignItems: "center",
           backgroundColor: theme.background,
           ...(!pressed ? commonStyles.lightShadow : undefined),

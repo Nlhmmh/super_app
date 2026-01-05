@@ -7,13 +7,13 @@ import React from "react";
 import { Platform, Pressable, TextInput } from "react-native";
 
 export type InputFieldProps = {
-  label: string;
+  label?: string;
   placeholder: string;
   value: string;
   onChangeText: (text: string) => void;
   icon?: string;
   errorMsg: string;
-  inputRef: React.RefObject<TextInput>;
+  inputRef: React.RefObject<TextInput | null>;
   returnKeyType: "next" | "done";
   onSubmitEditing?: () => void;
   keyboardType?:
@@ -32,6 +32,7 @@ export type InputFieldProps = {
   showPassword?: boolean;
   onTogglePassword?: () => void;
   alignCenter?: boolean;
+  zIndex?: number;
 };
 
 export default function InputField({
