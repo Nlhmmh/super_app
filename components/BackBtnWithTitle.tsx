@@ -13,7 +13,7 @@ const BackBtnWithTitle = ({
   title: string;
   showBack?: boolean;
 }) => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const commonStyles = useCommonStyles();
 
   const goBack = () => {

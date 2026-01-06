@@ -36,7 +36,7 @@ export function ThemedText({
   link?: string;
   oneLineMode?: boolean;
 }) {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const styles = StyleSheet.create({
     xsm: {
       fontSize: 10,

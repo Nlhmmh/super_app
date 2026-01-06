@@ -11,11 +11,11 @@ import React, {
 export const SECURE_LANGUAGE_KEY = "secure_language";
 
 type LanguageContextValue = {
-  languageCode: LanguageType | null;
+  language: LanguageType | undefined | null;
   isLoading: boolean;
-  error: LanguageType | null;
-  saveLanguageCode: (code: LanguageType) => Promise<void>;
-  clearLanguageCode: () => Promise<void>;
+  error: string | null;
+  saveLanguage: (code: LanguageType) => Promise<void>;
+  clearLanguage: () => Promise<void>;
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -23,7 +23,7 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguage] = useState<LanguageType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<LanguageType | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const loadLanguage = useCallback(async () => {
     setIsLoading(true);
@@ -42,6 +42,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const saveLanguage = useCallback(async (code: LanguageType) => {
+    if (!code) return;
     setIsLoading(true);
     setError(null);
     try {
@@ -70,11 +71,11 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value: LanguageContextValue = {
-    languageCode: language,
+    language,
     isLoading,
     error,
-    saveLanguageCode: saveLanguage,
-    clearLanguageCode: clearLanguage,
+    saveLanguage,
+    clearLanguage,
   };
 
   useEffect(() => {

@@ -3,6 +3,7 @@ import BackBtnWithTitle from "@/components/BackBtnWithTitle";
 import CustomModal from "@/components/CustomModal";
 import CustomScrollView from "@/components/CustomScrollView";
 import IconButton from "@/components/IconButton";
+import InfoCard from "@/components/InfoCard";
 import Loading from "@/components/Loading";
 import Pad from "@/components/Pad";
 import PriorityImage from "@/components/PriorityImage";
@@ -21,9 +22,10 @@ import { ImageStyle } from "expo-image";
 import { useKeepAwake } from "expo-keep-awake";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const RadioStationDetailPage = () => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const commonStyles = useCommonStyles();
   const { stationId } = useLocalSearchParams();
   const {
@@ -34,8 +36,8 @@ const RadioStationDetailPage = () => {
     currentTrack,
     position,
     duration,
-    seek,
   } = useAudioPlayer();
+  const { t } = useTranslation();
   const { isFavouriteRadioStation, toggleFavouriteRadioStation } =
     useFavouriteStations();
 
@@ -78,7 +80,7 @@ const RadioStationDetailPage = () => {
         setStation(station);
       },
       catchCb: (error) => {
-        setError("Could not load radio station. Please check your network.");
+        setError(t("radio.api-error"));
       },
       finallyCb: () => {
         setLoading(false);
@@ -88,18 +90,15 @@ const RadioStationDetailPage = () => {
 
   const onPressPlayPause = async () => {
     if (!station) return;
-
-    // Check if we're already playing this station
     const isSameStation =
       currentTrack?.uri === (station.url_resolved || station.url);
-
     if (isPlaying && isSameStation) {
       await pause();
     } else {
       await play({
         uri: station.url_resolved || station.url || "",
         title: station.name,
-        artist: "Super App",
+        artist: t("general.app-name"),
         artwork: station.favicon,
         station,
       });
@@ -246,7 +245,7 @@ const RadioStationDetailPage = () => {
       <CustomModal
         open={openDetailModal}
         onClose={() => setOpenDetailModal(false)}
-        title={"Station Details"}
+        title={t("radio.station-details")}
         body={
           <ThemedView
             style={{
@@ -259,70 +258,41 @@ const RadioStationDetailPage = () => {
               ...commonStyles.shadow,
             }}
           >
-            <InfoCard title="Name:" info={station?.name} />
+            <InfoCard title={t("radio.name")} info={station?.name} />
             {station?.homepage && (
               <InfoCard
-                title="Homepage:"
+                title={t("radio.homepage")}
                 info={station?.homepage}
                 link={station?.homepage}
                 openLink
                 oneLineMode
               />
             )}
-            {station?.tags && <InfoCard title="Tags:" info={station?.tags} />}
-            <InfoCard title="Country:" info={station?.country} />
-            <InfoCard title="Language:" info={station?.language} />
-            <InfoCard title="Codec:" info={station?.codec} />
-            <InfoCard title="Bitrate:" info={`${station?.bitrate} kbps`} />
-            <InfoCard title="Click Count:" info={`${station?.clickcount}`} />
-            <InfoCard title="Votes:" info={`${station?.votes}`} />
+            {station?.tags && (
+              <InfoCard title={t("radio.tags")} info={station?.tags} />
+            )}
+            <InfoCard title={t("radio.country")} info={station?.country} />
+            <InfoCard title={t("radio.language")} info={station?.language} />
+            <InfoCard title={t("radio.codec")} info={station?.codec} />
+            <InfoCard
+              title={t("radio.bitrate")}
+              info={`${station?.bitrate} kbps`}
+            />
+            <InfoCard
+              title={t("radio.clicks")}
+              info={`${station?.clickcount}`}
+            />
+            <InfoCard title={t("radio.votes")} info={`${station?.votes}`} />
             <ThemedText
               type={TextType.LINK}
               link={station?.url_resolved || station?.url}
               style={{ marginBottom: 4 }}
             >
-              copy radio stream url here!!
+              {t("radio.copy-radio-stream-url-here")}
             </ThemedText>
           </ThemedView>
         }
       />
-    </ThemedView>
-  );
-};
-
-const InfoCard = ({
-  title,
-  info,
-  link,
-  oneLineMode,
-  openLink,
-}: {
-  title: string;
-  info: string | null | undefined;
-  link?: string;
-  oneLineMode?: boolean;
-  openLink?: boolean;
-}) => {
-  const theme = useTheme();
-  return (
-    <ThemedView style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-      <ThemedText
-        type={TextType.M}
-        bold
-        style={{ flex: 1, alignSelf: "flex-start" }}
-      >
-        {title}
-      </ThemedText>
-      <ThemedText
-        type={
-          link ? (openLink ? TextType.OPEN_LINK : TextType.LINK) : TextType.M
-        }
-        link={link || undefined}
-        style={{ flex: 2 }}
-        oneLineMode={oneLineMode}
-      >
-        {info}
-      </ThemedText>
     </ThemedView>
   );
 };

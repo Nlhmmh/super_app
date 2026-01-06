@@ -1,6 +1,66 @@
 {
-  "language": "Language",
+  "general": {
+    "app-name": "Super App",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "guest": "Guest",
+    "username": "Username",
+    "theme": "Theme",
+    "unselected": "Unselected",
+    "device-language": "Device Language",
+    "select-device-language": "Select Device Language",
+    "search-device-language": "Search Device Language",
+    "Light": "Light",
+    "Dark": "Dark",
+    "no-data-found": "No data found.",
+    "error": "Error",
+    "loading": "Loading..."
+  },
+  "start": {
+    "welcome-message": "Welcome to Super App!",
+    "get-started": "Get Started",
+    "enter-username": "Please enter your username to continue:",
+    "name-placeholder": "Enter your name"
+  },
   "home": {
-    "welcome": "Welcome"
+    "home": "Home",
+    "welcome": "Welcome",
+    "radio": "Radio",
+    "info": "Phone Info"
+  },
+  "radio": {
+    "country": "Country",
+    "language": "Language",
+    "select-country": "Select Country",
+    "search-country": "Search Country",
+    "select-language": "Select Language",
+    "search-language": "Search Language",
+    "api-error": "Could not load radio stations. Please check the network connection and try again.",
+    "search-stations": "Search stations",
+    "loading-more": "Loading more...",
+    "station-details": "Station Details",
+    "play": "Play",
+    "pause": "Pause",
+    "name": "Name",
+    "homepage": "Homepage",
+    "tags": "Tags",
+    "codec": "Codec",
+    "bitrate": "Bitrate",
+    "votes": "Votes",
+    "clicks": "Clicks",
+    "clicks-today": "Clicks Today",
+    "copy-radio-stream-url-here": "copy radio stream URL here!!",
+    "radio-favorites": "Radio Favorites",
+    "no-favourites": "No favorite radio stations added yet."
+  },
+  "settings": {
+    "settings": "Settings",
+    "changeLanguage": "Change Language",
+    "notifications": "Notifications",
+    "clear-settings-title": "Clear Settings",
+    "clear-settings-message": "Are you sure you want to clear all settings?",
+    "permission-needed": "Permission Needed",
+    "photo-permission": "Please allow photo library access to pick images.",
+    "image-picker-error": "Could not open image picker. Please try again."
   }
 }

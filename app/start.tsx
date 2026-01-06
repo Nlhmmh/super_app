@@ -1,13 +1,21 @@
 import AssetImage from "@/components/AssetImage";
 import CustomButton from "@/components/CustomButton";
+import FilteredSelectionModal from "@/components/FilteredSelectionModal";
 import InputField from "@/components/InputField";
 import Pad from "@/components/Pad";
+import SelectBox from "@/components/SelectBox";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useUser } from "@/contexts/UserContext";
+import { DEVICE_LANGUAGES } from "@/i18n";
+import { labelValuePair } from "@/utils/models";
+import { useCommonStyles } from "@/utils/useCommonStyles";
 import { validateField } from "@/utils/validation";
 import { router } from "expo-router";
+import i18next from "i18next";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -17,18 +25,19 @@ import {
 } from "react-native";
 
 export default function StartPage() {
+  const { t } = useTranslation();
+  const commonStyles = useCommonStyles();
   const { user, isReady, saveUser } = useUser();
+  const { language, saveLanguage } = useLanguage();
   const nameRef = useRef<TextInput>(null);
   const [name, setName] = useState("");
   const [nameErrMsg, setNameErrMsg] = useState("");
   const btnRef = useRef<any>(null);
+  const [openDeviceLanguageModal, setOpenDeviceLanguageModal] = useState(false);
+  const [selDeviceLanguage, setSelDeviceLanguage] = useState<
+    labelValuePair | undefined
+  >(undefined);
 
-  useEffect(() => {
-    if (!isReady) return;
-    if (user) router.replace("/home");
-  }, [isReady, user]);
-
-  // Handle field changes
   const handleNameChange = (text: string) => {
     setName(text);
     const validation = validateField(text, "Name");
@@ -48,6 +57,23 @@ export default function StartPage() {
     });
     router.replace("/home");
   };
+
+  useEffect(() => {
+    if (!isReady) return;
+    if (user) router.replace("/home");
+  }, [isReady, user]);
+
+  useEffect(() => {
+    setSelDeviceLanguage(
+      DEVICE_LANGUAGES.find((v) => v.value === language) || DEVICE_LANGUAGES[0]
+    );
+  }, [language]);
+
+  useEffect(() => {
+    setOpenDeviceLanguageModal(false);
+    i18next.changeLanguage(selDeviceLanguage?.value);
+    saveLanguage?.(selDeviceLanguage?.value);
+  }, [selDeviceLanguage, saveLanguage]);
 
   return (
     <Pressable
@@ -71,7 +97,7 @@ export default function StartPage() {
           }}
         >
           <ThemedText bold type={TextType.XXL}>
-            Welcome to Super App
+            {t("start.welcome-message")}
           </ThemedText>
           <Pad height={16} />
           <AssetImage
@@ -87,7 +113,7 @@ export default function StartPage() {
           <ThemedView style={{ width: "100%", alignSelf: "center" }}>
             <InputField
               hideLabel
-              placeholder={"Hello Guest! Please enter your name..."}
+              placeholder={t("start.name-placeholder")}
               value={name}
               onChangeText={handleNameChange}
               errorMsg={nameErrMsg}
@@ -98,13 +124,30 @@ export default function StartPage() {
             />
             <Pad height={16} />
             <ThemedView style={{ width: "80%", alignSelf: "center" }}>
+              <SelectBox
+                options={DEVICE_LANGUAGES}
+                sel={selDeviceLanguage}
+                setSel={setSelDeviceLanguage}
+              />
+              <Pad height={16} />
               <CustomButton
-                title="Continue"
+                title={t("start.get-started")}
                 onPress={onContinue}
                 ref={btnRef}
               />
             </ThemedView>
           </ThemedView>
+
+          <FilteredSelectionModal
+            open={openDeviceLanguageModal}
+            setOpen={setOpenDeviceLanguageModal}
+            title={t("general.select-device-language")}
+            placeholder={t("general.search-device-language")}
+            allOptions={DEVICE_LANGUAGES}
+            selectedValue={selDeviceLanguage}
+            onSelect={setSelDeviceLanguage}
+            defaultOption={DEVICE_LANGUAGES[0]}
+          />
         </ThemedView>
       </KeyboardAvoidingView>
     </Pressable>

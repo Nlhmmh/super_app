@@ -5,7 +5,9 @@ import { ThemedView } from "@/components/ThemedView";
 import { useTheme } from "@/theme/ThemeContext";
 import { station } from "@/utils/models";
 import { useCommonStyles } from "@/utils/useCommonStyles";
+import { formatDisplayNumber } from "@/utils/utils";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native";
 
 const StationCard = ({
@@ -17,7 +19,8 @@ const StationCard = ({
   disabled?: boolean;
   onPress: () => void;
 }) => {
-  const theme = useTheme();
+  const { t } = useTranslation();
+  const { theme } = useTheme();
   const commonStyles = useCommonStyles();
   const [pressed, setPressed] = useState(false);
 
@@ -63,7 +66,9 @@ const StationCard = ({
         <ThemedText oneLineMode>
           {station.country} | {station.language}
         </ThemedText>
-        <ThemedText>Votes: {station.votes}</ThemedText>
+        <ThemedText>
+          {t("radio.votes")}: {formatDisplayNumber(station.votes)}
+        </ThemedText>
       </ThemedView>
     </TouchableOpacity>
   );

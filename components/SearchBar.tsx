@@ -18,7 +18,7 @@ export default function SearchBar({
   onPressLanguageOptions?: () => void;
   onPressFavourites?: () => void;
 }) {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const searchBarColors = {
     textColor: theme.accentBlue,
     iconColor: theme.accentBlue,
@@ -52,8 +52,6 @@ export default function SearchBar({
         onChangeText={setSearchText}
         style={{
           flex: 1,
-          fontSize: 16,
-          lineHeight: 18,
           color: searchBarColors.textColor,
         }}
         placeholderTextColor={searchBarColors.placeholderColor}
@@ -79,11 +77,7 @@ export default function SearchBar({
       )}
       {onPressFavourites && (
         <TouchableOpacity onPress={onPressFavourites}>
-          <Ionicons
-            name="heart"
-            size={24}
-            color={searchBarColors.iconColor}
-          />
+          <Ionicons name="heart" size={24} color={searchBarColors.iconColor} />
         </TouchableOpacity>
       )}
     </ThemedView>

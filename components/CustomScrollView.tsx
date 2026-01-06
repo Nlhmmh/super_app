@@ -33,7 +33,7 @@ const CustomScrollView = ({
 }) => {
   const headerHeight = useHeaderHeight?.() ?? 0;
   const insets = useSafeAreaInsets();
-  const theme = useTheme();
+  const { theme } = useTheme();
   const verticalOffset =
     typeof keyboardOffset === "number"
       ? keyboardOffset

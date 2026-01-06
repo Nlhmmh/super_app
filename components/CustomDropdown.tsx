@@ -26,7 +26,7 @@ const CustomDropdown = ({
   parentScrollable?: boolean;
   setParentScrollable?: (scrollable: boolean) => void;
 }) => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const commonStyle = useCommonStyles();
 
   const handleSelectChange = useCallback(

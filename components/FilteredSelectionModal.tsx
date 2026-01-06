@@ -28,7 +28,7 @@ const FilteredSelectionModal = ({
   onSelect,
   defaultOption,
 }: FilteredSelectionModalProps) => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const [searchText, setSearchText] = useState("");
   const [filteredOptions, setFilteredOptions] =
     useState<labelValuePair[]>(allOptions);

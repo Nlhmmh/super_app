@@ -8,6 +8,7 @@ import React, {
 } from "react";
 
 const SECURE_USER_KEY = "secure_user";
+const SECURE_PROFILE_IMAGE_KEY = "secure_profile_image";
 
 export type StoredUser = {
   id?: number;
@@ -16,6 +17,7 @@ export type StoredUser = {
   token?: string;
   phone?: string;
   expiresAt?: string;
+  profileImageUri?: string;
   [key: string]: unknown;
 };
 
@@ -72,6 +74,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         token: value.token,
         phone: value.phone,
         expiresAt: value.expiresAt,
+        profileImageUri: value.profileImageUri,
       };
       await AsyncStorage.setItem(SECURE_USER_KEY, JSON.stringify(userToStore));
       setUser(value);

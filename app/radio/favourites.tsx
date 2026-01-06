@@ -6,8 +6,10 @@ import { ThemedView } from "@/components/ThemedView";
 import { useFavouriteStations } from "@/contexts/FavouriteStationsContext";
 import { station } from "@/utils/models";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 const RadioFavouritesPage = () => {
+  const { t } = useTranslation();
   const { favouriteRadioStations } = useFavouriteStations();
 
   const onPressStation = (station: station) => {
@@ -16,7 +18,7 @@ const RadioFavouritesPage = () => {
 
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
-      <BackBtnWithTitle title="Radio Favourites" />
+      <BackBtnWithTitle title={t("radio.radio-favorites")} />
       <ThemedView style={{ flex: 1, padding: 12 }}>
         <CustomScrollView childGrow>
           <ThemedView
@@ -40,7 +42,7 @@ const RadioFavouritesPage = () => {
           </ThemedView>
           {(!favouriteRadioStations ||
             favouriteRadioStations?.length === 0) && (
-            <NoData text="No Favourite Radio Stations" />
+            <NoData text={t("radio.no-favourites")} />
           )}
         </CustomScrollView>
       </ThemedView>

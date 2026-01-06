@@ -2,6 +2,7 @@ import { useTheme } from "@/theme/ThemeContext";
 import { labelValuePair } from "@/utils/models";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Animated,
   LayoutChangeEvent,
@@ -22,7 +23,8 @@ const Toggle = ({
   initSel: labelValuePair;
   onChange?: (value: labelValuePair) => void;
 }) => {
-  const theme = useTheme();
+  const { t } = useTranslation();
+  const { theme } = useTheme();
   const commonStyles = useCommonStyles();
   const [sel, setSel] = useState<labelValuePair>(initSel);
   const [componentWidth, setComponentWidth] = useState(0);
@@ -100,9 +102,8 @@ const Toggle = ({
       ...commonStyles.lightShadow,
     } as ViewStyle,
     baseText: {
-      fontSize: 14,
+      fontSize: 12,
       fontWeight: "bold",
-      lineHeight: 16,
     } as TextStyle,
   });
 
@@ -136,7 +137,7 @@ const Toggle = ({
         onPress={() => handlePress(options[0])}
       >
         <AnimatedThemedText style={[styles.baseText, { color: leftColor }]}>
-          {options[0].label}
+          {t(`general.${options[0].label}`) || options[0].label}
         </AnimatedThemedText>
       </Pressable>
 
@@ -145,7 +146,7 @@ const Toggle = ({
         onPress={() => handlePress(options[1])}
       >
         <AnimatedThemedText style={[styles.baseText, { color: rightColor }]}>
-          {options[1].label}
+          {t(`general.${options[1].label}`) || options[1].label}
         </AnimatedThemedText>
       </Pressable>
     </Animated.View>

@@ -2,7 +2,7 @@ import { useTheme } from "@/theme/ThemeContext";
 import { StyleSheet } from "react-native";
 
 export const useCommonStyles = () => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   return StyleSheet.create({
     shadow: {
       elevation: 10,

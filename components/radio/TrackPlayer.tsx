@@ -9,7 +9,7 @@ import IconButton from "../IconButton";
 import { ThemedText } from "../ThemedText";
 
 const TrackPlayer = () => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const commonStyles = useCommonStyles();
   const { isPlaying, isLoading, currentTrack, play, pause } = useAudioPlayer();
   const [pressed, setPressed] = useState(false);

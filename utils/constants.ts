@@ -1,5 +1,7 @@
-import { ThemeSchemes } from "@/theme/schemeStore";
+import { ThemeSchemes } from "@/theme/ThemeContext";
 import { labelValuePair } from "./models";
+
+export const RADIO_API_BASE_URL = "https://de1.api.radio-browser.info/json";
 
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const MIN_PASSWORD_LENGTH = 4;

@@ -1,24 +1,28 @@
-import AssetImage from "@/components/AssetImage";
 import BackBtnWithTitle from "@/components/BackBtnWithTitle";
 import CustomButton from "@/components/CustomButton";
 import CustomScrollView from "@/components/CustomScrollView";
 import FilteredSelectionModal from "@/components/FilteredSelectionModal";
+import ImageUploader from "@/components/ImageUploader";
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Toggle from "@/components/Toggle";
 import { useAudioPlayer } from "@/contexts";
 import { useCountryCode } from "@/contexts/CountryCodeContext";
 import { useLanguageCode } from "@/contexts/LanguageCodeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useUser } from "@/contexts/UserContext";
-import { ColorScheme, schemeStore } from "@/theme/schemeStore";
+import { DEVICE_LANGUAGES } from "@/i18n";
 import { useTheme } from "@/theme/ThemeContext";
-import { COUNTRY_CODES, LANGUAGES, THEMES } from "@/utils/constants";
+import { THEMES } from "@/utils/constants";
 import { labelValuePair } from "@/utils/models";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { Ionicons } from "@expo/vector-icons";
+import i18next from "i18next";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Alert,
+  ColorSchemeName,
   Keyboard,
   TextInput,
   TouchableOpacity,
@@ -26,82 +30,64 @@ import {
 } from "react-native";
 
 export default function SettingPage() {
-  const theme = useTheme();
+  const { t } = useTranslation();
+  const { theme, scheme, saveScheme, clearScheme } = useTheme();
   const commonStyles = useCommonStyles();
   const { user, saveUser, clearUser } = useUser();
-  const { countryCode, saveCountryCode, clearCountryCode } = useCountryCode();
-  const { languageCode, saveLanguageCode, clearLanguageCode } =
-    useLanguageCode();
+  const { clearCountryCode } = useCountryCode();
+  const { clearLanguageCode } = useLanguageCode();
+  const { language, saveLanguage, clearLanguage } = useLanguage();
   const { clearCurrentStation } = useAudioPlayer();
-  const [currentScheme, setCurrentScheme] = useState<ColorScheme | null>(
-    THEMES[0]
-  );
   const [usernameEditable, setUsernameEditable] = useState(false);
   const [username, setUsername] = useState(user?.username || "");
-  const [openCountryModal, setOpenCountryModal] = useState(false);
-  const [selCountry, setSelCountry] = useState<labelValuePair | undefined>(
-    undefined
-  );
-  const [openLanguageModal, setOpenLanguageModal] = useState(false);
-  const [selLanguage, setSelLanguage] = useState<labelValuePair | undefined>(
-    undefined
-  );
+  const [openDeviceLanguageModal, setOpenDeviceLanguageModal] = useState(false);
+  const [selDeviceLanguage, setSelDeviceLanguage] = useState<
+    labelValuePair | undefined
+  >(undefined);
 
-  useEffect(() => {
-    (async () => {
-      const stored = await schemeStore.get();
-      setCurrentScheme(THEMES.find((t) => t.value == stored) || THEMES[0]);
-    })();
-  }, []);
-
-  useEffect(() => {
-    if (!countryCode) return;
-    setSelCountry(COUNTRY_CODES.find((v) => v.value === countryCode));
-  }, [countryCode]);
-
-  useEffect(() => {
-    if (!languageCode) return;
-    setSelLanguage(LANGUAGES.find((v) => v.value === languageCode));
-  }, [languageCode]);
-
-  useEffect(() => {
-    setOpenCountryModal(false);
-    saveCountryCode(selCountry?.value || "");
-  }, [selCountry, saveCountryCode]);
-
-  useEffect(() => {
-    setOpenLanguageModal(false);
-    saveLanguageCode?.(selLanguage?.value || "");
-  }, [selLanguage, saveLanguageCode]);
-
-  const changeTheme = (newTheme: ColorScheme) => {
-    schemeStore.set(newTheme);
+  const changeTheme = (newTheme: ColorSchemeName) => {
+    saveScheme(newTheme);
   };
 
   const onClearSettings = () => {
-    Alert.alert("Clear Settings", "Are you sure to clear settings?", [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-      {
-        text: "OK",
-        onPress: async () => {
-          await clearUser();
-          await clearCountryCode();
-          await clearLanguageCode();
-          await clearCurrentStation();
-          schemeStore.clear();
-          setCurrentScheme(THEMES[0]);
-          changeTheme(THEMES[0]);
+    Alert.alert(
+      t("settings.clear-settings-title"),
+      t("settings.clear-settings-message"),
+      [
+        {
+          text: t("general.cancel"),
+          style: "cancel",
         },
-      },
-    ]);
+        {
+          text: t("general.ok"),
+          onPress: async () => {
+            await clearUser();
+            await clearLanguage();
+            await clearCountryCode();
+            await clearLanguageCode();
+            await clearCurrentStation();
+            await clearScheme();
+          },
+        },
+      ]
+    );
   };
+
+  useEffect(() => {
+    setSelDeviceLanguage(
+      DEVICE_LANGUAGES.find((v) => v.value === language) || DEVICE_LANGUAGES[0]
+    );
+  }, [language]);
+
+  useEffect(() => {
+    setOpenDeviceLanguageModal(false);
+    i18next.changeLanguage(selDeviceLanguage?.value);
+    saveLanguage?.(selDeviceLanguage?.value);
+  }, [selDeviceLanguage, saveLanguage]);
 
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
-      <BackBtnWithTitle title="Settings" showBack={false} />
+      <BackBtnWithTitle title={t("settings.settings")} showBack={false} />
 
       <TouchableWithoutFeedback
         onPress={() => {
@@ -110,24 +96,16 @@ export default function SettingPage() {
         }}
       >
         <CustomScrollView contentContainerStyle={{ padding: 12, gap: 12 }}>
-          <AssetImage
-            path="icon.png"
-            style={{
-              width: "100%",
-              height: 160,
-              borderRadius: 12,
-              alignSelf: "center",
-            }}
-          />
+          <ImageUploader />
 
-          <SettingCard title="Username" icon="person">
+          <SettingCard title={t("general.username")} icon="person">
             <TouchableOpacity
               onPress={() => setUsernameEditable(!usernameEditable)}
               activeOpacity={0.8}
               style={{ ...commonStyles.lightShadow }}
             >
               {!usernameEditable && (
-                <ThemedText>{user?.username || "Guest"}</ThemedText>
+                <ThemedText>{user?.username || t("general.guest")}</ThemedText>
               )}
               {usernameEditable && (
                 <TextInput
@@ -148,46 +126,31 @@ export default function SettingPage() {
             </TouchableOpacity>
           </SettingCard>
 
-          <SettingCard title="Theme" icon="color-palette">
+          <SettingCard title={t("general.theme")} icon="color-palette">
             <Toggle
               options={THEMES}
-              initSel={currentScheme}
-              onChange={(value) => changeTheme(value.value as ColorScheme)}
+              initSel={THEMES.find((t) => t.value === scheme) || THEMES[0]}
+              onChange={(value) => changeTheme(value.value as ColorSchemeName)}
             />
           </SettingCard>
 
-          <SettingCard title="Country" icon="globe">
+          <SettingCard title={t("general.device-language")} icon="language">
             <TouchableOpacity
-              onPress={() => setOpenCountryModal(true)}
+              onPress={() => setOpenDeviceLanguageModal(true)}
               activeOpacity={0.8}
               style={{ ...commonStyles.lightShadow }}
             >
               <ThemedText>
                 <>
-                  {countryCode ||
-                    (user?.countryCode ? user.countryCode : "Unselected")}
-                </>
-              </ThemedText>
-            </TouchableOpacity>
-          </SettingCard>
-
-          <SettingCard title="Language" icon="language">
-            <TouchableOpacity
-              onPress={() => setOpenLanguageModal(true)}
-              activeOpacity={0.8}
-              style={{ ...commonStyles.lightShadow }}
-            >
-              <ThemedText>
-                <>
-                  {languageCode ||
-                    (user?.languageCode ? user.languageCode : "Unselected")}
+                  {DEVICE_LANGUAGES.find((v) => v.value === language)?.label ||
+                    DEVICE_LANGUAGES[0].label}
                 </>
               </ThemedText>
             </TouchableOpacity>
           </SettingCard>
 
           <CustomButton
-            title="Clear Setting"
+            title={t("settings.clear-settings-title")}
             variant="tertiary"
             large
             onPress={onClearSettings}
@@ -196,25 +159,14 @@ export default function SettingPage() {
       </TouchableWithoutFeedback>
 
       <FilteredSelectionModal
-        open={openCountryModal}
-        setOpen={setOpenCountryModal}
-        title="Select Country"
-        placeholder="Search Country"
-        allOptions={COUNTRY_CODES}
-        selectedValue={selCountry}
-        onSelect={setSelCountry}
-        defaultOption={COUNTRY_CODES[0]}
-      />
-
-      <FilteredSelectionModal
-        open={openLanguageModal}
-        setOpen={setOpenLanguageModal}
-        title="Select Language"
-        placeholder="Search Language"
-        allOptions={LANGUAGES}
-        selectedValue={selLanguage}
-        onSelect={setSelLanguage}
-        defaultOption={LANGUAGES[0]}
+        open={openDeviceLanguageModal}
+        setOpen={setOpenDeviceLanguageModal}
+        title={t("general.select-device-language")}
+        placeholder={t("general.search-device-language")}
+        allOptions={DEVICE_LANGUAGES}
+        selectedValue={selDeviceLanguage}
+        onSelect={setSelDeviceLanguage}
+        defaultOption={DEVICE_LANGUAGES[0]}
       />
     </ThemedView>
   );
@@ -229,7 +181,7 @@ const SettingCard = ({
   title: string;
   children?: React.ReactNode;
 }) => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const commonStyles = useCommonStyles();
   return (
     <ThemedView

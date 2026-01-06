@@ -36,7 +36,7 @@ const CustomModal = ({
   flexStart?: boolean;
   atBottom?: boolean;
 }) => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const commonStyles = useCommonStyles();
 
   const atBottomStyle: StyleProps = {

@@ -18,13 +18,13 @@ const SelectBox = ({
 }: {
   title?: string;
   options: labelValuePair[];
-  sel: labelValuePair;
+  sel: labelValuePair | null | undefined;
   setSel: (val: labelValuePair) => void;
   isScrollable?: boolean;
   isWrap?: boolean;
   height?: number;
 }) => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   return (
     <ThemedView>
       {title && (
@@ -74,7 +74,7 @@ const SelectBoxContent = ({
   isWrap = false,
 }: {
   options: labelValuePair[];
-  sel: labelValuePair;
+  sel: labelValuePair | null | undefined;
   setSel: (val: labelValuePair) => void;
   isWrap?: boolean;
 }) => {
@@ -107,7 +107,7 @@ const SelectCard = ({
   isChecked: boolean;
   onPress: () => void;
 }) => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const commonStyles = useCommonStyles();
   return (
     <TouchableOpacity

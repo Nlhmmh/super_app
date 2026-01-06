@@ -38,7 +38,7 @@ const CustomButton = React.forwardRef<View, Props>(function CustomButton(
   }: Props,
   ref
 ) {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const commonStyle = useCommonStyles();
   const [pressed, setPressed] = useState(false);
 

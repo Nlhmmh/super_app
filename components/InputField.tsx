@@ -56,7 +56,7 @@ export default function InputField({
   onTogglePassword,
   alignCenter,
 }: InputFieldProps) {
-  const theme = useTheme();
+  const { theme } = useTheme();
   return (
     <ThemedView
       style={{

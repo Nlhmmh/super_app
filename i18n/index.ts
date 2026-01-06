@@ -1,6 +1,7 @@
 import { SECURE_LANGUAGE_KEY } from "@/contexts/LanguageContext";
 import translationEn from "@/locales/en-US/translation.json";
 import translationMy from "@/locales/my-MM/translation.json";
+import { labelValuePair } from "@/utils/models";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Localization from "expo-localization";
 import i18n from "i18next";
@@ -12,6 +13,11 @@ export const Languages = {
 };
 
 export type LanguageType = (typeof Languages)[keyof typeof Languages];
+
+export const DEVICE_LANGUAGES: labelValuePair[] = [
+  { label: "English", value: Languages.ENGLISH },
+  { label: "မြန်မာ", value: Languages.MYANMAR },
+];
 
 const supportedLanguages = Object.values(Languages);
 
@@ -29,7 +35,7 @@ export const initI18n = async () => {
 
   let savedLanguage = loc;
   let storedLanguage = await AsyncStorage.getItem(SECURE_LANGUAGE_KEY);
-  if (storedLanguage && !isLanguageSupported(storedLanguage)) {
+  if (storedLanguage && isLanguageSupported(storedLanguage)) {
     savedLanguage = storedLanguage;
   }
 

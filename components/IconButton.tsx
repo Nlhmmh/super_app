@@ -24,7 +24,7 @@ const IconButton = ({
   loading?: boolean;
   onPress: () => void;
 }) => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const commonStyles = useCommonStyles();
   const [pressed, setPressed] = useState(false);
   return (

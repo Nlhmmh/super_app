@@ -2,7 +2,7 @@ import { AudioPlayer } from "expo-audio";
 
 export type labelValuePair = {
   label: string;
-  value: string;
+  value: any;
 };
 
 export type idNamePair = {

@@ -11,24 +11,25 @@ import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useCountryCode } from "@/contexts/CountryCodeContext";
 import { useLanguageCode } from "@/contexts/LanguageCodeContext";
-import { useTheme } from "@/theme/ThemeContext";
 import { get, safeAPICall } from "@/utils/api";
-import { COUNTRY_CODES, LANGUAGES } from "@/utils/constants";
+import {
+  COUNTRY_CODES,
+  LANGUAGES,
+  RADIO_API_BASE_URL,
+} from "@/utils/constants";
 import { labelValuePair, station } from "@/utils/models";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const RadioPage = () => {
-  const theme = useTheme();
+  const { t } = useTranslation();
   const commonStyles = useCommonStyles();
   const { countryCode, saveCountryCode } = useCountryCode();
   const { languageCode, saveLanguageCode } = useLanguageCode();
   const [searchTerm, setSearchTerm] = useState("");
   const [stations, setStations] = useState<station[]>([]);
-  const [currentStation, setCurrentStation] = useState<station | undefined>(
-    undefined
-  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -38,7 +39,6 @@ const RadioPage = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [tags, setTags] = useState<labelValuePair[]>([]);
   const [selTag, setSelTag] = useState<labelValuePair | null>(null);
-
   const [openCountryModal, setOpenCountryModal] = useState(false);
   const [selCountry, setSelCountry] = useState<labelValuePair | undefined>(
     undefined
@@ -64,17 +64,14 @@ const RadioPage = () => {
           }
 
           const currentOffset = reset ? 0 : offset;
-          const API_URL =
-            "https://de2.api.radio-browser.info/json/stations/search";
+          const API_URL = `${RADIO_API_BASE_URL}/stations/search`;
           let url = `${API_URL}?limit=${limit}&offset=${currentOffset}&hidebroken=true&order=votes&reverse=true`;
           if (searchTerm.trim() !== "") url += `&name=${searchTerm}`;
           if (selCountry && selCountry.value !== "unselected") {
             url += `&countrycode=${selCountry.value}`;
           }
           if (selLanguage && selLanguage.value !== "unselected") {
-            const langs: any[] = await get(
-              `https://de2.api.radio-browser.info/json/languages`
-            );
+            const langs: any[] = await get(`${RADIO_API_BASE_URL}/languages`);
             const langObj = langs.find((l) => l.iso_639! === selLanguage.value);
             if (langObj) url += `&language=${langObj.name!}`;
           }
@@ -96,9 +93,7 @@ const RadioPage = () => {
           }
         },
         catchCb: (error) => {
-          setError(
-            "Could not load radio stations. Please check the network or API."
-          );
+          setError(t("radio.api-error"));
         },
         finallyCb: () => {
           setLoading(false);
@@ -122,7 +117,7 @@ const RadioPage = () => {
     safeAPICall({
       fn: async () => {
         const tags: any[] = await get(
-          `https://de2.api.radio-browser.info/json/tags?order=stationcount&hidebroken=true&limit=100`
+          `${RADIO_API_BASE_URL}/tags?order=stationcount&hidebroken=true&limit=100`
         );
         if (tags) {
           const tagNames: labelValuePair[] = tags.map((tag: any) => {
@@ -139,10 +134,10 @@ const RadioPage = () => {
 
   const handleScroll = (event: any) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const paddingToBottom = 20;
+    const paddingToBottom = 200;
     const isCloseToBottom =
-      layoutMeasurement.height + contentOffset.y >=
-      contentSize.height - paddingToBottom;
+      Math.ceil(layoutMeasurement.height + contentOffset.y) >=
+      contentSize.height - (paddingToBottom * (offset || 20)) / limit;
     if (isCloseToBottom && !loadingMore && hasMore) {
       fetchStations(false);
     }
@@ -187,11 +182,11 @@ const RadioPage = () => {
 
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
-      <BackBtnWithTitle title="Radio" />
+      <BackBtnWithTitle title={t("home.radio")} />
 
       <ThemedView style={{ flex: 1, padding: 12 }}>
         <SearchBar
-          placeholder="Search stations"
+          placeholder={t("radio.search-stations")}
           searchText={searchTerm}
           setSearchText={setSearchTerm}
           onPressCountryOptions={() => setOpenCountryModal(true)}
@@ -241,8 +236,8 @@ const RadioPage = () => {
           </ThemedView>
           {loading && <Loading />}
           {loadingMore && !loading && (
-            <ThemedText style={{ textAlign: "center" }}>
-              Loading more...
+            <ThemedText style={{ textAlign: "center", marginTop: 8 }}>
+              {t("radio.loading-more")}
             </ThemedText>
           )}
           {error && <ThemedText type={TextType.ERROR}>{error}</ThemedText>}
@@ -254,8 +249,8 @@ const RadioPage = () => {
       <FilteredSelectionModal
         open={openCountryModal}
         setOpen={setOpenCountryModal}
-        title="Select Country"
-        placeholder="Search Country"
+        title={t("radio.select-country")}
+        placeholder={t("radio.search-country")}
         allOptions={COUNTRY_CODES}
         selectedValue={selCountry}
         onSelect={setSelCountry}
@@ -265,8 +260,8 @@ const RadioPage = () => {
       <FilteredSelectionModal
         open={openLanguageModal}
         setOpen={setOpenLanguageModal}
-        title="Select Language"
-        placeholder="Search Language"
+        title={t("radio.select-language")}
+        placeholder={t("radio.search-language")}
         allOptions={LANGUAGES}
         selectedValue={selLanguage}
         onSelect={setSelLanguage}

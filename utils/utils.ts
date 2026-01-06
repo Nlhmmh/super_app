@@ -33,7 +33,9 @@ export const formatTime = (date: Date): string => {
 
 export const truncateStr = (title: string, maxLength: number = 10): string => {
   if (!title) return "";
-  return title.length > maxLength ? title.substring(0, maxLength) + "..." : title;
+  return title.length > maxLength
+    ? title.substring(0, maxLength) + "..."
+    : title;
 };
 
 export const formatTimeInput = (input: string): string => {
@@ -81,4 +83,20 @@ export const formatMillisecondsToTime = (milliseconds: number): string => {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+};
+
+export const formatDisplayNumber = (num: number): string => {
+  if (num >= 1000000000) {
+    return (num / 1000000000).toFixed(1) + "B";
+  }
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + "M";
+  }
+  if (num >= 10000) {
+    return (num / 1000).toFixed(0) + "K";
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1) + "K";
+  }
+  return num.toString();
 };

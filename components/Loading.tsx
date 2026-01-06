@@ -3,7 +3,7 @@ import { ActivityIndicator } from "react-native";
 import { ThemedView } from "./ThemedView";
 
 const Loading = ({ size = "large" }: { size?: "small" | "large" }) => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   return (
     <ThemedView
       style={{

@@ -179,10 +179,7 @@ export function AudioPlayerProvider({
         } else if (currentTrack) {
           // If no player loaded but we have a current track, reload it
           await loadTrack(currentTrack);
-          if (playerRef.current) {
-            playerRef.current.play();
-            setLockScreenControls(currentTrack);
-          }
+          setLockScreenControls(currentTrack);
         }
       } catch (err) {
         console.error("Error playing audio:", err);

@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native";
 
 export default function HomePage() {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const commonStyles = useCommonStyles();
   const { t } = useTranslation();
   const { user } = useUser();
@@ -37,11 +37,14 @@ export default function HomePage() {
         activeOpacity={0.8}
         style={[
           {
+            flex: 1,
+            justifyContent: "center",
             alignItems: "center",
             borderWidth: 0.2,
             borderColor: theme.outline,
             borderRadius: 12,
             padding: 12,
+            gap: 4,
             backgroundColor: theme.primaryContainer,
           },
           !pressed ? commonStyles.shadow : undefined,
@@ -62,11 +65,16 @@ export default function HomePage() {
         showBack={false}
       />
 
-      <ThemedView style={{ padding: 12 }}>
+      <ThemedView style={{ flexDirection: "row", padding: 12, gap: 12 }}>
         <ItemCard
           iconName="radio"
-          text="Radio"
+          text={t("home.radio")}
           onPress={() => router.push("/radio")}
+        />
+        <ItemCard
+          iconName="phone-portrait"
+          text={t("home.info")}
+          onPress={() => router.push("/info")}
         />
       </ThemedView>
 

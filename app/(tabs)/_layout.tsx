@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -13,8 +14,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 export default function TabLayout() {
-  const theme = useTheme();
-  const { user } = useUser();
+  const { t } = useTranslation();
   return (
     <Tabs
       screenOptions={{ headerShown: false }}
@@ -23,7 +23,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="home"
         options={{
-          title: "Home",
+          title: t("home.home"),
           tabBarIcon: ({ focused, color, size }) => (
             <NavIcon
               iconName={"home"}
@@ -37,7 +37,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="setting"
         options={{
-          title: "Setting",
+          title: t("settings.settings"),
           tabBarIcon: ({ focused, color, size }) => (
             <NavIcon
               iconName={"settings"}
@@ -76,7 +76,7 @@ const NavIcon = ({
 };
 
 const CustomTabBar = (props: BottomTabBarProps) => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const commonStyles = useCommonStyles();
   const { user } = useUser();
   const { state, descriptors, navigation } = props;
@@ -116,7 +116,7 @@ const BottomNavRouteCard = (
   index: number,
   navigation: BottomTabBarProps["navigation"]
 ) => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const commonStyles = useCommonStyles();
   const { options } = descriptors[route.key];
   const isFocused = state.routes[state.index].key === route.key;
@@ -161,6 +161,7 @@ const BottomNavRouteCard = (
             paddingVertical: 12,
           },
           animatedTabStyle,
+          isFocused ? commonStyles.lightShadow : undefined,
         ]}
       >
         {tabBarIcon &&
