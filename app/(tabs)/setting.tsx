@@ -17,6 +17,7 @@ import { THEMES } from "@/utils/constants";
 import { labelValuePair } from "@/utils/models";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import i18next from "i18next";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -98,7 +99,11 @@ export default function SettingPage() {
         <CustomScrollView contentContainerStyle={{ padding: 12, gap: 12 }}>
           <ImageUploader />
 
-          <SettingCard title={t("general.username")} icon="person">
+          <SettingCard
+            title={t("general.username")}
+            icon="person"
+            onPress={() => setUsernameEditable(!usernameEditable)}
+          >
             <TouchableOpacity
               onPress={() => setUsernameEditable(!usernameEditable)}
               activeOpacity={0.8}
@@ -134,7 +139,11 @@ export default function SettingPage() {
             />
           </SettingCard>
 
-          <SettingCard title={t("general.device-language")} icon="language">
+          <SettingCard
+            title={t("general.device-language")}
+            icon="language"
+            onPress={() => setOpenDeviceLanguageModal(true)}
+          >
             <TouchableOpacity
               onPress={() => setOpenDeviceLanguageModal(true)}
               activeOpacity={0.8}
@@ -148,6 +157,12 @@ export default function SettingPage() {
               </ThemedText>
             </TouchableOpacity>
           </SettingCard>
+
+          <SettingCard
+            title={t("settings.about")}
+            icon="information-circle"
+            onPress={() => router.push("/about")}
+          />
 
           <CustomButton
             title={t("settings.clear-settings-title")}
@@ -176,15 +191,18 @@ const SettingCard = ({
   icon,
   title,
   children,
+  onPress,
 }: {
   icon?: keyof typeof Ionicons.glyphMap;
   title: string;
   children?: React.ReactNode;
+  onPress?: () => void;
 }) => {
   const { theme } = useTheme();
   const commonStyles = useCommonStyles();
   return (
-    <ThemedView
+    <TouchableOpacity
+      activeOpacity={0.8}
       style={{
         padding: 12,
         borderRadius: 12,
@@ -193,6 +211,7 @@ const SettingCard = ({
         justifyContent: "center",
         ...commonStyles.lightShadow,
       }}
+      onPress={onPress}
     >
       <ThemedView
         style={{
@@ -222,6 +241,6 @@ const SettingCard = ({
         </ThemedView>
         {children && <>{children}</>}
       </ThemedView>
-    </ThemedView>
+    </TouchableOpacity>
   );
 };

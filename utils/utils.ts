@@ -100,3 +100,17 @@ export const formatDisplayNumber = (num: number): string => {
   }
   return num.toString();
 };
+
+export const formatDisplayMemory = (bytes: number | null): string => {
+  if (bytes === null) return "N/A";
+  if (bytes >= 1073741824) {
+    return (bytes / 1073741824).toFixed(2) + " GB";
+  }
+  if (bytes >= 1048576) {
+    return (bytes / 1048576).toFixed(2) + " MB";
+  }
+  if (bytes >= 1024) {
+    return (bytes / 1024).toFixed(2) + " KB";
+  }
+  return bytes + " B";
+};

@@ -27,6 +27,38 @@
     "radio": "ရေဒီယို",
     "info": "ဖုန်းအချက်အလက်"
   },
+  "about": {
+    "app-version": "အက်ပ်ဗားရှင်း",
+    "developed-by": "ဖန်တီးသူ"
+  },
+  "info": {
+    "device-info": "စက်အချက်အလက်",
+    "device-type": "စက်အမျိုးအစား",
+    "brand": "အမှတ်တံဆိပ်",
+    "manufacturer": "ထုတ်လုပ်သူ",
+    "model-name": "မော်ဒယ်အမည်",
+    "device-year": "စက်၏နှစ်",
+    "os-name": "အော်ပရေတာစနစ်အမည်",
+    "os-version": "အော်ပရေတာစနစ်ဗားရှင်း",
+    "platform-api-level": "ပလက်ဖောင်း API အဆင့်",
+    "total-memory": "စုစုပေါင်းမှတ်ဉာဏ်",
+    "phone": "ဖုန်း",
+    "tablet": "တက်ဘလက်",
+    "unknown": "မသိပါ",
+    "battery-info": "ဘက်ထရီအချက်အလက်",
+    "current-battery-level": "လက်ရှိဘက်ထရီအဆင့်",
+    "current-battery-state": "လက်ရှိဘက်ထရီအခြေအနေ",
+    "unplugged": "ဘက်ထရီမချိတ်ထားပါ",
+    "charging": "အားသွင်းနေသည်",
+    "full": "ပြည့်စုံသည်",
+    "brightness-info": "အလင်းပြည့်မှုအချက်အလက်",
+    "current-brightness-level": "လက်ရှိအလင်းပြည့်မှုအဆင့်",
+    "current-brightness-mode": "လက်ရှိအလင်းပြည့်မှုမုဒ်",
+    "permission-needed": "ခွင့်ပြုချက် လိုအပ်သည်",
+    "brightness-permission": "အလင်းပြည့်မှုကို ဖတ်ရန် ခွင့်ပြုချက် လိုအပ်သည်",
+    "automatic": "အလိုအလျောက်",
+    "manual": "လက်ဖြင့်"
+  },
   "radio": {
     "country": "နိုင်ငံ",
     "language": "ဘာသာစကား",
@@ -60,6 +92,7 @@
     "clear-settings-message": "ဆက်တင်များအားလုံးကို ဖျက်ရန် သေချာပါသလား။",
     "permission-needed": "ခွင့်ပြုချက် လိုအပ်သည်",
     "photo-permission": "ပုံများကို ရွေးချယ်ရန် ဓာတ်ပုံစာကြည့်တိုက် ဝင်ခွင့်ကို ခွင့်ပြုပါ။",
-    "image-picker-error": "ပုံရွေးချယ်သူကို ဖွင့်၍ မရပါ။ ထပ်မံကြိုးစားပါ။"
+    "image-picker-error": "ပုံရွေးချယ်သူကို ဖွင့်၍ မရပါ။ ထပ်မံကြိုးစားပါ။",
+    "about": "App အကြောင်း"
   }
 }

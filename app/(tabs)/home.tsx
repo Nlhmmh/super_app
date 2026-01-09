@@ -13,9 +13,9 @@ import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native";
 
 export default function HomePage() {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const commonStyles = useCommonStyles();
-  const { t } = useTranslation();
   const { user } = useUser();
   const { currentTrack } = useAudioPlayer();
 

@@ -28,6 +28,38 @@
     "radio": "Radio",
     "info": "Phone Info"
   },
+  "about": {
+    "app-version": "App Version",
+    "developed-by": "Developed by"
+  },
+  "info": {
+    "device-info": "Device Info",
+    "device-type": "Device Type",
+    "brand": "Brand",
+    "manufacturer": "Manufacturer",
+    "model-name": "Model Name",
+    "device-year": "Device Year",
+    "os-name": "OS Name",
+    "os-version": "OS Version",
+    "platform-api-level": "Platform API Level",
+    "total-memory": "Total Memory",
+    "phone": "Phone",
+    "tablet": "Tablet",
+    "unknown": "Unknown",
+    "battery-info": "Battery Info",
+    "current-battery-level": "Current Battery Level",
+    "current-battery-state": "Current Battery State",
+    "unplugged": "Unplugged",
+    "charging": "Charging",
+    "full": "Full",
+    "brightness-info": "Brightness Info",
+    "current-brightness-level": "Current Brightness Level",
+    "current-brightness-mode": "Current Brightness Mode",
+    "permission-needed": "Permission Needed",
+    "brightness-permission": "Permission is needed to read brightness information",
+    "automatic": "Automatic",
+    "manual": "Manual"
+  },
   "radio": {
     "country": "Country",
     "language": "Language",
@@ -61,6 +93,7 @@
     "clear-settings-message": "Are you sure you want to clear all settings?",
     "permission-needed": "Permission Needed",
     "photo-permission": "Please allow photo library access to pick images.",
-    "image-picker-error": "Could not open image picker. Please try again."
+    "image-picker-error": "Could not open image picker. Please try again.",
+    "about": "About"
   }
 }

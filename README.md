@@ -20,7 +20,7 @@ make a-deploy-local
 
 - Network, Cellular
 - Barometer, Gyroscope, LightSensor, Magnetometer, Pedometer (Expo Sensors)
-- Battery, Brightness, Device,
+- Battery, Brightness, Device
 - File browser
 - Video player
 - Localization

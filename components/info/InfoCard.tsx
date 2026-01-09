@@ -1,6 +1,5 @@
 import { TextType, ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useTheme } from "@/theme/ThemeContext";
 
 const InfoCard = ({
   title,
@@ -10,18 +9,17 @@ const InfoCard = ({
   openLink,
 }: {
   title: string;
-  info: string | null | undefined;
+  info: string | number | null | undefined;
   link?: string;
   oneLineMode?: boolean;
   openLink?: boolean;
 }) => {
-  const { theme } = useTheme();
   return (
     <ThemedView style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
       <ThemedText
         type={TextType.M}
-        bold
-        style={{ flex: 1, alignSelf: "flex-start" }}
+        subBold
+        style={{ flex: 2, alignSelf: "flex-start" }}
       >
         {title}
       </ThemedText>

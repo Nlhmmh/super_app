@@ -3,7 +3,7 @@ import BackBtnWithTitle from "@/components/BackBtnWithTitle";
 import CustomModal from "@/components/CustomModal";
 import CustomScrollView from "@/components/CustomScrollView";
 import IconButton from "@/components/IconButton";
-import InfoCard from "@/components/InfoCard";
+import InfoCard from "@/components/info/InfoCard";
 import Loading from "@/components/Loading";
 import Pad from "@/components/Pad";
 import PriorityImage from "@/components/PriorityImage";
