@@ -1,11 +1,11 @@
 import { ThemedView } from "@/components/ThemedView";
 import { useTheme } from "@/theme/ThemeContext";
+import { askBrightnessPermission } from "@/utils/permission";
 import { useCommonStyles } from "@/utils/useCommonStyles";
 import Slider from "@react-native-community/slider";
 import * as Brightness from "expo-brightness";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert } from "react-native";
 import { TextType, ThemedText } from "../ThemedText";
 import InfoCard from "./InfoCard";
 
@@ -20,16 +20,10 @@ const BrightnessInfo = () => {
 
   useEffect(() => {
     (async () => {
-      const permisson = await Brightness.getPermissionsAsync();
-      if (!permisson.granted) {
-        const { status } = await Brightness.requestPermissionsAsync();
-        if (status !== "granted") {
-          Alert.alert(
-            t("info.permission-needed"),
-            t("info.brightness-permission")
-          );
-        }
-      }
+      await askBrightnessPermission({
+        alertTitle: t("info.permission-needed"),
+        alertMessage: t("info.brightness-permission"),
+      });
       setBrightnessLevel(await Brightness.getSystemBrightnessAsync());
       setBrightnessMode(await Brightness.getSystemBrightnessModeAsync());
     })();

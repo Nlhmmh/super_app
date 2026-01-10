@@ -119,5 +119,16 @@
     "photo-permission": "Please allow photo library access to pick images.",
     "image-picker-error": "Could not open image picker. Please try again.",
     "about": "About"
+  },
+  "sensor": {
+    "sensor": "Sensors",
+    "compass": "Compass",
+    "magnetometer-permission": "Permission is needed to use the magnetometer",
+    "cardinal": {
+      "N": "N",
+      "E": "E",
+      "S": "S",
+      "W": "W"
+    }
   }
 }

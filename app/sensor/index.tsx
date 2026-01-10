@@ -10,7 +10,14 @@ const SensorIndex = () => {
     <ThemedView style={{ flex: 1 }} useTheme>
       <BackBtnWithTitle title={t("home.sensor")} />
       <CustomScrollView>
-        <ThemedView style={{ flex: 1, padding: 12, gap: 24 }}>
+        <ThemedView
+          style={{
+            flex: 1,
+            paddingVertical: 18,
+            paddingHorizontal: 12,
+            gap: 24,
+          }}
+        >
           <Compass />
         </ThemedView>
       </CustomScrollView>

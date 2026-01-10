@@ -9,8 +9,6 @@ import {
   getIsoCountryCodeAsync,
   getMobileCountryCodeAsync,
   getMobileNetworkCodeAsync,
-  getPermissionsAsync,
-  requestPermissionsAsync,
 } from "expo-cellular";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -33,16 +31,10 @@ const CellularInfo = () => {
 
   useEffect(() => {
     (async () => {
-      const permisson = await getPermissionsAsync();
-      if (!permisson.granted) {
-        const { status } = await requestPermissionsAsync();
-        if (status !== "granted") {
-          Alert.alert(
-            t("info.permission-needed"),
-            t("info.cellular-permission")
-          );
-        }
-      }
+      askCellularPermission({
+        alertTitle: t("info.permission-needed"),
+        alertMessage: t("info.cellular-permission"),
+      });
       setCarrierName(await getCarrierNameAsync());
       setCellularGeneration(await getCellularGenerationAsync());
       setIsoCountryCode(await getIsoCountryCodeAsync());
