@@ -16,13 +16,13 @@ make a-deploy-local
 
 - Radio Browser
 - Battery, Brightness, Device, Network, Cellular
+- Barometer, Gyroscope, LightSensor, Magnetometer, Pedometer (Expo Sensors)
+- Localization
 
 ### TODO Feature
 
-- Barometer, Gyroscope, LightSensor, Magnetometer, Pedometer (Expo Sensors)
 - File browser
 - Video player
-- Localization
 
 ### Screens
 

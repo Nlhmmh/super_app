@@ -31,7 +31,8 @@
     "facebook": "Facebook",
     "useful-apps": "Useful Apps",
     "messenger": "Messenger",
-    "google-maps": "Google Maps"
+    "google-maps": "Maps",
+    "google": "Google"
   },
   "about": {
     "app-version": "App Version",

@@ -79,7 +79,7 @@ export default function HomePage() {
           <AppCard
             iconName="logo-facebook"
             text={t("home.facebook")}
-            onPress={() => Linking.openURL("http:fb://page/")}
+            onPress={() => Linking.openURL("fb://page/")}
           />
           <AppCard
             iconName="chatbubbles"
@@ -90,6 +90,11 @@ export default function HomePage() {
             iconName="location"
             text={t("home.google-maps")}
             onPress={() => Linking.openURL("https://www.google.com/maps")}
+          />
+          <AppCard
+            iconName="globe"
+            text={t("home.google")}
+            onPress={() => Linking.openURL("https://www.google.com")}
           />
         </ThemedView>
       </ThemedView>
@@ -138,6 +143,7 @@ const ItemCard = ({
           backgroundColor: theme.primaryContainer,
         },
         !pressed ? commonStyles.shadow : undefined,
+        !pressed ? commonStyles.boxShadow : undefined,
       ]}
     >
       <Ionicons name={iconName} size={24} color={theme.onPrimaryContainer} />
@@ -169,11 +175,12 @@ const AppCard = ({
       activeOpacity={0.8}
       style={[
         {
+          flex: 1,
           justifyContent: "center",
           alignItems: "center",
           gap: 4,
         },
-        !pressed ? commonStyles.shadow : undefined,
+        !pressed ? commonStyles.lightShadow : undefined,
       ]}
     >
       <Ionicons name={iconName} size={24} color={theme.onPrimaryContainer} />

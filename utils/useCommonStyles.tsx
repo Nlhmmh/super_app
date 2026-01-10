@@ -12,11 +12,14 @@ export const useCommonStyles = () => {
       shadowRadius: 2,
     },
     lightShadow: {
-      elevation: 1,
+      elevation: 2,
       shadowColor: theme.shadow,
       shadowOffset: { width: 2, height: 2 },
       shadowOpacity: 0.2,
-      shadowRadius: 1,
+      shadowRadius: 3,
     },
+    boxShadow: {
+      boxShadow: `1px 1px 4px rgba(0, 0, 0, 0.5)`,
+    }
   });
 };
