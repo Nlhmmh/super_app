@@ -15,12 +15,11 @@ make a-deploy-local
 ### Features
 
 - Radio Browser
+- Battery, Brightness, Device, Network, Cellular
 
 ### TODO Feature
 
-- Network, Cellular
 - Barometer, Gyroscope, LightSensor, Magnetometer, Pedometer (Expo Sensors)
-- Battery, Brightness, Device
 - File browser
 - Video player
 - Localization

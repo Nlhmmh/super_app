@@ -37,7 +37,8 @@ export default function HomePage() {
         activeOpacity={0.8}
         style={[
           {
-            flex: 1,
+            // flex: 1,
+            width: "48%",
             justifyContent: "center",
             alignItems: "center",
             borderWidth: 0.2,
@@ -65,7 +66,15 @@ export default function HomePage() {
         showBack={false}
       />
 
-      <ThemedView style={{ flexDirection: "row", padding: 12, gap: 12 }}>
+      <ThemedView
+        style={{
+          flexDirection: "row",
+          padding: 12,
+          gap: 12,
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+        }}
+      >
         <ItemCard
           iconName="radio"
           text={t("home.radio")}
@@ -75,6 +84,11 @@ export default function HomePage() {
           iconName="phone-portrait"
           text={t("home.info")}
           onPress={() => router.push("/info")}
+        />
+        <ItemCard
+          iconName="speedometer"
+          text={t("home.sensor")}
+          onPress={() => router.push("/sensor")}
         />
       </ThemedView>
 
