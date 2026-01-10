@@ -58,7 +58,20 @@
     "permission-needed": "Permission Needed",
     "brightness-permission": "Permission is needed to read brightness information",
     "automatic": "Automatic",
-    "manual": "Manual"
+    "manual": "Manual",
+    "network-info": "Network Info",
+    "network-reachability": "Network Reachability",
+    "network-type": "Network Type",
+    "internet-reachable": "Internet Reachable",
+    "internet-unreachable": "Internet Unreachable",
+    "network-status": "Network Status",
+    "cellular": "Cellular",
+    "wifi": "Wi-Fi",
+    "bluetooth": "Bluetooth",
+    "ethernet": "Ethernet",
+    "vpn": "VPN",
+    "connected": "Connected",
+    "disconnected": "Disconnected"
   },
   "radio": {
     "country": "Country",

@@ -57,7 +57,20 @@
     "permission-needed": "ခွင့်ပြုချက် လိုအပ်သည်",
     "brightness-permission": "အလင်းပြည့်မှုကို ဖတ်ရန် ခွင့်ပြုချက် လိုအပ်သည်",
     "automatic": "အလိုအလျောက်",
-    "manual": "လက်ဖြင့်"
+    "manual": "လက်ဖြင့်",
+    "network-info": "ကွန်ယက်အချက်အလက်",
+    "network-status": "ကွန်ယက်အခြေအနေ",
+    "network-reachability": "ကွန်ယက်ရောက်ရှိနိုင်မှု",
+    "network-type": "ကွန်ယက်အမျိုးအစား",
+    "internet-reachable": "အင်တာနက်ရောက်ရှိနိုင်သည်",
+    "internet-unreachable": "အင်တာနက်မရောက်ရှိနိုင်ပါ",
+    "cellular": "ဆဲလ်ဖုန်းကွန်ယက်",
+    "wifi": "ဝိုင်ဖိုင်ကွန်ယက်",
+    "bluetooth": "ဘလူးတူးသ်ကွန်ယက်",
+    "ethernet": "အီသာနက်ကွန်ယက်",
+    "vpn": "ဗီပီအန်ကွန်ယက်",
+    "connected": "ချိတ်ဆက်ထားသည်",
+    "disconnected": "ချိတ်ဆက်မထားပါ"
   },
   "radio": {
     "country": "နိုင်ငံ",
