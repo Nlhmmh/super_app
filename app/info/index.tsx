@@ -2,6 +2,7 @@ import BackBtnWithTitle from "@/components/BackBtnWithTitle";
 import CustomScrollView from "@/components/CustomScrollView";
 import BatteryInfo from "@/components/info/BatteryInfo";
 import BrightnessInfo from "@/components/info/BrightnessInfo";
+import CellularInfo from "@/components/info/CellularInfo";
 import DeviceInfo from "@/components/info/DeviceInfo";
 import NetworkInfo from "@/components/info/NetworkInfo";
 import { ThemedView } from "@/components/ThemedView";
@@ -18,6 +19,7 @@ const InfoIndex = () => {
           <BatteryInfo />
           <BrightnessInfo />
           <NetworkInfo />
+          <CellularInfo />
         </ThemedView>
       </CustomScrollView>
     </ThemedView>

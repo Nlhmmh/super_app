@@ -70,7 +70,18 @@
     "ethernet": "အီသာနက်ကွန်ယက်",
     "vpn": "ဗီပီအန်ကွန်ယက်",
     "connected": "ချိတ်ဆက်ထားသည်",
-    "disconnected": "ချိတ်ဆက်မထားပါ"
+    "disconnected": "ချိတ်ဆက်မထားပါ",
+    "cellular-info": "ဆဲလ်ဖုန်းကွန်ယက်အချက်အလက်",
+    "carrier-name": "ဆဲလ်ဖုန်းပံ့ပိုးသူအမည်",
+    "cellular-generation": "ဆဲလ်ဖုန်းကွန်ယက်မျိုးဆက်",
+    "iso-country-code": "ISO နိုင်ငံကုဒ်",
+    "mobile-country-code": "မိုဘိုင်းနိုင်ငံကုဒ်",
+    "mobile-network-code": "မိုဘိုင်းကွန်ယက်ကုဒ်",
+    "cellular-2g": "2G",
+    "cellular-3g": "3G",
+    "cellular-4g": "4G",
+    "cellular-5g": "5G",
+    "cellular-permission": "ဆဲလ်ဖုန်းကွန်ယက်အချက်အလက်များကို ဖတ်ရန် ခွင့်ပြုချက် လိုအပ်သည်"
   },
   "radio": {
     "country": "နိုင်ငံ",
