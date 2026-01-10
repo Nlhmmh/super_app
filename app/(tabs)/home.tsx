@@ -80,7 +80,7 @@ export default function HomePage() {
 
       {currentTrack && (
         <ThemedView
-          style={{ position: "absolute", bottom: 80, alignSelf: "center" }}
+          style={{ position: "absolute", bottom: 90, alignSelf: "center" }}
         >
           <TrackPlayer />
         </ThemedView>

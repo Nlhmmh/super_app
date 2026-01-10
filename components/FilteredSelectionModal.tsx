@@ -2,7 +2,6 @@ import { useTheme } from "@/theme/ThemeContext";
 import { labelValuePair } from "@/utils/models";
 import { useEffect, useState } from "react";
 import CustomModal from "./CustomModal";
-import CustomScrollView from "./CustomScrollView";
 import SearchBar from "./SearchBar";
 import SelectBox from "./SelectBox";
 import { ThemedView } from "./ThemedView";
@@ -60,7 +59,6 @@ const FilteredSelectionModal = ({
   return (
     <CustomModal
       open={open}
-      // setOpen={setOpen}
       title={title}
       onClose={handleClose}
       body={
@@ -71,7 +69,6 @@ const FilteredSelectionModal = ({
             borderRadius: 12,
             padding: 12,
             gap: 8,
-            flex: 1,
           }}
         >
           <SearchBar
@@ -79,14 +76,12 @@ const FilteredSelectionModal = ({
             setSearchText={setSearchText}
             placeholder={placeholder}
           />
-          <CustomScrollView>
             <SelectBox
               options={filteredOptions}
               sel={selectedValue}
               setSel={handleSelect}
               isWrap
             />
-          </CustomScrollView>
         </ThemedView>
       }
     />

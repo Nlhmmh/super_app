@@ -75,9 +75,10 @@ const CustomModal = ({
             ...(atBottom
               ? atBottomStyle
               : {
-                  borderRadius: 24,
+                  // flex: 1,
                   width: "100%",
-                  height: "90%",
+                  maxHeight: "90%",
+                  borderRadius: 24,
                   marginBottom: 36,
                 }),
             ...commonStyles.shadow,
@@ -116,9 +117,7 @@ const CustomModal = ({
               <Pad height={24} />
             </>
           )}
-          {body && (
-            <ThemedView style={{ flex: 1, width: "100%" }}>{body}</ThemedView>
-          )}
+          {body && <ThemedView style={{ width: "100%" }}>{body}</ThemedView>}
           {errMsg && (
             <>
               <ThemedText

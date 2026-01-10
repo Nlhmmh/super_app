@@ -30,9 +30,6 @@ const BrightnessInfo = () => {
           );
         }
       }
-      // Brightness.addBrightnessListener((data) => {
-      //   setBrightnessLevel(data.brightness);
-      // });
       setBrightnessLevel(await Brightness.getSystemBrightnessAsync());
       setBrightnessMode(await Brightness.getSystemBrightnessModeAsync());
     })();
