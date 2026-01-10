@@ -26,7 +26,12 @@
     "home": "Home",
     "welcome": "Welcome",
     "radio": "Radio",
-    "info": "Phone Info"
+    "info": "Phone Info",
+    "sensor": "Sensors",
+    "facebook": "Facebook",
+    "useful-apps": "Useful Apps",
+    "messenger": "Messenger",
+    "google-maps": "Google Maps"
   },
   "about": {
     "app-version": "App Version",

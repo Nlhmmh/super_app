@@ -26,7 +26,11 @@
     "welcome": "ကြိုဆိုပါသည်",
     "radio": "ရေဒီယို",
     "info": "ဖုန်းအချက်အလက်",
-    "sensor": "ဆင်ဆာများ"
+    "sensor": "ဆင်ဆာများ",
+    "facebook": "Facebook",
+    "useful-apps": "အသုံးဝင်သော အက်ပ်များ",
+    "messenger": "Messenger",
+    "google-maps": "Google Maps"
   },
   "about": {
     "app-version": "အက်ပ်ဗားရှင်း",

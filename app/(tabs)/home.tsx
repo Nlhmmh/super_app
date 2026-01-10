@@ -1,5 +1,7 @@
 import BackBtnWithTitle from "@/components/BackBtnWithTitle";
+import Pad from "@/components/Pad";
 import TrackPlayer from "@/components/radio/TrackPlayer";
+import TextOnBorder from "@/components/TextOnBorder";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useAudioPlayer } from "@/contexts";
@@ -10,7 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity } from "react-native";
+import { Linking, TouchableOpacity } from "react-native";
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -18,46 +20,6 @@ export default function HomePage() {
   const commonStyles = useCommonStyles();
   const { user } = useUser();
   const { currentTrack } = useAudioPlayer();
-
-  const ItemCard = ({
-    iconName,
-    text,
-    onPress,
-  }: {
-    iconName: keyof typeof Ionicons.glyphMap;
-    text: string;
-    onPress: () => void;
-  }) => {
-    const [pressed, setPressed] = useState(false);
-    return (
-      <TouchableOpacity
-        onPress={onPress}
-        onPressIn={() => setPressed(true)}
-        onPressOut={() => setPressed(false)}
-        activeOpacity={0.8}
-        style={[
-          {
-            // flex: 1,
-            width: "48%",
-            justifyContent: "center",
-            alignItems: "center",
-            borderWidth: 0.2,
-            borderColor: theme.outline,
-            borderRadius: 12,
-            padding: 12,
-            gap: 4,
-            backgroundColor: theme.primaryContainer,
-          },
-          !pressed ? commonStyles.shadow : undefined,
-        ]}
-      >
-        <Ionicons name={iconName} size={24} color={theme.onPrimaryContainer} />
-        <ThemedText style={{ color: theme.onPrimaryContainer }}>
-          {text}
-        </ThemedText>
-      </TouchableOpacity>
-    );
-  };
 
   return (
     <ThemedView style={{ flex: 1 }} useTheme>
@@ -91,6 +53,46 @@ export default function HomePage() {
           onPress={() => router.push("/sensor")}
         />
       </ThemedView>
+      <Pad size={12} />
+
+      <ThemedView
+        style={{
+          padding: 12,
+          gap: 12,
+          borderWidth: 1,
+          margin: 12,
+          borderRadius: 12,
+          borderColor: theme.outline,
+          paddingVertical: 24,
+          backgroundColor: theme.background,
+          ...commonStyles.lightShadow,
+        }}
+      >
+        <TextOnBorder text={t("home.useful-apps")} />
+        <ThemedView
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 12,
+          }}
+        >
+          <AppCard
+            iconName="logo-facebook"
+            text={t("home.facebook")}
+            onPress={() => Linking.openURL("http:fb://page/")}
+          />
+          <AppCard
+            iconName="chatbubbles"
+            text={t("home.messenger")}
+            onPress={() => Linking.openURL("http://m.me/")}
+          />
+          <AppCard
+            iconName="location"
+            text={t("home.google-maps")}
+            onPress={() => Linking.openURL("https://www.google.com/maps")}
+          />
+        </ThemedView>
+      </ThemedView>
 
       {currentTrack && (
         <ThemedView
@@ -102,3 +104,82 @@ export default function HomePage() {
     </ThemedView>
   );
 }
+
+const ItemCard = ({
+  iconName,
+  text,
+  onPress,
+}: {
+  iconName: keyof typeof Ionicons.glyphMap;
+  text: string;
+  onPress: () => void;
+}) => {
+  const { t } = useTranslation();
+  const { theme } = useTheme();
+  const commonStyles = useCommonStyles();
+  const [pressed, setPressed] = useState(false);
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
+      activeOpacity={0.8}
+      style={[
+        {
+          // flex: 1,
+          width: "48%",
+          justifyContent: "center",
+          alignItems: "center",
+          borderWidth: 0.2,
+          borderColor: theme.outline,
+          borderRadius: 12,
+          padding: 12,
+          gap: 4,
+          backgroundColor: theme.primaryContainer,
+        },
+        !pressed ? commonStyles.shadow : undefined,
+      ]}
+    >
+      <Ionicons name={iconName} size={24} color={theme.onPrimaryContainer} />
+      <ThemedText style={{ color: theme.onPrimaryContainer }}>
+        {text}
+      </ThemedText>
+    </TouchableOpacity>
+  );
+};
+
+const AppCard = ({
+  iconName,
+  text,
+  onPress,
+}: {
+  iconName: keyof typeof Ionicons.glyphMap;
+  text: string;
+  onPress: () => void;
+}) => {
+  const { t } = useTranslation();
+  const { theme } = useTheme();
+  const commonStyles = useCommonStyles();
+  const [pressed, setPressed] = useState(false);
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
+      activeOpacity={0.8}
+      style={[
+        {
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 4,
+        },
+        !pressed ? commonStyles.shadow : undefined,
+      ]}
+    >
+      <Ionicons name={iconName} size={24} color={theme.onPrimaryContainer} />
+      <ThemedText style={{ color: theme.onPrimaryContainer }}>
+        {text}
+      </ThemedText>
+    </TouchableOpacity>
+  );
+};
