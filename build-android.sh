@@ -5,7 +5,7 @@ PROJECT_DIR="$(pwd)"
 
 # Run eas build and capture output
 echo "Building APK..."
-output=$(eas build -p android --local --profile production 2>&1)
+output=$(eas build --clear-cache -p android --local --profile production 2>&1)
 
 # Extract the APK path from the output
 apk_path=$(echo "$output" | grep -oE '/[^ ]+/build-[0-9]+\.apk' | head -1)
